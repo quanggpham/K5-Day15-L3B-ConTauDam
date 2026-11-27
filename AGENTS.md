@@ -40,6 +40,15 @@ Khung chỉ dùng thư viện chuẩn của Python. Thêm thư viện thì ghi v
 
 ## Quy ước của nhóm
 
-- Ngôn ngữ trả lời người dùng: __
-- Phong cách code / đặt tên: __
-- Ai duyệt thay đổi do agent tạo trước khi commit: __
+- Ngôn ngữ trả lời người dùng: tiếng Việt
+- Phong cách code / đặt tên: Python snake_case, React component PascalCase
+- Người duyệt thay đổi do agent tạo trước khi commit: thành viên nhóm được phân công (chưa xác định).
+
+## Quy ước LearningPulse
+
+- Trả lời bằng tiếng Việt; Python dùng snake_case, React component dùng PascalCase.
+- Dùng uv với Python 3.13 và pnpm cho frontend. Thành viên nhóm được phân công duyệt thay đổi trước commit.
+- DuckDB/Pandas tính số liệu; LLM chỉ nhận thống kê đã tổng hợp và căn cứ được phép. Không gửi raw chat hoặc dữ liệu cá nhân lên model hay Langfuse.
+- Không để LLM tự viết SQL hoặc bịa số liệu; kiểm tra mã nguồn trích dẫn bằng code. Coach quyết định cuối cùng.
+- `data/pre_class/` và database DuckDB là dữ liệu local, không commit. Knowledge base phải có nguồn được phép riêng.
+- Liquid LFM3-1.7B là model dự kiến; tích hợp phải giữ `call_model` và token usage thực từ API. Chế độ hiện tại vẫn là fake.

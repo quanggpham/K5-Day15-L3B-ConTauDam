@@ -21,3 +21,9 @@
 ## Dataset 2 · [tên]
 
 …
+
+## Dữ liệu pre-class local
+
+Nguồn: dữ liệu BTC trong `data/pre_class/`; năm file CSV được nạp bằng `uv run python -m codebase.backend.analytics.ingest` vào DuckDB local. Bản gốc và database không được commit. Chưa kiểm tra tính đại diện, chất lượng hay quyền sử dụng để gửi tới dịch vụ bên ngoài; chưa dùng làm bằng chứng pain. Nội dung bài học cho RAG cần nguồn riêng được phép.
+
+Import yêu cầu các cột chính theo từng file và kiểm tra số cột từng dòng. `column_dictionary.csv` cho phép thiếu ô cuối `gia_tri`; dữ liệu gốc hiện có một dòng như vậy. Số dòng được in khi import; đây là mô tả dữ liệu, chưa phải bằng chứng pain.

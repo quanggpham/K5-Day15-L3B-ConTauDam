@@ -35,7 +35,11 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả):
 - Không làm (≥3 điều):
-- **Sơ đồ** (ảnh / Mermaid / draw.io): [chèn ở đây]
+- **Sơ đồ** (ảnh / Mermaid / draw.io):
+
+  ![Luồng AI của LearningPulse: input guard → metric + gap → truy xuất bài → LLM đề xuất → output guard → coach duyệt](docs/ai-flow.png)
+
+  Sơ đồ kiến trúc hệ thống và ranh giới dữ liệu: [docs/architecture-diagram.html](docs/architecture-diagram.html) · mô tả chi tiết: [docs/architecture.md](docs/architecture.md)
 - **Hình dạng:** [ ] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn:
 - **AI dựa vào đâu** — mỗi công cụ (khớp `codebase/tools.py`):
 
