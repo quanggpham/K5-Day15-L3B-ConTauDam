@@ -1,9 +1,12 @@
+import Flow from "./Flow"
 import Hero from "./Hero"
 import LandingNav from "./LandingNav"
+import Principles from "./Principles"
+import Problem from "./Problem"
 
 /**
  * Trang giới thiệu công khai (route `/` sẽ được nối ở bước sau).
- * Step 2-3 sẽ thêm các mục bên dưới Hero trong <main>; Step 3 thêm footer.
+ * Step 3 sẽ thêm minh hoạ báo cáo, FAQ và footer.
  */
 export default function LandingPage() {
   return (
@@ -17,7 +20,9 @@ export default function LandingPage() {
       <LandingNav />
       <main id="landing-main">
         <Hero />
-        {/* Step 2: bài toán, luồng 5 bước, nguyên tắc an toàn */}
+        <Problem />
+        <Flow />
+        <Principles />
         {/* Step 3: minh hoạ báo cáo, FAQ */}
       </main>
       {/* Step 3: footer */}
