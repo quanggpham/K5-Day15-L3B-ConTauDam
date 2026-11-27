@@ -19,7 +19,7 @@ const PRINCIPLES = [
   {
     icon: UserCheck,
     title: "Coach quyết định cuối",
-    body: "Theo thiết kế, khi có đề xuất AI, coach chấp nhận, từ chối hoặc sửa tay từng đề xuất. Hiện chưa có đề xuất AI để duyệt.",
+    body: "Màn duyệt đã có: coach chấp nhận, từ chối, yêu cầu sửa hoặc sửa tay từng đề xuất, và lịch sử được lưu. Hiện chưa có đề xuất AI để duyệt.",
   },
   {
     icon: Ban,

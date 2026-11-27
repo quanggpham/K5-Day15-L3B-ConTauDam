@@ -4,10 +4,12 @@ import { useLandingCta } from "./useLandingCta"
 
 // Nội dung lấy từ docs/learningpulse-design.md và README (trạng thái hiện tại).
 const AVAILABLE_NOW = [
-  "Số liệu tổng hợp theo bài học và theo ý kiến thức",
-  "Xếp thứ tự theo tỷ lệ sai ở lần trả lời đầu",
-  "Gắn cờ ý kiến thức chưa đủ dữ liệu, không xếp ưu tiên",
-  "Lưu bản nháp báo cáo để coach xem lại",
+  "Đăng nhập bằng email trong danh sách cho phép",
+  "Dashboard số liệu theo bài học và ý kiến thức, xếp theo tỷ lệ sai ở lần trả lời đầu; ý kiến thức chưa đủ dữ liệu được gắn cờ, không xếp ưu tiên",
+  "Tạo phân tích, lưu bản nháp và xem lại trong lịch sử",
+  "Báo cáo đã lưu có các tab và cho tải CSV",
+  "Copilot với 4 thao tác cố định; hai thao tác đầu do code trả lời từ snapshot đã lưu",
+  "Màn duyệt đề xuất: chấp nhận, từ chối, yêu cầu sửa hoặc sửa tay, kèm lịch sử duyệt",
 ]
 
 const NOT_YET = ["Khuyến nghị AI", "Truy xuất bài giảng (RAG)", "Chấm JEV"]
@@ -80,8 +82,9 @@ export default function Hero() {
             Chưa bật
           </p>
           <p className="mt-1 text-sm text-slate-700">
-            {NOT_YET.join(", ")}. LearningPulse không gửi gì cho học viên hay
-            LMS.
+            {NOT_YET.join(", ")}. Vì vậy chưa có đề xuất AI để duyệt, và hai
+            thao tác Copilot tạo nội dung đang bị khoá. LearningPulse không gửi
+            gì cho học viên hay LMS.
           </p>
         </div>
       </aside>

@@ -10,18 +10,23 @@ const SECTION_LINKS = [
   { href: "#hoi-dap", label: "Hỏi đáp" },
 ]
 
-/** Thanh điều hướng đơn giản: thương hiệu bên trái, nút Đăng nhập bên phải. */
+/**
+ * Thanh điều hướng: thương hiệu, link neo, nút CTA. Thứ tự DOM = thứ tự nhìn
+ * ở mọi cỡ màn hình (WCAG 2.4.3), nên chỉ dùng grid, không dùng `order`.
+ * Mobile: hàng 1 thương hiệu, hàng 2 link neo (cuộn ngang) rồi CTA.
+ * Desktop (md+): một hàng thương hiệu, link neo, CTA.
+ */
 export default function LandingNav() {
   const cta = useLandingCta()
   return (
     <header className="border-b border-violet-200/70 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <nav
         aria-label="Điều hướng chính"
-        className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-y-1 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:gap-x-4 md:py-0 lg:px-8"
+        className="mx-auto grid w-full max-w-6xl grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 gap-y-1 px-4 py-3 sm:px-6 md:h-16 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-x-4 md:py-0 lg:px-8"
       >
         <Link
           to="/"
-          className="flex items-center gap-2 rounded-md text-lg font-semibold tracking-tight text-violet-950 outline-hidden focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2"
+          className="col-span-2 flex w-fit items-center gap-2 rounded-md text-lg font-semibold tracking-tight text-violet-950 outline-hidden focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 md:col-span-1"
         >
           <span
             aria-hidden="true"
@@ -31,14 +36,7 @@ export default function LandingNav() {
           </span>
           LearningPulse
         </Link>
-        <Link
-          to={cta.to}
-          className="order-2 md:order-3 inline-flex h-10 items-center gap-1.5 rounded-lg border border-violet-300 bg-white px-4 text-sm font-medium text-violet-900 outline-hidden transition-colors hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
-        >
-          {cta.label}
-          <ArrowRight aria-hidden="true" className="size-4" />
-        </Link>
-        <ul className="order-3 flex w-full items-center gap-1 overflow-x-auto p-1 md:order-2 md:w-auto md:overflow-visible">
+        <ul className="flex min-w-0 items-center gap-1 overflow-x-auto p-1 md:justify-self-center md:overflow-visible">
           {SECTION_LINKS.map((link) => (
             <li key={link.href}>
               <a
@@ -50,6 +48,13 @@ export default function LandingNav() {
             </li>
           ))}
         </ul>
+        <Link
+          to={cta.to}
+          className="inline-flex h-10 items-center gap-1.5 rounded-lg border border-violet-300 bg-white px-4 text-sm font-medium text-violet-900 outline-hidden transition-colors hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+        >
+          {cta.label}
+          <ArrowRight aria-hidden="true" className="size-4" />
+        </Link>
       </nav>
     </header>
   )

@@ -8,8 +8,8 @@ interface FlowStep {
   status: Status
 }
 
-// Trạng thái theo README: đã có báo cáo số liệu và lưu bản nháp;
-// RAG, khuyến nghị AI, JEV chưa tích hợp.
+// Trạng thái theo README: đã có dashboard, báo cáo lưu nháp, Copilot cố định và màn duyệt;
+// RAG, khuyến nghị AI, JEV chưa tích hợp nên chưa có đề xuất AI để duyệt.
 const STEPS: FlowStep[] = [
   {
     title: "Số liệu",
@@ -33,7 +33,7 @@ const STEPS: FlowStep[] = [
   },
   {
     title: "Coach duyệt",
-    body: "Hiện coach có thể lưu báo cáo số liệu thành bản nháp. Chấp nhận, từ chối hay sửa tay từng đề xuất sẽ có khi có đề xuất AI.",
+    body: "Coach đã lưu được báo cáo số liệu thành bản nháp, và màn duyệt đã có (chấp nhận, từ chối, yêu cầu sửa, sửa tay, kèm lịch sử). Chưa có đề xuất AI nên chưa có gì để duyệt.",
     status: "partial",
   },
 ]

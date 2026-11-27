@@ -33,8 +33,8 @@ export default function Showcase() {
             Báo cáo trông như thế nào
           </h2>
           <p className="mt-4 text-lg leading-8 text-slate-700">
-            Coach chọn một bài học và xem các ý kiến thức xếp theo tỷ lệ sai ở
-            lần trả lời đầu. Ý kiến thức có quá ít lượt trả lời được tách riêng,
+            Trên dashboard và trong báo cáo đã lưu, coach chọn một bài học và xem
+            các ý kiến thức xếp theo tỷ lệ sai ở lần trả lời đầu. Ý kiến thức có quá ít lượt trả lời được tách riêng,
             gắn cờ chưa đủ dữ liệu và không xếp hạng.
           </p>
         </div>

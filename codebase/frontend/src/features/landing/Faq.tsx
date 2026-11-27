@@ -4,11 +4,11 @@ import { ChevronDown } from "lucide-react"
 const FAQS = [
   {
     q: "AI có gửi gì cho học viên không?",
-    a: "Không. LearningPulse không nhắn tin, không giao bài cho học viên và không ghi ngược vào LMS. AI không có công cụ nào ghi hay gửi ra ngoài; ứng dụng chỉ lưu bản nháp và lịch sử duyệt của coach.",
+    a: "Không. LearningPulse không nhắn tin, không giao bài cho học viên và không ghi ngược vào LMS. AI không có công cụ nào ghi hay gửi ra ngoài; ứng dụng chỉ lưu bản nháp báo cáo và lịch sử duyệt của coach.",
   },
   {
     q: "Dữ liệu nào được đưa lên mô hình?",
-    a: "Theo thiết kế, mô hình chỉ nhận số liệu đã tổng hợp và đoạn bài giảng được phép dùng; không có dữ liệu dòng hay mã học viên. Hiện mô hình chưa được nối vào luồng báo cáo.",
+    a: "Theo thiết kế, mô hình chỉ nhận số liệu đã tổng hợp và đoạn bài giảng được phép dùng; không có dữ liệu dòng hay mã học viên. Hiện mô hình chưa được nối vào luồng báo cáo; hai thao tác Copilot đang chạy là do code trả lời từ snapshot đã lưu.",
   },
   {
     q: "Ai quyết định cuối cùng?",
@@ -16,7 +16,11 @@ const FAQS = [
   },
   {
     q: "Khi nào bật gợi ý AI?",
-    a: "Chưa có mốc thời gian. Cần có nguồn bài giảng được phép dùng và chốt cách chấm kiểm tra đầu ra trước khi bật. Hiện ứng dụng chỉ có báo cáo số liệu và bản nháp.",
+    a: "Chưa có mốc thời gian. Cần có nguồn bài giảng được phép dùng và chốt cách chấm kiểm tra đầu ra trước khi bật. Hiện ứng dụng có dashboard, báo cáo số liệu đã lưu, Copilot cố định và màn duyệt, nhưng chưa có đề xuất AI để duyệt.",
+  },
+  {
+    q: "Copilot làm được gì?",
+    a: "Copilot trong báo cáo có 4 thao tác cố định. Hai thao tác đầu (giải thích ưu tiên, so sánh với bài trước) do code trả lời từ snapshot đã lưu. Hai thao tác tạo nội dung (kế hoạch ôn 15 phút, 3 câu hỏi kiểm tra lại) đang bị khoá cho đến khi có nguồn bài giảng và cách chấm đầu ra.",
   },
   {
     q: "Ai đăng nhập được?",
