@@ -11,10 +11,10 @@
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Nguyễn Phi Hoàng |2A202603952| Đội trưởng | ____ |
-| 2 | Phạm Quang Dũng | 2A202603896| Thành viên | ____ |
-| 3 | Nguyễn Minh Phúc| 2A202603894 | Thành viên | ____ |
-|4|Nguyễn Công Hoàn|2A202603972|Thành viên ||
+| 1 | Nguyễn Phi Hoàng |2A202603952| Đội trưởng | PO/DevOps |
+| 2 | Phạm Quang Dũng | 2A202603896| Thành viên | FE/BE |
+| 3 | Nguyễn Minh Phúc| 2A202603894 | Thành viên |FE/BE |
+|4|Nguyễn Công Hoàn|2A202603972|Thành viên |BA/test|
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
 - Mỗi thành viên một dòng, nhóm **3–5 người**. Thiếu thì thêm dòng theo đúng mẫu, thừa thì xoá dòng.
