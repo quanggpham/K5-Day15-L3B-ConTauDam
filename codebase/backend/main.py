@@ -1,16 +1,27 @@
 """LearningPulse API and production frontend."""
 import os
 from pathlib import Path
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from codebase.backend.security.auth import require_coach
 from codebase.backend.analytics.snapshot import read_snapshot
 from codebase.backend.analytics.workflow import create_report
 from codebase.backend.api.dashboard import router as dashboard_router
+from codebase.backend.api.analysis_runs import router as analysis_runs_router
+from codebase.backend.security.headers import security_headers
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="LearningPulse")
+
+@app.middleware("http")
+async def add_security_headers(request: Request, call_next):
+    response = await call_next(request)
+    for name, value in security_headers().items():
+        response.headers.setdefault(name, value)
+    return response
+
 app.include_router(dashboard_router)
+app.include_router(analysis_runs_router)
 DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 
 @app.get("/api/health")
