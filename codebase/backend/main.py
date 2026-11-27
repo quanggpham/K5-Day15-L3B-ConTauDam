@@ -7,6 +7,9 @@ from codebase.backend.analytics.snapshot import read_snapshot
 from codebase.backend.analytics.workflow import create_report
 from codebase.backend.api.dashboard import router as dashboard_router
 from codebase.backend.api.analysis_runs import router as analysis_runs_router
+from codebase.backend.api.export import router as export_router
+from codebase.backend.api.reviews import router as reviews_router
+from codebase.backend.api.copilot import router as copilot_router
 from codebase.backend.security.headers import security_headers
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
@@ -22,6 +25,9 @@ async def add_security_headers(request: Request, call_next):
 
 app.include_router(dashboard_router)
 app.include_router(analysis_runs_router)
+app.include_router(export_router)
+app.include_router(reviews_router)
+app.include_router(copilot_router)
 DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 
 @app.get("/api/health")
