@@ -46,3 +46,4 @@ codebase/frontend/*.tsbuildinfo
 # Supabase CLI local link and cache
 supabase/.temp/
 data/aggregate.json
+data/aggregate.v2.json
