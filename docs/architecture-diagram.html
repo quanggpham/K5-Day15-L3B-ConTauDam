@@ -42,7 +42,7 @@
   <div class="scroll">
   <svg viewBox="0 0 1200 640" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="lp-arch-title lp-arch-desc">
     <title id="lp-arch-title">LearningPulse — kiến trúc hệ thống</title>
-    <desc id="lp-arch-desc">Coach đăng nhập qua Supabase, dùng dashboard gọi FastAPI; FastAPI và khung eval của BTC cùng gọi một workflow LangGraph, workflow đọc bảng tổng hợp DuckDB và Lesson KB, chỉ gửi số tổng hợp lên OpenRouter và ghi trace lên Langfuse.</desc>
+    <desc id="lp-arch-desc">Coach đăng nhập qua Supabase, dùng dashboard gọi FastAPI; FastAPI và khung eval của BTC cùng gọi một workflow LangGraph, workflow đọc bảng tổng hợp DuckDB và Lesson KB, chỉ gửi số tổng hợp lên Liquid API và ghi trace lên Langfuse.</desc>
     <defs>
       <marker id="a-m" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
       <marker id="a-l" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#2e5aa8"/></marker>
@@ -83,7 +83,7 @@
     <line x1="160" y1="304" x2="462" y2="304" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#a-m)"/>
     <rect x="268" y="280" width="72" height="12" rx="2" fill="#ffffff"/>
     <text x="304" y="289" class="lb" text-anchor="middle">answer(text)</text>
-    <!-- Workflow -> OpenRouter (trust boundary crossing) -->
+    <!-- Workflow -> Liquid API (trust boundary crossing) -->
     <line x1="640" y1="304" x2="918" y2="304" stroke="#9673A6" stroke-width="1.6" marker-end="url(#a-p)"/>
     <rect x="732" y="280" width="96" height="12" rx="2" fill="#ffffff"/>
     <text x="780" y="289" class="lb" text-anchor="middle">CHỈ SỐ TỔNG HỢP</text>
@@ -152,11 +152,11 @@
     <text x="942" y="135" class="tg" fill="#a07400" text-anchor="middle">EXT</text>
     <text x="1020" y="158" class="nm" text-anchor="middle">Supabase</text>
     <text x="1020" y="172" class="sb" text-anchor="middle">Auth + Postgres (bản nháp)</text>
-    <!-- OpenRouter (orange) -->
+    <!-- Liquid API (orange) -->
     <rect x="920" y="272" width="200" height="64" rx="6" fill="#FFE6CC" stroke="#D79B00" stroke-width="1"/>
     <rect x="928" y="278" width="28" height="12" rx="2" fill="none" stroke="rgba(215,155,0,0.7)" stroke-width="0.8"/>
     <text x="942" y="287" class="tg" fill="#a07400" text-anchor="middle">LLM</text>
-    <text x="1020" y="310" class="nm" text-anchor="middle">OpenRouter</text>
+    <text x="1020" y="310" class="nm" text-anchor="middle">Liquid API</text>
     <text x="1020" y="324" class="sb" text-anchor="middle">model đề xuất + JEV judge</text>
     <!-- Langfuse (orange) -->
     <rect x="920" y="420" width="200" height="64" rx="6" fill="#FFE6CC" stroke="#D79B00" stroke-width="1"/>

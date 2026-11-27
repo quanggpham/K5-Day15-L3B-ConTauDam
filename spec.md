@@ -106,6 +106,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 | 27/11 20:05 | Cập nhật tài liệu thiết kế: Liquid API cho LFM3-1.7B, TypeSafe API cho JEV. | Khớp lựa chọn nhà cung cấp của nhóm; giữ báo cáo số liệu khi model lỗi. |
 | 27/11 21:01 | Hiện số liệu tổng hợp cho KC mẫu nhỏ; tiếp tục gắn cờ và không xếp ưu tiên dưới 10 lượt được chấm. | Theo quyết định của nhóm để đáp ứng câu thử về mẫu nhỏ; không hiện dữ liệu từng học viên. |
 | 27/11 21:04 | Thêm bí danh `Day NN` cho CLI và làm rõ prompt/JEV trong module thử nghiệm; chưa bật AI trong ứng dụng. | Hỗ trợ chọn bài theo cách gọi phổ biến và hạn chế diễn giải sai số liệu; cần kiểm thử thêm trước khi nối workflow. |
+| 27-11 21:10 | Đồng bộ nhãn nhà cung cấp trong sơ đồ kiến trúc sang Liquid API. | Khớp lựa chọn LFM3-1.7B qua Liquid API của nhóm. |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
