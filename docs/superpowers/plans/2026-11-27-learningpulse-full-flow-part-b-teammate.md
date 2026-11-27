@@ -1,7 +1,7 @@
 # LearningPulse full flow — Phần B: việc cho người thứ hai
 
 > Tách từ `2026-11-27-learningpulse-full-flow.md`. Phần A (đang làm) ở `...-part-a-in-progress.md`.
-> Các việc dưới đây không đụng file của phần A. Làm trên nhánh riêng từ `origin/main`, một PR nhỏ cho mỗi việc.
+> Mỗi bên chỉ sửa trong vùng file của mình (xem bên dưới). Làm trên nhánh riêng từ `origin/main`, một PR nhỏ cho mỗi việc.
 
 ## Đọc trước
 `AGENTS.md`, `data/DATA_CARD.md`, `docs/learningpulse-design.md`, `spec.md` §7, `docs/superpowers/plans/2026-11-27-learningpulse-full-flow.md`.
@@ -41,7 +41,7 @@ Ràng buộc chung: không đổi số liệu, nhãn trạng thái hay hợp đ�
 
 ## Sau khi phần A xong bước tương ứng
 - [ ] B10. Thêm test runner frontend (vitest; cần nhóm duyệt dependency).
-- [ ] B11. Endpoint catalog riêng cho `/analysis/new` và `/history`.
+- [ ] B11. Endpoint catalog riêng cho `/analysis/new` và `/history` — **phần A làm** (sửa backend), phần B chỉ dùng lại khi xong.
 - [ ] B12. `python run.py simulate` (mô phỏng chi phí; cần model/token thật).
 - [ ] B13. Cập nhật README, `docs/architecture.md` theo API đã có.
 
