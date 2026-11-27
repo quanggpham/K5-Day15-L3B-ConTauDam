@@ -2,18 +2,6 @@ import { Link, isRouteErrorResponse, useParams, useRouteError } from "react-rout
 import { ComingSoon } from "@/components/ComingSoon"
 import { EmptyState, ErrorState, stateButtonClass } from "@/components/states"
 
-export function DashboardPage() {
-  return <ComingSoon title="Dashboard" description="Tổng quan theo bài học sẽ hiển thị số liệu thật từ backend khi hoàn thiện." />
-}
-
-export function NewAnalysisPage() {
-  return <ComingSoon title="Tạo phân tích" description="Chọn bài học và tạo bản nháp phân tích sẽ có ở bước tiếp theo." />
-}
-
-export function HistoryPage() {
-  return <ComingSoon title="Lịch sử" description="Danh sách báo cáo đã lưu của bạn sẽ hiển thị ở đây khi hoàn thiện." />
-}
-
 export function ReportPage() {
   const { runId } = useParams()
   return (

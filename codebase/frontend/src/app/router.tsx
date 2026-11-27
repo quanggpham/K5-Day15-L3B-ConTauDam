@@ -1,9 +1,6 @@
 import { createBrowserRouter, type RouteObject } from "react-router-dom"
 import RequireAuth from "@/features/auth/RequireAuth"
 import {
-  DashboardPage,
-  HistoryPage,
-  NewAnalysisPage,
   NotFoundPage,
   ReportPage,
   ReportReviewPage,
@@ -29,9 +26,9 @@ export const routes: RouteObject[] = [
           {
             lazy: async () => ({ Component: (await import("@/components/layout/AppShell")).default }),
             children: [
-              { path: "/dashboard", element: <DashboardPage />, handle: handle({ title: "Dashboard" }) },
-              { path: "/analysis/new", element: <NewAnalysisPage />, handle: handle({ title: "Tạo phân tích" }) },
-              { path: "/history", element: <HistoryPage />, handle: handle({ title: "Lịch sử" }) },
+              { path: "/dashboard", lazy: async () => ({ Component: (await import("@/features/dashboard/DashboardPage")).default }), handle: handle({ title: "Dashboard" }) },
+              { path: "/analysis/new", lazy: async () => ({ Component: (await import("@/features/analysis/NewAnalysisPage")).default }), handle: handle({ title: "Tạo phân tích" }) },
+              { path: "/history", lazy: async () => ({ Component: (await import("@/features/history/HistoryPage")).default }), handle: handle({ title: "Lịch sử" }) },
               { path: "/reports/:runId", element: <ReportPage />, handle: handle({ title: "Báo cáo" }) },
               { path: "/reports/:runId/review", element: <ReportReviewPage />, handle: handle({ title: "Duyệt báo cáo" }) },
               { path: "/profile", lazy: async () => ({ Component: (await import("@/features/profile/ProfilePage")).default }), handle: handle({ title: "Hồ sơ" }) },
