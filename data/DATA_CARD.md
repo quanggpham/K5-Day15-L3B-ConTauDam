@@ -4,26 +4,40 @@
 > Một trang. Mỗi dataset một mục. Dữ liệu chạy thử (bài mẫu, thông báo mẫu, đoạn transcript…) để trong thư mục `data/` này.
 > Không commit nguyên tài liệu khoá, dữ liệu cá nhân thật hay nguyên file data BTC cấp — chỉ đoạn trích ngắn, bản viết lại, hoặc số đã tổng hợp.
 
-## Dataset 1 · [tên]
+## Dataset 1 · Nhật ký pre-class AI20K khoá 5
 
 | | |
 |---|---|
-| Dùng để làm gì | nguồn cho công cụ `…` · bộ câu thử · đào bằng chứng |
-| Từ đâu | data BTC cấp (`…` trong repo đề) · tài liệu khoá (trích / viết lại) · nhóm tự viết · sinh có seed |
-| Xử lý những bước gì | lọc __ · làm sạch __ · ẩn danh __ · chia __ (script: `…`) |
-| Số dòng / số đoạn | __ |
-| Phiên bản / ngày lấy | __ |
-| Nhãn | thật · `synthetic` |
-| Giới hạn | thiếu gì, lệch về phía nào |
+| Dùng để làm gì | nguồn cho bước phân tích và phát hiện lỗ hổng (`codebase/backend/analytics/`) · nguồn sự thật của câu thử B01–B10 · đào bằng chứng |
+| Từ đâu | data BTC cấp (`data/preclass/` trong repo đề `K5-L3-Day15-AI-Product-Hackathon`, commit `cebf442`) |
+| Xử lý những bước gì | chép vào `data/pre_class/` (gitignore) · `uv run python -m codebase.backend.analytics.ingest` kiểm cột bắt buộc và số cột từng dòng (`column_dictionary.csv` được thiếu ô cuối `gia_tri`), nạp `answers`, `events`, `completed_items`, `chat`, `column_dictionary` vào `data/learning_pulse.duckdb` (gitignore) · ẩn danh do BTC làm, nhóm không xử lý thêm · phân tích lỗ hổng lọc `lan_thu = 1` và `was_correct` không trống |
+| Số dòng / số đoạn | `events` 107.709 · `answers` 3.776 · `completed_items` 2.472 · `chat` 1.260 · `class_events` 849 · `learners` 721 · `rewards` 228 · `column_dictionary` 71 · `event_types` 38. Sau lọc để phân tích lỗ hổng: 2.478 lượt trả lời lần đầu có chấm, 123 học viên, 160 `kc_code`, 13 bài |
+| Phiên bản / ngày lấy | dữ liệu 05/11–25/11/2026 (Day01–Day13) · lấy ngày 27/11/2026 |
+| Nhãn | thật (BTC đã ẩn danh) |
+| Giới hạn | mẫu mỏng: 70/160 KC có dưới 10 lượt trả lời lần đầu (trung vị 10, tối đa 95) · lệch về học viên tích cực: 173 người có dòng trong `answers` so với 436 có hoạt động và 721 tài khoản · câu có chấm chủ yếu từ ôn tập cuối ngày (`pre_post_post` 1.970 dòng) và mini lab (`thuc_hanh` 519), `video_quiz` chỉ 7, `quiz_module`/`checkpoint`/`pre_post_pre` 0 dòng · không có câu chữ học viên viết, chỉ có độ dài · câu nhắn AI chỉ gắn tới module, 1.259/1.260 dòng `chat` trống `lesson_id` · không có lời giảng hay slide · `learning_mode` chỉ có từ 25/11 (22 dòng `answers`) · giờ là UTC; mỗi loại dữ liệu bắt đầu ghi từ ngày khác nhau · chưa kiểm quyền gửi ra dịch vụ ngoài, nên chỉ số tổng hợp theo bài/KC (không có `hv`) mới được gửi lên LLM · luật BTC: không đoán danh tính, không xếp hạng học viên, không đăng lại nguyên file |
 
-**Data `synthetic` (nhóm tự sinh):** ghi cách sinh (prompt / script), seed, người kiểm, số dòng đã kiểm tay. Data tự dựng **không phải bằng chứng pain**.
+**Data `synthetic` (nhóm tự sinh):** bản chạy thử không dùng data sinh bằng prompt hay script. Câu thử B11–B15 (Dataset 3) do nhóm viết tay, không có seed. Data tự dựng **không phải bằng chứng pain**.
 
-## Dataset 2 · [tên]
+## Dataset 2 · Lesson KB (nội dung bài giảng cho RAG)
 
-…
+| | |
+|---|---|
+| Dùng để làm gì | nguồn cho bước truy xuất bài giảng (BM25 và lọc metadata `lesson_id`, `kc_code`) |
+| Từ đâu | chưa chốt: nhóm tự viết lại, hoặc trích từ tài liệu khoá được BTC cho phép |
+| Xử lý những bước gì | chưa có |
+| Số dòng / số đoạn | chưa có |
+| Phiên bản / ngày lấy | chưa có |
+| Nhãn | ghi khi có nguồn |
+| Giới hạn | khi chưa có KB, hệ thống vẫn nêu lỗ hổng từ số liệu và ghi rõ "chưa có căn cứ bài giảng" |
 
-## Dữ liệu pre-class local
+## Dataset 3 · Bộ câu thử `eval/benchmark.csv`
 
-Nguồn: dữ liệu BTC trong `data/pre_class/`; năm file CSV được nạp bằng `uv run python -m codebase.backend.analytics.ingest` vào DuckDB local. Bản gốc và database không được commit. Chưa kiểm tra tính đại diện, chất lượng hay quyền sử dụng để gửi tới dịch vụ bên ngoài; chưa dùng làm bằng chứng pain. Nội dung bài học cho RAG cần nguồn riêng được phép.
-
-Import yêu cầu các cột chính theo từng file và kiểm tra số cột từng dòng. `column_dictionary.csv` cho phép thiếu ô cuối `gia_tri`; dữ liệu gốc hiện có một dòng như vậy. Số dòng được in khi import; đây là mô tả dữ liệu, chưa phải bằng chứng pain.
+| | |
+|---|---|
+| Dùng để làm gì | bộ câu thử cho `python run.py eval`, chấm theo `eval/metric_spec.yaml` |
+| Từ đâu | B01–B10 (`source = data_that`): đáp án tính từ Dataset 1, cột `source` ghi file và bộ lọc · B11–B15 (`source = tu_viet`): nhóm tự viết |
+| Xử lý những bước gì | B01–B10 lọc `lan_thu = 1`, `was_correct` không trống, theo bài hoặc `kc_code` ghi ở từng dòng |
+| Số dòng / số đoạn | 15 câu: `thuong` 7 · `kho` 5 · `tu_choi` 3 |
+| Phiên bản / ngày lấy | 27/11/2026 |
+| Nhãn | B01–B10 thật · B11–B15 nhóm tự viết |
+| Giới hạn | câu tự viết không phải bằng chứng pain · đáp án B01–B10 chỉ đúng với bản data ở Dataset 1 |
