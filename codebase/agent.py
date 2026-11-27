@@ -2,10 +2,15 @@
 import json
 from fastapi import HTTPException
 from tools import lesson_report
+from backend.security.input_guard import refusal
 from tracing import note
 
 
 def answer(text: str) -> dict:
+    denied = refusal(text)
+    if denied:
+        note("Từ chối yêu cầu ngoài phạm vi")
+        return {"output": denied}
     try:
         result = lesson_report(text.strip())
     except HTTPException:
