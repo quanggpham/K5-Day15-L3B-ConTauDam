@@ -1,5 +1,5 @@
 /** Kiểu payload GET /api/dashboard. Trường nào backend có thể thiếu thì để optional/null: UI hiện "chưa được ghi nhận". */
-export type KcStatus = "ok" | "insufficient_sample" | "no_graded"
+export type KcStatus = "ok" | "insufficient_sample" | "no_graded" | "small_group"
 
 export interface KcStat {
   kc_code: string

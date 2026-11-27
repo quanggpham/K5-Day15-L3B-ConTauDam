@@ -1,16 +1,18 @@
 import { formatCount, formatRate, formatSignedPp } from "@/lib/format"
 import type { KcStat } from "./types"
 
-export type KcKind = "ok" | "low" | "empty"
+export type KcKind = "ok" | "low" | "empty" | "masked"
 
-/** Phân loại hiển thị: đủ mẫu / chưa đủ dữ liệu (<min lượt) / mẫu số 0. */
+/** Phân loại hiển thị: đủ mẫu / chưa đủ dữ liệu (<min lượt) / mẫu số 0 / nhóm nhỏ (<5 người, số liệu bị ẩn). */
 export function kcKind(kc: KcStat): KcKind {
+  if (kc.status === "small_group") return "masked"
   if (kc.status === "no_graded" || kc.incorrect_rate === null) return "empty"
   return kc.status === "insufficient_sample" ? "low" : "ok"
 }
 
 export function kcStatusLabel(kc: KcStat, minSample?: number | null): string {
   const kind = kcKind(kc)
+  if (kind === "masked") return "Nhóm nhỏ (dưới 5 người): số liệu được ẩn"
   if (kind === "empty") return "Mẫu số 0: chưa có lượt chấm"
   if (kind === "low") return `Chưa đủ dữ liệu (dưới ${formatCount(minSample)} lượt)`
   return "Đủ mẫu"
@@ -18,7 +20,7 @@ export function kcStatusLabel(kc: KcStat, minSample?: number | null): string {
 
 export interface KcChartRow {
   kc: string
-  kind: Exclude<KcKind, "empty">
+  kind: Exclude<KcKind, "empty" | "masked">
   /** Tỷ lệ sai theo phần trăm (0-100). */
   percent: number
   sufficient: number | null
@@ -30,7 +32,7 @@ export interface KcChartRow {
 export function toChartRows(kcs: KcStat[]): KcChartRow[] {
   return kcs.flatMap((kc) => {
     const kind = kcKind(kc)
-    if (kind === "empty" || kc.incorrect_rate === null) return []
+    if (kind === "empty" || kind === "masked" || kc.incorrect_rate === null) return []
     const percent = Math.round(kc.incorrect_rate * 1000) / 10
     return [
       {

@@ -23,6 +23,7 @@ function Legend() {
 export function KcRateSection({ lesson, minSample }: { lesson: LessonView; minSample?: number | null }) {
   const rows = toChartRows(lesson.kcs)
   const emptyCount = lesson.kcs.filter((kc) => kcKind(kc) === "empty").length
+  const maskedCount = lesson.kcs.filter((kc) => kcKind(kc) === "masked").length
   return (
     <section aria-labelledby="kc-rate-title" className={cardClass}>
       <h2 id="kc-rate-title" className="text-lg font-semibold text-violet-950">
@@ -46,6 +47,12 @@ export function KcRateSection({ lesson, minSample }: { lesson: LessonView; minSa
           ) : (
             <p className="mt-4 rounded-lg bg-violet-50 px-3 py-4 text-sm text-slate-800">
               Chưa có KC nào có lượt chấm (mẫu số 0) nên không vẽ biểu đồ.
+            </p>
+          )}
+          {maskedCount > 0 && (
+            <p className="mt-2 text-xs text-slate-700">
+              {maskedCount} KC có dưới 5 học viên: số liệu được ẩn để không lộ kết quả của từng người, không vẽ cột và
+              không xếp ưu tiên.
             </p>
           )}
           {emptyCount > 0 && (
