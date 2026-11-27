@@ -4,7 +4,7 @@ LearningPulse hỗ trợ lab coach tìm nội dung cần ôn tập từ dữ li�
 
 ## Trạng thái
 
-CLI BTC đang dùng model giả. Backend có health endpoint, frontend là trang nền. Analytics, RAG, đề xuất, JEV, Liquid API và Langfuse chưa được tích hợp. LFM3-1.7B qua Liquid API là model dự kiến; cấu hình trong `.env.example` chỉ chuẩn bị cho bước sau.
+CLI và dashboard dùng chung báo cáo số liệu tổng hợp; không có khuyến nghị AI khi chưa có Lesson KB. Dashboard có đăng nhập, allowlist, chọn bài và lưu bản nháp. Adapter Liquid đã có nhưng chưa nối vào workflow; RAG, JEV, khuyến nghị AI và Langfuse chưa tích hợp.
 
 ## Cài đặt và chạy
 
@@ -64,3 +64,17 @@ Tạo Supabase project, chạy migration `supabase/migrations/20261127000000_ini
 Tạo Railway service dùng Dockerfile, workflow đồng bộ `SUPABASE_URL` và `SUPABASE_PUBLISHABLE_KEY` từ GitHub environment secrets sang service variables; chỉ dùng publishable key, không đưa secret/service-role key vào frontend. Bật domain và health check `/api/health`. Trong GitHub environment `production`, tạo secrets `RAILWAY_TOKEN`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và variable `RAILWAY_SERVICE` là tên service. Tắt auto-deploy GitHub trong Railway để tránh deploy trùng. Workflow kiểm thử, build image và deploy khi push main; `railway up --ci` chỉ xác nhận build, kiểm tra trạng thái deployment/health trên Railway sau đó.
 
 Frontend local dùng `pnpm dev`, backend dùng `uv run uvicorn codebase.backend.main:app --reload`; đặt hai biến Supabase trong môi trường backend trước khi chạy. Supabase lưu tài khoản và kết quả; DuckDB giữ dữ liệu pre-class local. Không có bước tự đồng bộ dataset lên cloud.
+
+### Allowlist giảng viên và coach
+
+Migration `20261127000001_coach_allowlist.sql` tạo bảng allowlist và yêu cầu email trong JWT nằm trong bảng cho mọi truy cập các bảng ứng dụng. Người quản trị quản lý email viết thường qua Supabase SQL Editor; client không có quyền đọc hoặc sửa bảng allowlist. Cần tạo người dùng trong Supabase Auth riêng. Không nhập mật khẩu hoặc service-role key vào repo.
+
+Backend có `/api/me` để xác thực token với Supabase Auth và kiểm tra allowlist qua RLS; cả hai đều phải thành công. Thay đổi backend/frontend này phải được deploy mới có tác dụng trên Railway.
+
+`lesson_metrics` hiện tổng hợp theo `lesson_id` và `kc_code`: tỷ lệ sai bằng số lượt sai chia số lượt đã được chấm ở lần đầu; lượt chưa chấm được tính riêng. Chưa gắn ngưỡng mẫu nhỏ, chưa kết nối dashboard hoặc công bố dữ liệu lên cloud.
+
+### Chuẩn bị báo cáo tổng hợp
+
+Chạy `uv run python -m codebase.backend.analytics.ingest`, sau đó `uv run python -m codebase.backend.analytics.export_snapshot`. Snapshot `data/aggregate.json` được ignore, không chứa mã học viên; nhóm dưới 5 học viên có lượt chấm đúng/sai ở lần đầu bị che số đếm và tỷ lệ. Ngưỡng 5 là giả định tạm cần nhóm chốt. Backend đọc `AGGREGATE_SNAPSHOT_PATH`; Railway dùng `/data/aggregate.json` trên volume. CLI nhận chính xác mã bài học và trả báo cáo cùng luồng với dashboard; câu hỏi tự do hiện chưa hỗ trợ. Chưa có Lesson KB, JEV và AI recommendation hoạt động; báo cáo không phải kết quả đánh giá model.
+
+`LIQUID_API_KEY` được đồng bộ từ GitHub Actions secret sang Railway trong bước deploy. Adapter Liquid đã chuẩn bị nhưng chưa nối vào luồng báo cáo. Điền `MODEL_PROVIDER=liquid`, `MODEL_NAME=lfm3-1.7b` chỉ khi kiểm thử adapter; mặc định là fake.

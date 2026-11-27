@@ -42,14 +42,20 @@ jobs:
           RAILWAY_SERVICE: ${{ vars.RAILWAY_SERVICE }}
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+          LIQUID_API_KEY: ${{ secrets.LIQUID_API_KEY }}
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
         run: |
           set -eu
           : "${RAILWAY_TOKEN:?Missing RAILWAY_TOKEN}"
           : "${RAILWAY_SERVICE:?Missing RAILWAY_SERVICE}"
           : "${SUPABASE_URL:?Missing SUPABASE_URL}"
           : "${SUPABASE_PUBLISHABLE_KEY:?Missing SUPABASE_PUBLISHABLE_KEY}"
+          : "${LIQUID_API_KEY:?Missing LIQUID_API_KEY}"
+          : "${TYPESAFE_API_KEY:?Missing TYPESAFE_API_KEY}"
           printf '%s' "$SUPABASE_URL" | railway variable set SUPABASE_URL --service "$RAILWAY_SERVICE" --stdin --skip-deploys
           printf '%s' "$SUPABASE_PUBLISHABLE_KEY" | railway variable set SUPABASE_PUBLISHABLE_KEY --service "$RAILWAY_SERVICE" --stdin --skip-deploys
+          printf '%s' "$LIQUID_API_KEY" | railway variable set LIQUID_API_KEY --service "$RAILWAY_SERVICE" --stdin --skip-deploys
+          printf '%s' "$TYPESAFE_API_KEY" | railway variable set TYPESAFE_API_KEY --service "$RAILWAY_SERVICE" --stdin --skip-deploys
       - name: Deploy to Railway
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}

@@ -18,6 +18,7 @@ Nối model thật: điền .env (chép từ .env.example), rồi viết nhánh 
 (có ví dụ OpenAI, Claude, model chạy trên máy, và cách nối nhà cung cấp khác). Không dán API key vào file này.
 """
 import os
+import httpx
 
 from tracing import model_call
 
@@ -40,7 +41,7 @@ def load_env(path=os.path.join(ROOT, ".env")):
 load_env()
 MODEL_PROVIDER = (os.environ.get("MODEL_PROVIDER") or "fake").strip().lower()
 MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
-API_KEY = (os.environ.get("API_KEY") or "").strip()
+API_KEY = (os.environ.get("LIQUID_API_KEY") or os.environ.get("API_KEY") or "").strip()
 
 
 @model_call
@@ -48,6 +49,21 @@ def call_model(system: str, user: str) -> dict:
     if MODEL_PROVIDER == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
+
+    if MODEL_PROVIDER == "liquid":
+        if not MODEL_NAME or not API_KEY:
+            raise ValueError("Cần MODEL_NAME và LIQUID_API_KEY để gọi Liquid")
+        response = httpx.post(
+            "https://api.liquid.ai/openai/v1/chat/completions",
+            headers={"Authorization": f"Bearer {API_KEY}"},
+            json={"model": MODEL_NAME, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+            timeout=60,
+        )
+        response.raise_for_status()
+        result = response.json()
+        usage = result["usage"]
+        return {"text": result["choices"][0]["message"]["content"], "model": result["model"],
+                "tokens_in": usage["prompt_tokens"], "tokens_out": usage["completion_tokens"]}
 
     # NHÓM VIẾT: gọi model thật ở đây (theo MODEL_PROVIDER, MODEL_NAME, API_KEY) rồi trả đúng 4 khoá.
     # Ví dụ chép được cho từng nhà cung cấp: docs/connect-model.md mục 2.

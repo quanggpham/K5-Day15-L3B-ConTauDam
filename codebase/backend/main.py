@@ -1,7 +1,10 @@
 """LearningPulse API and production frontend."""
 import os
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException
+from codebase.backend.security.auth import require_coach
+from codebase.backend.analytics.snapshot import read_snapshot
+from codebase.backend.analytics.workflow import create_report
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -18,6 +21,21 @@ def public_config():
 
 if (DIST / "assets").is_dir():
     app.mount("/assets", StaticFiles(directory=DIST / "assets"), name="assets")
+
+@app.get("/api/me")
+def me(user: dict = Depends(require_coach)):
+    return user
+
+@app.get("/api/lessons")
+def lessons(user: dict = Depends(require_coach)):
+    return sorted(read_snapshot())
+
+@app.get("/api/lessons/{lesson_id}")
+def report(lesson_id: str, user: dict = Depends(require_coach)):
+    result = create_report(lesson_id, read_snapshot())
+    if result is None:
+        raise HTTPException(404, "Không có dữ liệu cho bài học")
+    return result
 
 @app.get("/{path:path}")
 def frontend(path: str):

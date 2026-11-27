@@ -9,6 +9,14 @@ Công cụ có tác động ra ngoài: KHÔNG tự làm. Trả về bản nháp 
 Dữ liệu công cụ đọc (bài mẫu, thông báo mẫu, lịch…): để trong data/ và mô tả ở data/DATA_CARD.md.
 """
 from tracing import tool, TOOLS  # noqa: F401  (TOOLS: danh sách công cụ đã đăng ký, dùng khi viết vòng lặp agent)
+from backend.analytics.snapshot import read_snapshot
+from backend.analytics.workflow import create_report
+
+
+@tool
+def lesson_report(lesson_id: str) -> dict | None:
+    """Báo cáo bài học. Input: mã bài; output: báo cáo tổng hợp hoặc None. Không tác động ra ngoài."""
+    return create_report(lesson_id, read_snapshot())
 
 
 @tool
