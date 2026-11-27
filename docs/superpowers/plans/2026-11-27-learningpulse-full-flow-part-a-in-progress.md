@@ -24,13 +24,19 @@ Giao diện frontend (bố cục, kiểu dáng, `components/`, `style.css`) chuy
 - [x] A10b. review-code: sửa BLOCKER (run lưu thiếu khoá LessonView → tab Tổng quan trống, Copilot khoá), delta/thứ tự bài (natural sort, chỉ so bài liền trước), KC 0% khỏi ưu tiên, cấu hình snapshot v2 khi deploy
 - [x] A10c (một phần). Cursor sai → 422; allowlist cột trả về; replay RPC chỉ khi còn là trạng thái hiện tại
 
+## Đã làm thêm (bảo mật, kiểm tra lại)
+- [x] A10d (một phần). Hạn mức tạo run 20/phút/coach (429 + Retry-After); CSP + nosniff + X-Frame-Options + Referrer-Policy; thu hồi TRUNCATE của `service_role` trên bảng audit
+- [x] A11. `spec.md` §10 có changelog sau CP2; checklist H01–H06 ở `docs/acceptance-h01-h06.md` (tất cả "Chưa kiểm")
+- [x] L5. Landing đối chiếu câu chữ với tính năng thật, sửa thứ tự Tab nav
+- [x] Dependency audit: `pip-audit` sạch; `pnpm audit --prod` 9 lỗ hổng đều ở `vite<=6.4.3` (dev server qua `@tailwindcss/vite`, không vào image production)
+
 ## Còn lại
-- [ ] A10d. Review-security còn lại: hạn mức tạo run/coach; ngưỡng số học viên (k-anonymity) cho trạng thái `ok`; CSP + header bảo mật cho SPA; cân nhắc revoke TRUNCATE trên bảng audit
-- [ ] A11. Ghi thay đổi sau CP2 vào `spec.md` §10; dựng bảng checklist H01–H06 (đánh dấu "Chưa kiểm")
-- [ ] L5. Landing: đối chiếu câu "Hiện đã có", thứ tự Tab nav desktop, chụp thử desktop/mobile
-- [ ] Chạy `pnpm audit --prod` và `pip-audit` (review-security chưa chạy được)
-- [ ] Mở các PR code còn lại, từng cái một (PR #5 snapshot+dashboard đã mở)
-- [ ] Chờ kết quả B1 (migration thật) để sửa lỗi SQL nếu có
+- [ ] **Quyết định nhóm (k-anonymity)**: `spec.md` §10 có hai dòng mâu thuẫn (27/11 19:36 che nhóm <5 học viên; 21:01 hiện số tổng hợp mẫu nhỏ). Code đang theo dòng 21:01. KC có 1 học viên lộ đúng/sai của người đó. Chọn: (1) che KC <5 người, (2) che số lượt/tỷ lệ nhưng giữ cờ "mẫu nhỏ", (3) giữ nguyên + ghi chấp nhận rủi ro; rồi thay hai dòng bằng một dòng quyết định
+- [ ] Nâng vite: chuyển `@tailwindcss/vite` sang `devDependencies` + override `vite ^6.4.4`, chạy lại `pnpm audit` và `pnpm build` (cần nhóm duyệt dependency)
+- [ ] Thử CSP trên trình duyệt ở staging (Console có vi phạm khi vẽ biểu đồ/mở dialog không); thêm HSTS ở proxy Railway
+- [ ] Việc nhỏ từ review: test cho replay chặt và đối chiếu allowlist SQL; luồng v1 (`analytics/workflow.py`, CLI) còn xếp KC 0% vào ưu tiên; hạn mức chỉ tính sau insert thành công và dọn khoá cũ; regex cho cursor ISO lạ; response 500 chưa có header bảo mật
+- [ ] Chờ B1 (chạy thử migration `…03`/`…04` trên Postgres thật) rồi sửa lỗi SQL nếu có; nếu `…04` đã bị áp ở nơi dùng chung thì chuyển bản sửa sang `…05`
+- [ ] Merge chuỗi PR theo thứ tự: #4 ✓, #5 ✓; frontend #7 → #8 → #10 → #11; backend #9 → #12; migration #6 (sau B1)
 
 ## Quy ước làm việc
 - Mỗi bước một commit nhỏ; PR từng phần theo thứ tự trên, mỗi PR đủ CI (`pytest`, `pnpm build`, `docker build`).
