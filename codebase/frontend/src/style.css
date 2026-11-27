@@ -1,1 +1,6 @@
 @import "tailwindcss";
+
+/* Giao diện chỉ có chế độ sáng (nền sáng tím): ép control gốc của trình duyệt theo đó. */
+:root {
+  color-scheme: light;
+}
