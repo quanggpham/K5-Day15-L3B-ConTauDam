@@ -16,7 +16,7 @@
 | Nhãn | thật (BTC đã ẩn danh) |
 | Giới hạn | mẫu mỏng: 70/160 KC có dưới 10 lượt trả lời lần đầu (trung vị 10, tối đa 95) · lệch về học viên tích cực: 173 người có dòng trong `answers` so với 436 có hoạt động và 721 tài khoản · câu có chấm chủ yếu từ ôn tập cuối ngày (`pre_post_post` 1.970 dòng) và mini lab (`thuc_hanh` 519), `video_quiz` chỉ 7, `quiz_module`/`checkpoint`/`pre_post_pre` 0 dòng · không có câu chữ học viên viết, chỉ có độ dài · câu nhắn AI chỉ gắn tới module, 1.259/1.260 dòng `chat` trống `lesson_id` · không có lời giảng hay slide · `learning_mode` chỉ có từ 25/11 (22 dòng `answers`) · giờ là UTC; mỗi loại dữ liệu bắt đầu ghi từ ngày khác nhau · chưa kiểm quyền gửi ra dịch vụ ngoài, nên chỉ số tổng hợp theo bài/KC (không có `hv`) mới được gửi lên LLM · luật BTC: không đoán danh tính, không xếp hạng học viên, không đăng lại nguyên file |
 
-**Data `synthetic` (nhóm tự sinh):** bản chạy thử không dùng data sinh bằng prompt hay script. Câu thử B11–B15 (Dataset 3) do nhóm viết tay, không có seed. Data tự dựng **không phải bằng chứng pain**.
+**Data `synthetic` (nhóm tự sinh):** bản chạy thử không dùng data sinh bằng prompt hay script. Câu thử B11–B15 trong `eval/benchmark.csv` do nhóm viết tay, không có seed. Data tự dựng **không phải bằng chứng pain**.
 
 ## Dataset 2 · Lesson KB (nội dung bài giảng cho RAG)
 
@@ -29,15 +29,3 @@
 | Phiên bản / ngày lấy | chưa có |
 | Nhãn | ghi khi có nguồn |
 | Giới hạn | khi chưa có KB, hệ thống vẫn nêu lỗ hổng từ số liệu và ghi rõ "chưa có căn cứ bài giảng" |
-
-## Dataset 3 · Bộ câu thử `eval/benchmark.csv`
-
-| | |
-|---|---|
-| Dùng để làm gì | bộ câu thử cho `python run.py eval`, chấm theo `eval/metric_spec.yaml` |
-| Từ đâu | B01–B10 (`source = data_that`): đáp án tính từ Dataset 1, cột `source` ghi file và bộ lọc · B11–B15 (`source = tu_viet`): nhóm tự viết |
-| Xử lý những bước gì | B01–B10 lọc `lan_thu = 1`, `was_correct` không trống, theo bài hoặc `kc_code` ghi ở từng dòng |
-| Số dòng / số đoạn | 15 câu: `thuong` 7 · `kho` 5 · `tu_choi` 3 |
-| Phiên bản / ngày lấy | 27/11/2026 |
-| Nhãn | B01–B10 thật · B11–B15 nhóm tự viết |
-| Giới hạn | câu tự viết không phải bằng chứng pain · đáp án B01–B10 chỉ đúng với bản data ở Dataset 1 |
