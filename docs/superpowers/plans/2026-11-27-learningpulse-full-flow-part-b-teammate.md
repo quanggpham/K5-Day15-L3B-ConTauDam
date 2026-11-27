@@ -33,7 +33,7 @@
 - [ ] B15. AppShell: sidebar, header, panel Copilot, mobile (menu và Copilot mở theo yêu cầu); trạng thái active, icon, độ rộng, cuộn.
 - [ ] B16. Landing: bố cục hero, nhịp giữa các mục, minh hoạ báo cáo; không dùng số liệu/khách hàng/logo bịa, phần minh hoạ phải ghi "Minh hoạ".
 - [ ] B17. Login và Profile: màn đăng nhập gọn đẹp (hiện/ẩn mật khẩu, lỗi, hết phiên).
-- [ ] B18. Dashboard: thẻ chỉ số, biểu đồ, bảng KC; làm rõ phân cấp thông tin, màu không là tín hiệu duy nhất, ghi chú đơn vị lượt/người.
+- [ ] B18. Dashboard: thẻ chỉ số, biểu đồ, bảng KC; làm rõ phân cấp thông tin, màu không là tín hiệu duy nhất, ghi chú đơn vị lượt/người. Lưu ý KC trạng thái `small_group` (dưới 5 học viên) có mọi số là `null`: chỉ hiện nhãn "Nhóm nhỏ: số liệu được ẩn", không vẽ cột, không suy ra số.
 - [ ] B19. Báo cáo và màn duyệt: tabs, danh sách đề xuất, lịch sử duyệt, diff trước/sau bản sửa, trạng thái rỗng "chưa có đề xuất vì thiếu KB".
 - [ ] B20. Trạng thái chờ/rỗng/lỗi: skeleton, chuyển cảnh nhẹ (tôn trọng `prefers-reduced-motion`), nội dung hướng dẫn.
 - [ ] B21. Rà soát a11y (tương phản AA, focus, thứ tự Tab, ARIA tabs/dialog) và responsive 360px–1440px; ghi bằng chứng ảnh chụp vào PR.

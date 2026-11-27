@@ -31,12 +31,12 @@ Giao diện frontend (bố cục, kiểu dáng, `components/`, `style.css`) chuy
 - [x] Dependency audit: `pip-audit` sạch; `pnpm audit --prod` 9 lỗ hổng đều ở `vite<=6.4.3` (dev server qua `@tailwindcss/vite`, không vào image production)
 
 ## Còn lại
-- [ ] **Quyết định nhóm (k-anonymity)**: `spec.md` §10 có hai dòng mâu thuẫn (27/11 19:36 che nhóm <5 học viên; 21:01 hiện số tổng hợp mẫu nhỏ). Code đang theo dòng 21:01. KC có 1 học viên lộ đúng/sai của người đó. Chọn: (1) che KC <5 người, (2) che số lượt/tỷ lệ nhưng giữ cờ "mẫu nhỏ", (3) giữ nguyên + ghi chấp nhận rủi ro; rồi thay hai dòng bằng một dòng quyết định
-- [ ] Nâng vite: chuyển `@tailwindcss/vite` sang `devDependencies` + override `vite ^6.4.4`, chạy lại `pnpm audit` và `pnpm build` (cần nhóm duyệt dependency)
+- [x] k-anonymity: chọn ẩn toàn bộ số KC có <5 học viên (v2), tổng cấp bài chỉ từ KC hiển thị; code ở PR #16, dòng quyết định ở `spec.md` §10. **Nhóm xác nhận khi merge**; CLI v1 chưa áp quy tắc (nhóm quyết nếu muốn)
+- [x] Nâng vite 6.4.x + chuyển `@tailwindcss/vite` sang devDependencies (PR #15): `pnpm audit` sạch; cần nhóm đồng ý dependency khi merge; chưa thử `pnpm dev` trên trình duyệt
 - [ ] Thử CSP trên trình duyệt ở staging (Console có vi phạm khi vẽ biểu đồ/mở dialog không); thêm HSTS ở proxy Railway
-- [ ] Việc nhỏ từ review: test cho replay chặt và đối chiếu allowlist SQL; luồng v1 (`analytics/workflow.py`, CLI) còn xếp KC 0% vào ưu tiên; hạn mức chỉ tính sau insert thành công và dọn khoá cũ; regex cho cursor ISO lạ; response 500 chưa có header bảo mật
+- [x] Việc nhỏ từ review (PR #16): replay chặt có test, đối chiếu allowlist SQL, KC 0% ở v1, hoàn lượt hạn mức + dọn khoá, cursor ISO lạ → 422, header cho 500. Còn lại: HSTS ở proxy, ghi README về CSP/hạn mức 1 tiến trình
 - [ ] Chờ B1 (chạy thử migration `…03`/`…04` trên Postgres thật) rồi sửa lỗi SQL nếu có; nếu `…04` đã bị áp ở nơi dùng chung thì chuyển bản sửa sang `…05`
-- [ ] Merge chuỗi PR theo thứ tự: #4 ✓, #5 ✓; frontend #7 → #8 → #10 → #11; backend #9 → #12; migration #6 (sau B1)
+- [ ] Merge chuỗi PR theo thứ tự: #4 ✓, #5 ✓; frontend #7 → #8 → #10 → #11; backend #9 → #12 → #16; frontend nối tiếp #11 → #14 → #15; migration #6 (sau B1)
 
 ## Quy ước làm việc
 - Mỗi bước một commit nhỏ; PR từng phần theo thứ tự trên, mỗi PR đủ CI (`pytest`, `pnpm build`, `docker build`).
