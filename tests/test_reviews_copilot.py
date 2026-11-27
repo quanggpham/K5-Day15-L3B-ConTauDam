@@ -228,8 +228,11 @@ def test_migration_rpc_privileges_and_atomic_guards():
     assert re.search(r'grant execute on function public\.review_recommendation\([^)]*\)\s+to service_role;', sql)
     assert 'for update' in sql and 'version = p_expected_version' in sql
     assert 'jev_score = case when v_edited then null' in sql
-    assert not re.search(r'\b(drop table|truncate|delete from)\b', sql.split('-- DOWN:')[1].split('\n\n', 1)[1],
-                         re.IGNORECASE)
+    body = sql.split('-- DOWN:')[1].split('\n\n', 1)[1]
+    body = '\n'.join(line for line in body.splitlines() if not line.lstrip().startswith('--'))  # bỏ chú thích
+    body = re.sub(r'revoke\s+truncate\b[^;]*;', '', body, flags=re.IGNORECASE)  # thu hồi quyền TRUNCATE không phải xoá dữ liệu
+    assert not re.search(r'\b(drop table|truncate|delete from)\b', body, re.IGNORECASE)
+    assert re.search(r'revoke\s+truncate\s+on\s+public\.recommendation_reviews\s+from\s+service_role;', sql, re.IGNORECASE)
 
 
 def test_supabase_apply_review_posts_rpc_with_session_actor():
