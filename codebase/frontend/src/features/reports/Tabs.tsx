@@ -10,6 +10,7 @@ export interface TabDef {
 /**
  * ARIA tabs (kích hoạt tự động): mũi tên trái/phải đổi tab (vòng tròn), Home/End về đầu/cuối.
  * Roving tabindex: chỉ tab đang chọn nằm trong thứ tự Tab; panel focus được để đọc tiếp bằng bàn phím.
+ * Mọi tab đều có panel trong DOM (aria-controls luôn hợp lệ); panel không chọn `hidden` và rỗng, chỉ tab đang chọn mới render nội dung.
  * Tab đang chọn khác tab còn lại bằng gạch chân + chữ đậm, không chỉ bằng màu.
  */
 export function Tabs({ tabs, label }: { tabs: TabDef[]; label: string }) {
@@ -82,15 +83,22 @@ export function Tabs({ tabs, label }: { tabs: TabDef[]; label: string }) {
           )
         })}
       </div>
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel-${active.id}`}
-        aria-labelledby={`${baseId}-tab-${active.id}`}
-        tabIndex={0}
-        className="mt-5 outline-none focus-visible:ring-2 focus-visible:ring-violet-700"
-      >
-        {active.render()}
-      </div>
+      {tabs.map((tab) => {
+        const isActive = tab.id === active.id
+        return (
+          <div
+            key={tab.id}
+            role="tabpanel"
+            id={`${baseId}-panel-${tab.id}`}
+            aria-labelledby={`${baseId}-tab-${tab.id}`}
+            hidden={!isActive}
+            tabIndex={isActive ? 0 : undefined}
+            className="mt-5 outline-none focus-visible:ring-2 focus-visible:ring-violet-700"
+          >
+            {isActive ? tab.render() : null}
+          </div>
+        )
+      })}
     </div>
   )
 }

@@ -46,7 +46,7 @@ export function KcChart({ rows }: { rows: KcChartRow[] }) {
           margin={{ top: 4, right: 56, bottom: 4, left: 4 }}
           accessibilityLayer={false}
         >
-          <CartesianGrid horizontal={false} stroke="#e2e8f0" />
+          <CartesianGrid horizontal={false} stroke={CHART_COLORS.grid} />
           <XAxis type="number" domain={[0, 100]} tickFormatter={(v: number) => `${v}%`} tick={{ fontSize: 12, fill: CHART_COLORS.axis }} />
           <YAxis
             type="category"

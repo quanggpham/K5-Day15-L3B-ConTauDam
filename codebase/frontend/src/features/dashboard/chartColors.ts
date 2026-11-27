@@ -6,4 +6,5 @@ export const CHART_COLORS = {
   correct: "#047857",
   incorrect: "#b91c1c",
   axis: "#334155",
+  grid: "#e2e8f0",
 } as const

@@ -1,6 +1,6 @@
 import { NOT_RECORDED } from "@/lib/format"
 import { cn } from "@/lib/utils"
-import { EDITED_NOTE, reviewStatusLabel } from "./labels"
+import { EDITED_NEUTRAL_NOTE, EDITED_PENDING_NOTE, reviewStatusLabel } from "./labels"
 import type { RecommendationItem } from "./types"
 import { entriesOf, valueText } from "./values"
 
@@ -11,14 +11,22 @@ export function ReviewStatusChip({ status }: { status: string | null }) {
   return <span className={chipClass}>Duyệt: {reviewStatusLabel(status)}</span>
 }
 
-/** Bản sửa tay: cờ chữ rõ ràng (không chỉ màu). */
+/**
+ * Cờ "chờ duyệt lại" chỉ hiện khi review_status === "edited" (cảnh báo, có chữ rõ ràng, không chỉ màu).
+ * Sau khi coach chấp nhận/từ chối, is_edited vẫn đúng nhưng chỉ hiện nhãn trung tính.
+ */
 export function EditedFlag({ rec }: { rec: RecommendationItem }) {
-  if (!rec.is_edited && !rec.needs_rereview) return null
-  return (
-    <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
-      {rec.is_edited ? EDITED_NOTE : "Đề xuất này cần được duyệt lại."}
-    </p>
-  )
+  if (rec.review_status === "edited") {
+    return (
+      <p className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-950">
+        {EDITED_PENDING_NOTE}
+      </p>
+    )
+  }
+  if (rec.is_edited) {
+    return <p className="text-sm text-slate-800">{EDITED_NEUTRAL_NOTE}</p>
+  }
+  return null
 }
 
 /** Điểm JEV chỉ là tín hiệu hỗ trợ; null = không có điểm (không hiện là 0). */

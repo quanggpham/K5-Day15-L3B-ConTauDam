@@ -47,5 +47,7 @@ export function decisionLabel(decision: string | null | undefined): string {
   return decision ? (DECISION_LABELS[decision as ReviewDecision] ?? decision) : NOT_RECORDED
 }
 
-/** Nhãn cho bản sửa tay (backend đặt needs_rereview=true, jev_score=null). */
-export const EDITED_NOTE = "Bản sửa tay: chờ duyệt lại, không có điểm JEV của bản gốc"
+/** Cờ cảnh báo: chỉ hiện khi review_status === "edited" (backend đặt needs_rereview=true, jev_score=null). */
+export const EDITED_PENDING_NOTE = "Bản sửa tay: chờ duyệt lại, không có điểm JEV của bản gốc"
+/** Nhãn trung tính: bản từng được sửa tay nhưng coach đã chấp nhận/từ chối (hoặc trạng thái khác "edited"). */
+export const EDITED_NEUTRAL_NOTE = "Bản đã sửa tay, không có điểm JEV của bản gốc"
