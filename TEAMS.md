@@ -5,7 +5,7 @@
 > Kiểm bằng `python run.py check`: phần "Kiểm TEAMS.md" không báo gì là đúng format.
 
 - Tên nhóm: ConTauDam
-- Lớp: 3B
+- Lớp: L3B
 - Track: A
 - Link repo: https://github.com/quanggpham/K5-Day15-L3B-ConTauDam.git
 
