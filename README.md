@@ -59,9 +59,9 @@ Import kiểm tra cột bắt buộc và cấu trúc CSV trước khi thay datab
 
 ## Triển khai Railway và Supabase
 
-Tạo Supabase project, chạy migration `supabase/migrations/20261127000000_initial.sql` qua Supabase CLI hoặc SQL Editor sau khi review. Tạo tài khoản bằng Supabase Auth; app đăng nhập bằng email/mật khẩu. RLS chỉ cho phép người dùng truy cập dữ liệu thuộc tài khoản của mình; role do hệ thống quản lý. Chưa nối màn hình với dữ liệu analysis.
+Tạo Supabase project, áp dụng các migration trong `supabase/migrations/` qua Supabase CLI sau khi review. Tạo tài khoản bằng Supabase Auth; app đăng nhập bằng email/mật khẩu. RLS chỉ cho phép người dùng truy cập dữ liệu thuộc tài khoản của mình; role do hệ thống quản lý. Màn hình có thể lưu báo cáo số liệu thành bản nháp trong `analysis_runs`.
 
-Tạo Railway service dùng Dockerfile, workflow đồng bộ `SUPABASE_URL` và `SUPABASE_PUBLISHABLE_KEY` từ GitHub environment secrets sang service variables; chỉ dùng publishable key, không đưa secret/service-role key vào frontend. Bật domain và health check `/api/health`. Trong GitHub environment `production`, tạo secrets `RAILWAY_TOKEN`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` và variable `RAILWAY_SERVICE` là tên service. Tắt auto-deploy GitHub trong Railway để tránh deploy trùng. Workflow kiểm thử, build image và deploy khi push main; `railway up --ci` chỉ xác nhận build, kiểm tra trạng thái deployment/health trên Railway sau đó.
+Tạo Railway service dùng Dockerfile, workflow đồng bộ `SUPABASE_URL` và `SUPABASE_PUBLISHABLE_KEY` từ GitHub environment secrets sang service variables; chỉ dùng publishable key, không đưa secret/service-role key vào frontend. Bật domain và health check `/api/health`. Trong GitHub environment `production`, tạo secrets `RAILWAY_TOKEN`, `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `LIQUID_API_KEY`, `TYPESAFE_API_KEY` và variable `RAILWAY_SERVICE` là tên service. Tắt auto-deploy GitHub trong Railway để tránh deploy trùng. Workflow kiểm thử, build image và deploy khi push main; `railway up --ci` chỉ xác nhận build, kiểm tra trạng thái deployment/health trên Railway sau đó.
 
 Frontend local dùng `pnpm dev`, backend dùng `uv run uvicorn codebase.backend.main:app --reload`; đặt hai biến Supabase trong môi trường backend trước khi chạy. Supabase lưu tài khoản và kết quả; DuckDB giữ dữ liệu pre-class local. Không có bước tự đồng bộ dataset lên cloud.
 
@@ -71,12 +71,14 @@ Migration `20261127000001_coach_allowlist.sql` tạo bảng allowlist và yêu c
 
 Backend có `/api/me` để xác thực token với Supabase Auth và kiểm tra allowlist qua RLS; cả hai đều phải thành công. Thay đổi backend/frontend này phải được deploy mới có tác dụng trên Railway.
 
-`lesson_metrics` hiện tổng hợp theo `lesson_id` và `kc_code`: tỷ lệ sai bằng số lượt sai chia số lượt đã được chấm ở lần đầu; lượt chưa chấm được tính riêng. Chưa gắn ngưỡng mẫu nhỏ, chưa kết nối dashboard hoặc công bố dữ liệu lên cloud.
+`lesson_metrics` hiện tổng hợp theo `lesson_id` và `kc_code`: tỷ lệ sai bằng số lượt sai chia số lượt đã được chấm ở lần đầu; lượt chưa chấm được tính riêng. Dashboard đọc snapshot đã lọc trên Railway; API báo lỗi khi snapshot chưa có.
 
 ### Chuẩn bị báo cáo tổng hợp
 
 Chạy `uv run python -m codebase.backend.analytics.ingest`, sau đó `uv run python -m codebase.backend.analytics.export_snapshot`. Snapshot `data/aggregate.json` được ignore, không chứa mã học viên; nhóm dưới 5 học viên có lượt chấm đúng/sai ở lần đầu bị che số đếm và tỷ lệ. Ngoài ra KC dưới 10 lượt được chấm ở lần đầu không được xếp ưu tiên, theo quyết định CP2 trong canvas. Backend đọc `AGGREGATE_SNAPSHOT_PATH`; Railway dùng `/data/aggregate.json` trên volume. CLI nhận chính xác mã bài học và trả báo cáo cùng luồng với dashboard; câu hỏi tự do hiện chưa hỗ trợ. Chưa có Lesson KB, JEV và AI recommendation hoạt động; báo cáo không phải kết quả đánh giá model.
 
-`LIQUID_API_KEY` được đồng bộ từ GitHub Actions secret sang Railway trong bước deploy. Adapter Liquid đã chuẩn bị nhưng chưa nối vào luồng báo cáo. Điền `MODEL_PROVIDER=liquid`, `MODEL_NAME=lfm3-1.7b` chỉ khi kiểm thử adapter; mặc định là fake.
+`LIQUID_API_KEY` và `TYPESAFE_API_KEY` được đồng bộ từ GitHub Actions secrets sang Railway trong bước deploy. Adapter Liquid đã chuẩn bị nhưng chưa nối vào luồng báo cáo. Điền `MODEL_PROVIDER=liquid`, `MODEL_NAME=lfm3-1.7b` chỉ khi kiểm thử adapter; mặc định là fake.
 
 Các module BM25 theo `lesson_id`/`kc_code` và JEV đánh giá hai tiêu chí đã có kiểm thử với dữ liệu giả, nhưng chưa nối vào workflow: nhóm cần bổ sung nguồn Lesson KB được phép và chốt cách chấm/hiệu chuẩn trước khi bật đề xuất AI.
+
+Để cập nhật snapshot Railway sau khi kiểm tra dữ liệu nguồn và ngưỡng, dùng Railway CLI đã liên kết đúng project/environment/service và SSH key đã đăng ký: `railway volume files --volume <VOLUME_ID> upload data/aggregate.json /aggregate.json --overwrite --json`. Kiểm tra nội dung tổng hợp trước khi tải; không tải `data/pre_class/` hoặc database gốc lên volume.

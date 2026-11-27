@@ -101,6 +101,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 | Thời điểm | Đổi gì | Vì sao (trỏ về câu thử / lỗi / bằng chứng nào) |
 |---|---|---|
 | 27/11 19:36 | Áp dụng ngưỡng 10 lượt được chấm để xếp ưu tiên; che số liệu nhóm dưới 5 học viên. Chuẩn bị module BM25 và JEV, chưa bật đề xuất AI. | Đồng bộ quyết định CP2 trong `canvas.md`; giảm lộ thông tin nhóm nhỏ, chờ nguồn Lesson KB và hiệu chuẩn JEV. |
+| 27/11 19:39 | Cập nhật hướng dẫn snapshot, cấu hình secret và trạng thái triển khai trong README. | Tài liệu phải khớp luồng báo cáo và dữ liệu thực tế sau CP2. |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
