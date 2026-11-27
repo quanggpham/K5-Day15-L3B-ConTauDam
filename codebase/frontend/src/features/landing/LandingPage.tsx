@@ -1,12 +1,14 @@
+import Faq from "./Faq"
 import Flow from "./Flow"
+import Footer from "./Footer"
 import Hero from "./Hero"
 import LandingNav from "./LandingNav"
 import Principles from "./Principles"
 import Problem from "./Problem"
+import Showcase from "./Showcase"
 
 /**
  * Trang giới thiệu công khai (route `/` sẽ được nối ở bước sau).
- * Step 3 sẽ thêm minh hoạ báo cáo, FAQ và footer.
  */
 export default function LandingPage() {
   return (
@@ -22,10 +24,11 @@ export default function LandingPage() {
         <Hero />
         <Problem />
         <Flow />
+        <Showcase />
         <Principles />
-        {/* Step 3: minh hoạ báo cáo, FAQ */}
+        <Faq />
       </main>
-      {/* Step 3: footer */}
+      <Footer />
     </div>
   )
 }

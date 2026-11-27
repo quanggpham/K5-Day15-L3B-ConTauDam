@@ -3,7 +3,9 @@ import { Activity, ArrowRight } from "lucide-react"
 const SECTION_LINKS = [
   { href: "#bai-toan", label: "Bài toán" },
   { href: "#luong-xu-ly", label: "Luồng xử lý" },
+  { href: "#minh-hoa", label: "Minh hoạ" },
   { href: "#nguyen-tac", label: "Nguyên tắc an toàn" },
+  { href: "#hoi-dap", label: "Hỏi đáp" },
 ]
 
 /** Thanh điều hướng đơn giản: thương hiệu bên trái, nút Đăng nhập bên phải. */
@@ -12,7 +14,7 @@ export default function LandingNav() {
     <header className="border-b border-violet-200/70 bg-white/80 backdrop-blur supports-[backdrop-filter]:bg-white/60">
       <nav
         aria-label="Điều hướng chính"
-        className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-4 sm:px-6 lg:px-8"
+        className="mx-auto flex w-full max-w-6xl flex-wrap items-center justify-between gap-y-1 px-4 py-3 sm:px-6 md:h-16 md:flex-nowrap md:py-0 lg:px-8"
       >
         <a
           href="/"
@@ -26,12 +28,12 @@ export default function LandingNav() {
           </span>
           LearningPulse
         </a>
-        <ul className="hidden items-center gap-1 md:flex">
+        <ul className="order-3 -mx-1 flex w-full items-center gap-1 overflow-x-auto pb-1 md:order-none md:mx-0 md:w-auto md:overflow-visible md:pb-0">
           {SECTION_LINKS.map((link) => (
             <li key={link.href}>
               <a
                 href={link.href}
-                className="rounded-md px-3 py-2 text-sm font-medium text-slate-700 outline-none transition-colors hover:text-violet-900 focus-visible:ring-2 focus-visible:ring-violet-600 motion-reduce:transition-none"
+                className="block whitespace-nowrap rounded-md px-3 py-2 text-sm font-medium text-slate-700 outline-none transition-colors hover:text-violet-900 focus-visible:ring-2 focus-visible:ring-violet-600 motion-reduce:transition-none"
               >
                 {link.label}
               </a>
