@@ -3,7 +3,7 @@ import { AlertCircle } from "lucide-react"
 interface SampleRow {
   kc: string
   level: string
-  barClass: string
+  barClass?: string
   rank?: number
   insufficient?: boolean
 }
@@ -13,7 +13,7 @@ const SAMPLE_ROWS: SampleRow[] = [
   { kc: "KC-A", level: "Tỷ lệ sai: cao", barClass: "w-4/5", rank: 1 },
   { kc: "KC-B", level: "Tỷ lệ sai: trung bình", barClass: "w-3/5", rank: 2 },
   { kc: "KC-C", level: "Tỷ lệ sai: thấp", barClass: "w-1/5", rank: 3 },
-  { kc: "KC-D", level: "Chưa đủ dữ liệu", barClass: "w-2/5", insufficient: true },
+  { kc: "KC-D", level: "Chưa đủ dữ liệu", insufficient: true },
 ]
 
 /** Minh hoạ báo cáo bằng CSS tĩnh. Mọi tên và mức độ đều là dữ liệu giả. */
@@ -62,18 +62,19 @@ export default function Showcase() {
                     {row.level}
                   </span>
                 </div>
-                <div
-                  aria-hidden="true"
-                  className="mt-2 h-3 w-full overflow-hidden rounded-full bg-violet-100"
-                >
+                {row.insufficient ? (
                   <div
-                    className={`h-full rounded-full ${row.barClass} ${
-                      row.insufficient
-                        ? "border border-dashed border-slate-400 bg-transparent"
-                        : "bg-violet-700"
-                    }`}
+                    aria-hidden="true"
+                    className="mt-2 h-3 w-full rounded-full border border-dashed border-slate-400"
                   />
-                </div>
+                ) : (
+                  <div
+                    aria-hidden="true"
+                    className="mt-2 h-3 w-full overflow-hidden rounded-full bg-violet-100"
+                  >
+                    <div className={`h-full rounded-full bg-violet-700 ${row.barClass}`} />
+                  </div>
+                )}
               </li>
             ))}
           </ul>

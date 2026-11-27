@@ -38,7 +38,7 @@ export default function Hero() {
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
           <Link
             to={cta.to}
-            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-violet-700 px-6 text-base font-semibold text-white shadow-sm shadow-violet-700/30 outline-none transition-colors hover:bg-violet-800 focus-visible:ring-2 focus-visible:ring-violet-700 focus-visible:ring-offset-2 motion-reduce:transition-none"
+            className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-violet-700 px-6 text-base font-semibold text-white shadow-sm shadow-violet-700/30 outline-hidden transition-colors hover:bg-violet-800 focus-visible:ring-2 focus-visible:ring-violet-700 focus-visible:ring-offset-2 motion-reduce:transition-none"
           >
             {cta.label}
             <ArrowRight aria-hidden="true" className="size-5" />

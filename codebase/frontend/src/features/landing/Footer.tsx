@@ -15,7 +15,7 @@ export default function Footer() {
         </div>
         <Link
           to={cta.to}
-          className="inline-flex h-10 w-fit items-center rounded-lg border border-violet-300 bg-white px-4 text-sm font-medium text-violet-900 outline-none transition-colors hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+          className="inline-flex h-10 w-fit items-center rounded-lg border border-violet-300 bg-white px-4 text-sm font-medium text-violet-900 outline-hidden transition-colors hover:bg-violet-50 focus-visible:ring-2 focus-visible:ring-violet-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
         >
           {cta.label}
         </Link>

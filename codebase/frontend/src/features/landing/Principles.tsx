@@ -19,7 +19,7 @@ const PRINCIPLES = [
   {
     icon: UserCheck,
     title: "Coach quyết định cuối",
-    body: "Đề xuất chỉ có giá trị khi coach duyệt. Coach chấp nhận, từ chối hoặc sửa tay.",
+    body: "Theo thiết kế, khi có đề xuất AI, coach chấp nhận, từ chối hoặc sửa tay từng đề xuất. Hiện chưa có đề xuất AI để duyệt.",
   },
   {
     icon: Ban,
@@ -46,11 +46,11 @@ export default function Principles() {
         Đây là nguyên tắc thiết kế của nhóm. Các lớp kiểm tra cho đề xuất AI
         chưa được bật, vì khuyến nghị AI chưa tích hợp vào ứng dụng.
       </p>
-      <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+      <ul className="mt-8 flex flex-wrap justify-center gap-4 sm:gap-6">
         {PRINCIPLES.map(({ icon: Icon, title, body }) => (
           <li
             key={title}
-            className="rounded-2xl border border-violet-200 bg-white p-6 shadow-sm shadow-violet-100"
+            className="w-full rounded-2xl border border-violet-200 bg-white p-6 shadow-sm shadow-violet-100 sm:w-[calc((100%-1.5rem)/2)] lg:w-[calc((100%-3rem)/3)]"
           >
             <span
               aria-hidden="true"

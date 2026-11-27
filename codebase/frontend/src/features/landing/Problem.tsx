@@ -3,13 +3,13 @@ import { ClipboardList, Target } from "lucide-react"
 const PAIN_POINTS = [
   {
     icon: ClipboardList,
-    title: "Khó tổng hợp kết quả pre-class",
-    body: "Dữ liệu trước buổi học nằm rải rác theo bài và theo ý kiến thức, nên khó nhìn ra chỗ học viên đang vướng nếu chỉ dựa vào cảm nhận.",
+    title: "Khó tổng hợp kết quả học tập",
+    body: "Tổng hợp kết quả học tập trước buổi học là việc khó, và càng khó để xác định phần kiến thức học viên chưa hiểu.",
   },
   {
     icon: Target,
     title: "Khó chọn nội dung giảng lại",
-    body: "Thời gian buổi học có hạn. Chọn sai trọng tâm thì buổi ôn lệch hướng và lỗ hổng thật vẫn còn đó.",
+    body: "Không có cơ sở rõ ràng thì khó chọn nội dung cần giảng lại, và buổi ôn có thể lệch trọng tâm.",
   },
 ]
 

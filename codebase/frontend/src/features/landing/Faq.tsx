@@ -4,7 +4,7 @@ import { ChevronDown } from "lucide-react"
 const FAQS = [
   {
     q: "AI có gửi gì cho học viên không?",
-    a: "Không. LearningPulse không nhắn tin, không giao bài cho học viên và không ghi ngược vào LMS. Hệ thống không có công cụ nào ghi hay gửi ra ngoài.",
+    a: "Không. LearningPulse không nhắn tin, không giao bài cho học viên và không ghi ngược vào LMS. AI không có công cụ nào ghi hay gửi ra ngoài; ứng dụng chỉ lưu bản nháp và lịch sử duyệt của coach.",
   },
   {
     q: "Dữ liệu nào được đưa lên mô hình?",
@@ -48,7 +48,7 @@ export default function Faq() {
             key={q}
             className="group rounded-xl border border-violet-200 bg-white shadow-sm shadow-violet-100"
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-5 py-4 font-semibold text-violet-950 outline-none focus-visible:ring-2 focus-visible:ring-violet-700 [&::-webkit-details-marker]:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-xl px-5 py-4 font-semibold text-violet-950 outline-hidden focus-visible:ring-2 focus-visible:ring-violet-700 [&::-webkit-details-marker]:hidden">
               {q}
               <ChevronDown
                 aria-hidden="true"
