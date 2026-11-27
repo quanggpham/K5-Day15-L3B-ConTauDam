@@ -59,3 +59,72 @@ def test_delta_vs_previous_lesson_in_percentage_points():
     assert snap['lessons']['L2']['previous_lesson_id'] == 'L1'
     assert snap['lessons']['L2']['delta_vs_previous_pp'] == 30.0
     assert kc(snap, 'L2', 'K')['delta_vs_previous_pp'] == 30.0
+
+
+def graded_rows(lesson, code, wrong, total=10):
+    return [(lesson, code, 1, i >= wrong, f'{lesson}{code}{i}') for i in range(total)]
+
+
+def test_natural_sort_catalog_previous_and_latest():
+    from codebase.backend.analytics.metrics import lesson_sort_key
+    assert sorted(['L10', 'L2', 'L1'], key=lesson_sort_key) == ['L1', 'L2', 'L10']
+    rows = graded_rows('L1', 'K', 1) + graded_rows('L10', 'K', 5) + graded_rows('L2', 'K', 3)
+    snap = build_snapshot(make_db(rows))
+    assert [c['lesson_id'] for c in snap['catalog']] == ['L1', 'L2', 'L10']
+    assert snap['catalog'][-1]['lesson_id'] == 'L10'
+    assert snap['lessons']['L10']['previous_lesson_id'] == 'L2'
+    assert snap['lessons']['L2']['previous_lesson_id'] == 'L1'
+    assert snap['lessons']['L10']['delta_vs_previous_pp'] == 20.0
+    assert kc(snap, 'L10', 'K')['delta_vs_previous_pp'] == 20.0
+
+
+def test_previous_lesson_no_graded_gives_none_delta_not_older_lesson():
+    rows = graded_rows('L1', 'K', 2) + [('L2', 'K', 1, None, 'x'), ('L2', 'K', 1, None, 'y')] \
+        + graded_rows('L3', 'K', 5)
+    snap = build_snapshot(make_db(rows))
+    l3 = snap['lessons']['L3']
+    assert snap['lessons']['L2']['status'] == 'no_graded'
+    assert l3['previous_lesson_id'] == 'L2' and l3['delta_vs_previous_pp'] is None
+    assert kc(snap, 'L3', 'K')['delta_vs_previous_pp'] is None
+
+
+def test_kc_absent_in_previous_lesson_gives_none_delta():
+    rows = graded_rows('L1', 'A', 2) + graded_rows('L1', 'B', 4) + graded_rows('L2', 'B', 6) \
+        + graded_rows('L3', 'A', 5) + graded_rows('L3', 'B', 7)
+    snap = build_snapshot(make_db(rows))
+    assert kc(snap, 'L3', 'A')['delta_vs_previous_pp'] is None  # A vắng ở L2, không so với L1
+    assert kc(snap, 'L3', 'B')['delta_vs_previous_pp'] == 10.0
+    assert kc(snap, 'L2', 'B')['delta_vs_previous_pp'] == 20.0
+    assert snap['lessons']['L3']['delta_vs_previous_pp'] == 0.0  # L2 6/10 -> L3 12/20
+
+
+def test_zero_incorrect_kc_not_in_priority_but_listed_ok():
+    rows = graded_rows('L1', 'A', 3) + graded_rows('L1', 'Z', 0)
+    snap = build_snapshot(make_db(rows))
+    z = kc(snap, 'L1', 'Z')
+    assert z['status'] == 'ok' and z['incorrect_rate'] == 0.0
+    assert [p['kc_code'] for p in snap['lessons']['L1']['priority']] == ['A']
+
+
+def test_v2_path_prefers_explicit_env(tmp_path, monkeypatch):
+    import json
+    from codebase.backend.analytics.snapshot import read_snapshot_v2
+    explicit = tmp_path / 'elsewhere' / 'v2.json'
+    explicit.parent.mkdir()
+    explicit.write_text(json.dumps({'version': 2, 'catalog': [{'lesson_id': 'X'}], 'lessons': {}}), encoding='utf-8')
+    (tmp_path / 'aggregate.v2.json').write_text(json.dumps({'version': 2, 'catalog': [], 'lessons': {}}),
+                                                 encoding='utf-8')
+    monkeypatch.setenv('AGGREGATE_SNAPSHOT_PATH', str(tmp_path / 'aggregate.json'))
+    monkeypatch.setenv('AGGREGATE_SNAPSHOT_V2_PATH', str(explicit))
+    assert read_snapshot_v2()['catalog'] == [{'lesson_id': 'X'}]
+
+
+def test_v2_path_derived_from_v1_dir_when_env_unset(tmp_path, monkeypatch):
+    import json
+    from codebase.backend.analytics.snapshot import read_snapshot_v2
+    monkeypatch.delenv('AGGREGATE_SNAPSHOT_V2_PATH', raising=False)
+    monkeypatch.setenv('AGGREGATE_SNAPSHOT_PATH', str(tmp_path / 'aggregate.json'))
+    assert read_snapshot_v2() is None  # chưa có file v2 cạnh v1
+    (tmp_path / 'aggregate.v2.json').write_text(
+        json.dumps({'version': 2, 'catalog': [{'lesson_id': 'Y'}], 'lessons': {}}), encoding='utf-8')
+    assert read_snapshot_v2()['catalog'] == [{'lesson_id': 'Y'}]

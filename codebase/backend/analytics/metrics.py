@@ -1,4 +1,18 @@
 """Tổng hợp số liệu theo bài; không trả dữ liệu từng học viên."""
+import re
+
+_DIGITS = re.compile(r'(\d+)')
+
+
+def lesson_sort_key(lesson_id: str) -> tuple:
+    """Khoá natural sort cho mã bài: so từng đoạn chữ theo chuỗi, từng đoạn số theo giá trị.
+
+    Quy tắc: tách mã thành các đoạn chữ/số xen kẽ (re.split luôn đặt đoạn chữ ở vị trí chẵn,
+    đoạn số ở vị trí lẻ nên không so lẫn kiểu); đoạn số so bằng int, vd 'L2' < 'L10',
+    'Day 05' < 'Day 12'. Hoà khoá (vd 'L01' và 'L1') thì so nguyên chuỗi để thứ tự ổn định.
+    """
+    parts = _DIGITS.split(lesson_id)
+    return tuple(int(p) if i % 2 else p for i, p in enumerate(parts)), lesson_id
 
 
 def lesson_metrics(db, lesson_id: str) -> list[dict]:
@@ -72,8 +86,11 @@ def _status(graded: int) -> str:
 
 
 def _rank(items: list[dict]) -> list[dict]:
-    """Xếp hạng đồng hạng (1,1,3) cho nhóm status=ok; giữ trọn nhóm đồng hạng ở top N."""
-    eligible = sorted((i for i in items if i['status'] == 'ok'),
+    """Xếp hạng đồng hạng (1,1,3) cho nhóm status=ok; giữ trọn nhóm đồng hạng ở top N.
+
+    KC không có lượt sai (incorrect_count == 0) không cần ôn nên không vào priority.
+    """
+    eligible = sorted((i for i in items if i['status'] == 'ok' and i['incorrect_count'] > 0),
                       key=lambda i: (-i['incorrect_rate'], i['kc_code']))
     ranked = []
     for index, item in enumerate(eligible):
@@ -97,6 +114,8 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
        'incorrect_rate','previous_lesson_id','delta_vs_previous_pp','kcs':[...],'priority':[...]}}}
     Mẫu số = lượt đầu (lan_thu=1) có was_correct; lượt chưa chấm chỉ đếm ở ungraded.
     status: ok | insufficient_sample (<10 lượt, không xếp ưu tiên) | no_graded (mẫu số 0, rate=None).
+    Thứ tự catalog/previous_lesson_id theo lesson_sort_key (natural sort); phần tử cuối catalog là bài mới nhất.
+    delta_vs_previous_pp chỉ so với bài liền trước; None nếu bài/KC đó ở bài trước không có tỷ lệ.
     Tên bài: dữ liệu không có nên không bịa; thời gian lấy từ events.occurred_at nếu bảng có.
     """
     from datetime import datetime, timezone
@@ -114,16 +133,14 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
     except Exception:  # không có bảng events: bỏ thông tin thời gian
         times = {}
     lessons, catalog = {}, []
-    last_kc_rate: dict[str, float] = {}
-    prev_id, prev_rate = None, None
-    for lid in sorted(by_lesson):
+    # Delta (bài và KC) chỉ so với đúng bài liền trước theo lesson_sort_key; bài trước no_graded
+    # hoặc KC vắng/chưa chấm ở bài trước -> delta None (không so với bài xa hơn, không điền 0).
+    prev_id, prev_rate, prev_kc_rate = None, None, {}
+    for lid in sorted(by_lesson, key=lesson_sort_key):
         graded, incorrect, ungraded, learners = totals[lid]
         rate = incorrect / graded if graded else None
-        kcs = [{**k, 'delta_vs_previous_pp': _delta_pp(k['incorrect_rate'], last_kc_rate.get(k['kc_code']))}
+        kcs = [{**k, 'delta_vs_previous_pp': _delta_pp(k['incorrect_rate'], prev_kc_rate.get(k['kc_code']))}
                for k in by_lesson[lid]]
-        for k in kcs:
-            if k['incorrect_rate'] is not None:
-                last_kc_rate[k['kc_code']] = k['incorrect_rate']
         sample = {'responses': graded, 'learners': learners, 'ungraded': ungraded, 'incorrect': incorrect}
         status = _status(graded)
         lessons[lid] = {'lesson_id': lid, 'status': status, 'sample': sample, 'incorrect_rate': rate,
@@ -133,8 +150,7 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
         catalog.append({'lesson_id': lid, 'status': status, 'kc_count': len(kcs), 'sample': sample,
                         'first_event_at': str(first) if first else None,
                         'last_event_at': str(last) if last else None})
-        prev_id = lid
-        if rate is not None:
-            prev_rate = rate
+        prev_id, prev_rate = lid, rate
+        prev_kc_rate = {k['kc_code']: k['incorrect_rate'] for k in kcs}
     return {'version': SNAPSHOT_VERSION, 'generated_at': generated_at or datetime.now(timezone.utc).isoformat(),
             'min_sample': MIN_SAMPLE, 'catalog': catalog, 'lessons': lessons}
