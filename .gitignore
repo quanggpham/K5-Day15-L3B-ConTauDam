@@ -35,3 +35,10 @@ evidence/**/raw-*
 # Nguyên file data BTC cấp (data/preclass, data/training-ops… của repo đề): để ở đây, không commit
 data-btc
 data-btc/
+
+data/pre_class/
+# Local databases and build artifacts
+data/*.duckdb*
+codebase/frontend/dist/
+.tools/
+codebase/frontend/*.tsbuildinfo
