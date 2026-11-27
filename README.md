@@ -82,3 +82,5 @@ Chạy `uv run python -m codebase.backend.analytics.ingest`, sau đó `uv run py
 Các module BM25 theo `lesson_id`/`kc_code` và JEV đánh giá hai tiêu chí đã có kiểm thử với dữ liệu giả, nhưng chưa nối vào workflow: nhóm cần bổ sung nguồn Lesson KB được phép và chốt cách chấm/hiệu chuẩn trước khi bật đề xuất AI.
 
 Để cập nhật snapshot Railway sau khi kiểm tra dữ liệu nguồn và ngưỡng, dùng Railway CLI đã liên kết đúng project/environment/service và SSH key đã đăng ký: `railway volume files --volume <VOLUME_ID> upload data/aggregate.json /aggregate.json --overwrite --json`. Kiểm tra nội dung tổng hợp trước khi tải; không tải `data/pre_class/` hoặc database gốc lên volume.
+
+Module thử nghiệm `backend/agents/recommend.py` yêu cầu mỗi KC có nguồn được duyệt, kiểm tra định dạng, mã trích dẫn, dấu hiệu dữ liệu cá nhân và số trong output, sau đó nhận hai điểm JEV; thất bại thì thử lại một lần rồi chỉ trả số liệu. Ngưỡng 0,9 trong module là giá trị thử nghiệm chưa hiệu chuẩn, chưa phải chuẩn đạt CP2. Module này chưa nối vào ứng dụng; các bộ lọc không bảo đảm phát hiện mọi dữ liệu cá nhân, số sai hay prompt injection.
