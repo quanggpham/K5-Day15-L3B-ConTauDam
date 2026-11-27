@@ -99,11 +99,15 @@ def create_run(repo: RunRepository, owner_id: str, lesson_id: str, request_id: s
         try:
             return repo.insert_run(owner_id, row), True
         except DuplicateRequestError:
+            rate_limit.refund(owner_id)  # không tạo run mới nên không tính vào hạn mức
             # Race: request song song cùng request_id đã ghi trước -> đọc lại bản đó.
             winner = repo.find_by_request(owner_id, request_id)
             if winner is None:
                 raise _unavailable() from None
             return replay(winner)
+        except RepositoryError:
+            rate_limit.refund(owner_id)  # ghi lỗi hạ tầng: coach không mất lượt
+            raise
     except RepositoryError:
         raise _unavailable() from None
 
@@ -156,6 +160,10 @@ def _encode_cursor(run: dict) -> str:
     return base64.urlsafe_b64encode(raw).decode().rstrip('=')
 
 
+# Dạng PostgREST nhận cho timestamptz; fromisoformat của Python 3.11+ nhận thêm dạng lạ (vd tuần ISO).
+_CURSOR_TS = re.compile(r'\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(\.\d{1,6})?(Z|[+-]\d{2}:\d{2})')
+
+
 def _decode_cursor(cursor: str) -> tuple[str, str]:
     try:
         if len(cursor) > 512:
@@ -164,7 +172,7 @@ def _decode_cursor(cursor: str) -> tuple[str, str]:
         created_at, run_id = data['c'], data['i']
         if not isinstance(created_at, str) or not isinstance(run_id, str) or len(created_at) > 64 or len(run_id) > 64:
             raise ValueError
-        if datetime.fromisoformat(created_at).tzinfo is None:  # timestamptz luôn có offset
+        if not _CURSOR_TS.fullmatch(created_at) or datetime.fromisoformat(created_at).tzinfo is None:
             raise ValueError
         uuid.UUID(run_id)
         return created_at, run_id

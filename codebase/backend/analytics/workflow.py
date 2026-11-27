@@ -17,7 +17,7 @@ def create_report(lesson_id: str, snapshot: dict) -> dict | None:
     metrics = snapshot.get(lesson_id)
     if metrics is None:
         return None
-    priority = sorted((row for row in metrics if not row.get('insufficient_data') and row.get('incorrect_rate') is not None),
+    priority = sorted((row for row in metrics if not row.get('insufficient_data') and row.get('incorrect_rate') is not None and row['incorrect_rate'] > 0),
                       key=lambda row: (-row['incorrect_rate'], row['kc_code']))
     ranked = []
     for index, row in enumerate(priority):

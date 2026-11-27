@@ -11,7 +11,7 @@ from codebase.backend.api.export import router as export_router
 from codebase.backend.api.reviews import router as reviews_router
 from codebase.backend.api.copilot import router as copilot_router
 from codebase.backend.security.headers import security_headers
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="LearningPulse")
@@ -22,6 +22,11 @@ async def add_security_headers(request: Request, call_next):
     for name, value in security_headers().items():
         response.headers.setdefault(name, value)
     return response
+
+@app.exception_handler(Exception)
+async def unhandled_error(request: Request, exc: Exception):
+    """Lỗi không bắt được nằm ngoài middleware nên phải tự gắn header; không lộ chi tiết."""
+    return JSONResponse({"detail": "Lỗi máy chủ"}, status_code=500, headers=security_headers())
 
 app.include_router(dashboard_router)
 app.include_router(analysis_runs_router)

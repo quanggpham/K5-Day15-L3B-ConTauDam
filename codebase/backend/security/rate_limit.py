@@ -21,11 +21,22 @@ def creates_per_window() -> int:
         return DEFAULT_CREATES_PER_WINDOW
 
 
+SWEEP_ABOVE_KEYS = 256
+
+
+def _sweep(now: float) -> None:
+    """Xoá khoá của coach không còn lượt nào trong cửa sổ (tránh dict tăng mãi). Gọi khi đã giữ khoá."""
+    for key in [k for k, hits in _hits.items() if not hits or now - hits[-1] >= WINDOW_SECONDS]:
+        del _hits[key]
+
+
 def try_acquire(key: str, now: float | None = None) -> float | None:
     """Ghi một lượt. Trả None nếu được phép; nếu vượt hạn mức trả số giây nên chờ (Retry-After)."""
     now = time.monotonic() if now is None else now
     limit = creates_per_window()
     with _lock:
+        if len(_hits) > SWEEP_ABOVE_KEYS:
+            _sweep(now)
         hits = _hits[key]
         while hits and now - hits[0] >= WINDOW_SECONDS:
             hits.popleft()
@@ -33,6 +44,14 @@ def try_acquire(key: str, now: float | None = None) -> float | None:
             return max(1.0, WINDOW_SECONDS - (now - hits[0]))
         hits.append(now)
         return None
+
+
+def refund(key: str) -> None:
+    """Hoàn lại lượt gần nhất (khi lần tạo không thành công: bị trùng do race hoặc kho lỗi)."""
+    with _lock:
+        hits = _hits.get(key)
+        if hits:
+            hits.pop()
 
 
 def reset() -> None:
