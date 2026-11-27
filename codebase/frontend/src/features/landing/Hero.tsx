@@ -1,4 +1,6 @@
 import { ArrowRight, Check, Clock } from "lucide-react"
+import { Link } from "react-router-dom"
+import { useLandingCta } from "./useLandingCta"
 
 // Nội dung lấy từ docs/learningpulse-design.md và README (trạng thái hiện tại).
 const AVAILABLE_NOW = [
@@ -12,6 +14,7 @@ const NOT_YET = ["Khuyến nghị AI", "Truy xuất bài giảng (RAG)", "Chấm
 
 /** Hero: tiêu đề h1 duy nhất, mô tả ngắn, CTA Đăng nhập và thẻ trạng thái thật. */
 export default function Hero() {
+  const cta = useLandingCta()
   return (
     <section
       aria-labelledby="landing-hero-title"
@@ -33,15 +36,17 @@ export default function Hero() {
           cảm nhận. Mọi con số do code tính, coach là người quyết định cuối.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center">
-          <a
-            href="/login"
+          <Link
+            to={cta.to}
             className="inline-flex h-12 items-center justify-center gap-2 rounded-lg bg-violet-700 px-6 text-base font-semibold text-white shadow-sm shadow-violet-700/30 outline-none transition-colors hover:bg-violet-800 focus-visible:ring-2 focus-visible:ring-violet-700 focus-visible:ring-offset-2 motion-reduce:transition-none"
           >
-            Đăng nhập
+            {cta.label}
             <ArrowRight aria-hidden="true" className="size-5" />
-          </a>
+          </Link>
           <p className="text-sm text-slate-600">
-            Chỉ email trong danh sách cho phép mới vào được.
+            {cta.authenticated
+              ? "Bạn đã đăng nhập."
+              : "Chỉ email trong danh sách cho phép mới vào được."}
           </p>
         </div>
       </div>

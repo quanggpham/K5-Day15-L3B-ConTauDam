@@ -8,7 +8,7 @@ import Problem from "./Problem"
 import Showcase from "./Showcase"
 
 /**
- * Trang giới thiệu công khai (route `/` sẽ được nối ở bước sau).
+ * Trang giới thiệu công khai (route `/`).
  */
 export default function LandingPage() {
   return (
