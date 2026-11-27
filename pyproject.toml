@@ -1,0 +1,9 @@
+[project]
+name = "contaudam"
+version = "0.1.0"
+description = "AI20K hackathon - ConTauDam"
+requires-python = ">=3.10"
+dependencies = []
+
+[tool.uv]
+package = false
