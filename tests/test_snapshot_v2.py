@@ -45,11 +45,13 @@ def test_ties_crossing_top3_return_whole_group():
 
 def test_ungraded_and_retries_excluded_and_unique_learners():
     rows = [('L1', 'K', 1, False, 'a'), ('L1', 'K', 1, False, 'a'), ('L1', 'K', 1, True, 'b'),
-            ('L1', 'K', 1, None, 'c'), ('L1', 'K', 2, False, 'd')]
+            ('L1', 'K', 1, True, 'c'), ('L1', 'K', 1, False, 'd'), ('L1', 'K', 1, True, 'e'),
+            ('L1', 'K', 1, None, 'f'), ('L1', 'K', 2, False, 'g')]
     snap = build_snapshot(make_db(rows))
     k = kc(snap, 'L1', 'K')
-    assert (k['graded_count'], k['learner_count'], k['ungraded_count']) == (3, 2, 1)
-    assert snap['lessons']['L1']['sample'] == {'responses': 3, 'learners': 2, 'ungraded': 1, 'incorrect': 2}
+    assert (k['graded_count'], k['learner_count'], k['ungraded_count']) == (6, 5, 1)
+    assert snap['lessons']['L1']['sample'] == {'responses': 6, 'learners': 5, 'ungraded': 1, 'incorrect': 3,
+                                               'masked_kc_count': 0}
 
 
 def test_delta_vs_previous_lesson_in_percentage_points():

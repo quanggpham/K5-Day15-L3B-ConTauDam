@@ -23,6 +23,7 @@ router = APIRouter()
 
 BOM = '﻿'
 NO_GRADED = 'không có lượt chấm'
+SMALL_GROUP = 'ẩn: mẫu nhỏ (dưới 5 người)'  # KC có quá ít học viên: không xuất số để không lộ từng người
 HEADER = ['Loại dòng', 'Mã bài', 'Mã KC', 'Trạng thái', 'Số lượt chấm (lượt)', 'Số người (người)',
           'Tỷ lệ sai (0-1, trên lượt chấm lần đầu)', 'Thứ hạng ưu tiên', 'Nội dung đề xuất', 'Nguồn/căn cứ',
           'Trạng thái duyệt', 'Nhận xét duyệt', 'Ghi chú']
@@ -123,8 +124,10 @@ def _snapshot_rows(run: dict) -> list[list[str]]:
         status = kc.get('status')
         rows.append(_row(
             kind='Số liệu KC', lesson=run.get('lesson_id'), kc=kc.get('kc_code'), status=status or NOT_RECORDED,
-            responses=_num(kc.get('graded_count')), learners=_num(kc.get('learner_count')),
-            rate=_num(kc.get('incorrect_rate'), missing=NO_GRADED if status == 'no_graded' else NOT_RECORDED),
+            responses=_num(kc.get('graded_count'), missing=SMALL_GROUP if status == 'small_group' else NOT_RECORDED),
+            learners=_num(kc.get('learner_count'), missing=SMALL_GROUP if status == 'small_group' else NOT_RECORDED),
+            rate=_num(kc.get('incorrect_rate'), missing={'no_graded': NO_GRADED, 'small_group': SMALL_GROUP}.get(
+                status, NOT_RECORDED)),
             rank=_num(ranks.get(kc.get('kc_code')), missing='')))
     return rows
 

@@ -21,6 +21,7 @@ from typing import Literal, Mapping
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from codebase.backend.analytics.metrics import MIN_LEARNERS
 from codebase.backend.api.analysis_runs import RUN_SNAPSHOT_SCHEMA, _unavailable
 from codebase.backend.api.run_repository import RepositoryError, RunRepository, get_run_repository
 from codebase.backend.security.auth import require_coach
@@ -125,6 +126,9 @@ def explain_priority(stored: dict, lesson: dict, kc_code: str) -> tuple[str, str
         ev.add(kc_code, 'kcs.ungraded_count', kc.get('ungraded_count'))
         return 'ok', (f'KC {kc_code} không có lượt chấm lần đầu (mẫu số 0) nên không có tỷ lệ sai '
                       'và không được xếp ưu tiên.'), ev.items
+    if status == 'small_group':
+        return 'ok', (f'KC {kc_code} có dưới {MIN_LEARNERS} học viên nên số liệu được ẩn để không lộ kết quả của từng '
+                      'người; KC này không có tỷ lệ sai và không được xếp ưu tiên.'), ev.items
     if status == 'insufficient_sample':
         ev.add(kc_code, 'kcs.graded_count', graded)
         min_sample = ev.add(None, 'min_sample', stored.get('min_sample'))

@@ -21,7 +21,8 @@ def _rows():
     for i in range(12):  # L2: K1 sai 6/12, K2 chưa chấm, K3 chỉ 4 lượt (chưa đủ mẫu)
         rows.append(('L2', 'K1', 1, i >= 6, f'b{i}'))
         rows.append(('L2', 'K2', 1, None, f'b{i}'))
-    rows += [('L2', 'K3', 1, False, f'c{i}') for i in range(4)]
+    rows += [('L2', 'K3', 1, False, f'c{i}') for i in range(4)]  # 4 người: bị ẩn (mẫu nhỏ)
+    rows += [('L2', 'K4', 1, False, f'd{i}') for i in range(7)]  # 7 người, 7 lượt: hiện nhưng chưa đủ 10 lượt
     return rows
 
 
@@ -66,11 +67,14 @@ def test_stored_numbers_match_what_build_snapshot_computed(as_coach, real_snapsh
     assert dist['correct'] + dist['incorrect'] == lesson['sample']['responses']
     assert dist['ungraded'] == expected['sample']['ungraded']
     assert lesson['previous_lesson_id'] == 'L1'
-    # K2 chưa chấm → không có tỷ lệ, không bị biến thành 0%; K3 dưới 10 lượt → không xếp hạng
+    # K2 chưa chấm → không có tỷ lệ, không bị biến thành 0%; K4 dưới 10 lượt → không xếp hạng;
+    # K3 chỉ 4 người → ẩn toàn bộ số liệu (không lộ đúng/sai của từng người)
     by_kc = {k['kc_code']: k for k in lesson['kcs']}
     assert by_kc['K2']['status'] == 'no_graded' and by_kc['K2']['incorrect_rate'] is None
-    assert by_kc['K3']['status'] == 'insufficient_sample'
-    assert 'K3' not in {p['kc_code'] for p in lesson['priority']}
+    assert by_kc['K4']['status'] == 'insufficient_sample'
+    assert by_kc['K3']['status'] == 'small_group' and by_kc['K3']['incorrect_rate'] is None
+    assert by_kc['K3']['graded_count'] is None and by_kc['K3']['learner_count'] is None
+    assert not {'K3', 'K4'} & {p['kc_code'] for p in lesson['priority']}
 
 
 def test_dashboard_and_stored_report_share_one_lesson_view(as_coach, real_snapshot_path):

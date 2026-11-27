@@ -54,6 +54,7 @@ def export_snapshot(db) -> dict:
 
 SNAPSHOT_VERSION = 2
 MIN_SAMPLE = 10
+MIN_LEARNERS = 5  # dưới ngưỡng này (số người duy nhất) thì ẩn số liệu để không lộ đúng/sai của từng người
 TOP_N = 3
 
 _GROUP_SQL = '''
@@ -85,6 +86,12 @@ def _status(graded: int) -> str:
     return 'insufficient_sample' if graded < MIN_SAMPLE else 'ok'
 
 
+def _mask_small_group(kc_code: str) -> dict:
+    """KC có dưới MIN_LEARNERS người: chỉ giữ mã KC và cờ, mọi con số bị ẩn (None), không xếp hạng."""
+    return {'kc_code': kc_code, 'status': 'small_group', 'graded_count': None, 'learner_count': None,
+            'incorrect_count': None, 'ungraded_count': None, 'incorrect_rate': None}
+
+
 def _rank(items: list[dict]) -> list[dict]:
     """Xếp hạng đồng hạng (1,1,3) cho nhóm status=ok; giữ trọn nhóm đồng hạng ở top N.
 
@@ -113,7 +120,10 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
      'lessons': {lesson_id: {'lesson_id','status','sample':{'responses','learners','ungraded','incorrect'},
        'incorrect_rate','previous_lesson_id','delta_vs_previous_pp','kcs':[...],'priority':[...]}}}
     Mẫu số = lượt đầu (lan_thu=1) có was_correct; lượt chưa chấm chỉ đếm ở ungraded.
-    status: ok | insufficient_sample (<10 lượt, không xếp ưu tiên) | no_graded (mẫu số 0, rate=None).
+    status: ok | insufficient_sample (<10 lượt, không xếp ưu tiên) | no_graded (mẫu số 0, rate=None)
+            | small_group (KC có dưới MIN_LEARNERS=5 người: mọi số bị ẩn, không xếp ưu tiên).
+    Số liệu cấp bài (responses/incorrect/ungraded) chỉ cộng từ các KC còn hiển thị, và `sample.masked_kc_count`
+    cho biết có bao nhiêu KC bị ẩn: nếu không, lấy tổng bài trừ các KC hiển thị sẽ ra số đã ẩn.
     Thứ tự catalog/previous_lesson_id theo lesson_sort_key (natural sort); phần tử cuối catalog là bài mới nhất.
     delta_vs_previous_pp chỉ so với bài liền trước; None nếu bài/KC đó ở bài trước không có tỷ lệ.
     Tên bài: dữ liệu không có nên không bịa; thời gian lấy từ events.occurred_at nếu bảng có.
@@ -121,6 +131,9 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
     from datetime import datetime, timezone
     by_lesson: dict[str, list[dict]] = {}
     for lesson, kc, graded, incorrect, ungraded, learners in db.execute(_GROUP_SQL).fetchall():
+        if graded and learners < MIN_LEARNERS:
+            by_lesson.setdefault(lesson, []).append(_mask_small_group(kc))
+            continue
         by_lesson.setdefault(lesson, []).append({
             'kc_code': kc, 'status': _status(graded), 'graded_count': graded, 'learner_count': learners,
             'incorrect_count': incorrect, 'ungraded_count': ungraded,
@@ -137,12 +150,24 @@ def build_snapshot(db, generated_at: str | None = None) -> dict:
     # hoặc KC vắng/chưa chấm ở bài trước -> delta None (không so với bài xa hơn, không điền 0).
     prev_id, prev_rate, prev_kc_rate = None, None, {}
     for lid in sorted(by_lesson, key=lesson_sort_key):
-        graded, incorrect, ungraded, learners = totals[lid]
-        rate = incorrect / graded if graded else None
+        tot_graded, _, _, learners = totals[lid]
         kcs = [{**k, 'delta_vs_previous_pp': _delta_pp(k['incorrect_rate'], prev_kc_rate.get(k['kc_code']))}
                for k in by_lesson[lid]]
-        sample = {'responses': graded, 'learners': learners, 'ungraded': ungraded, 'incorrect': incorrect}
-        status = _status(graded)
+        visible = [k for k in kcs if k['status'] != 'small_group']
+        masked = len(kcs) - len(visible)
+        graded = sum(k['graded_count'] for k in visible)
+        incorrect = sum(k['incorrect_count'] for k in visible)
+        ungraded = sum(k['ungraded_count'] for k in visible)
+        rate = incorrect / graded if graded else None
+        # Cả bài chỉ có vài người, hoặc mọi KC có lượt chấm đều bị ẩn: ẩn luôn số cấp bài (kể cả số học viên).
+        if tot_graded and (learners < MIN_LEARNERS or graded == 0):
+            sample = {'responses': None, 'learners': None, 'ungraded': None, 'incorrect': None,
+                      'masked_kc_count': masked}
+            rate, status = None, 'small_group'
+        else:
+            sample = {'responses': graded, 'learners': learners, 'ungraded': ungraded, 'incorrect': incorrect,
+                      'masked_kc_count': masked}
+            status = _status(graded)
         lessons[lid] = {'lesson_id': lid, 'status': status, 'sample': sample, 'incorrect_rate': rate,
                         'previous_lesson_id': prev_id, 'delta_vs_previous_pp': _delta_pp(rate, prev_rate),
                         'kcs': kcs, 'priority': _rank(kcs)}
