@@ -16,12 +16,10 @@ def lesson_metrics(db, lesson_id: str) -> list[dict]:
             for kc, graded, incorrect, ungraded in rows]
 
 
-def export_snapshot(db, minimum_learners: int = 5) -> dict:
-    """Chỉ đưa số liệu nhóm đủ mẫu vào bản tổng hợp; không xuất mã học viên."""
-    if minimum_learners < 5:
-        raise ValueError('Ngưỡng tối thiểu là 5 học viên')
+def export_snapshot(db) -> dict:
+    """Xuất số liệu tổng hợp, gắn cờ mẫu nhỏ và không xuất mã học viên."""
     groups = db.execute('''
-        select lesson_id, kc_code, count(distinct hv) filter (where was_correct is not null) as learners,
+        select lesson_id, kc_code,
                count(*) filter (where was_correct is not null) as graded,
                count(*) filter (where was_correct = false) as incorrect,
                count(*) filter (where was_correct is null) as ungraded
@@ -31,13 +29,10 @@ def export_snapshot(db, minimum_learners: int = 5) -> dict:
         group by lesson_id, kc_code order by lesson_id, kc_code
     ''').fetchall()
     result = {}
-    for lesson, kc, learners, graded, incorrect, ungraded in groups:
-        if learners < minimum_learners:
-            item = {'kc_code': kc, 'insufficient_data': True}
-        else:
-            item = {'kc_code': kc, 'graded_count': graded, 'incorrect_count': incorrect,
-                    'ungraded_count': ungraded, 'incorrect_rate': incorrect / graded if graded else None}
-            if graded < 10:
-                item['insufficient_data'] = True
+    for lesson, kc, graded, incorrect, ungraded in groups:
+        item = {'kc_code': kc, 'graded_count': graded, 'incorrect_count': incorrect,
+                'ungraded_count': ungraded, 'incorrect_rate': incorrect / graded if graded else None}
+        if graded < 10:
+            item['insufficient_data'] = True
         result.setdefault(lesson, []).append(item)
     return result

@@ -21,22 +21,22 @@ def test_ungraded_and_parameterized_lesson():
     assert lesson_metrics(db, "L1' OR true --") == []
 
 
-def test_snapshot_suppresses_small_groups():
+def test_snapshot_marks_small_groups():
     from codebase.backend.analytics.metrics import export_snapshot
     db = duckdb.connect(':memory:')
     db.execute('create table answers (lesson_id varchar, kc_code varchar, lan_thu int, was_correct boolean, hv varchar)')
     db.executemany('insert into answers values (?, ?, ?, ?, ?)', [('L','small',1,False,'a')] + [('L','enough',1,False,str(i)) for i in range(10)])
-    result = export_snapshot(db, minimum_learners=5)
-    assert result == {'L': [{'kc_code':'enough','graded_count':10,'incorrect_count':10,'ungraded_count':0,'incorrect_rate':1.0},{'kc_code':'small','insufficient_data':True}]}
+    result = export_snapshot(db)
+    assert result == {'L': [{'kc_code':'enough','graded_count':10,'incorrect_count':10,'ungraded_count':0,'incorrect_rate':1.0},{'kc_code':'small','graded_count':1,'incorrect_count':1,'ungraded_count':0,'incorrect_rate':1.0,'insufficient_data':True}]}
     assert 'hv' not in str(result)
 
 
-def test_snapshot_suppresses_when_only_one_learner_graded():
+def test_snapshot_marks_when_only_one_learner_graded():
     from codebase.backend.analytics.metrics import export_snapshot
     db = duckdb.connect(':memory:')
     db.execute('create table answers (lesson_id varchar, kc_code varchar, lan_thu int, was_correct boolean, hv varchar)')
     db.executemany('insert into answers values (?, ?, ?, ?, ?)', [('L','K',1,False,'a')] + [('L','K',1,None,str(i)) for i in range(4)])
-    assert export_snapshot(db)['L'] == [{'kc_code':'K','insufficient_data':True}]
+    assert export_snapshot(db)['L'] == [{'kc_code':'K','graded_count':1,'incorrect_count':1,'ungraded_count':4,'incorrect_rate':1.0,'insufficient_data':True}]
 
 
 def test_priority_requires_ten_graded_responses():

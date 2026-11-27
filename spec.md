@@ -103,6 +103,9 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 | 27/11 19:36 | Áp dụng ngưỡng 10 lượt được chấm để xếp ưu tiên; che số liệu nhóm dưới 5 học viên. Chuẩn bị module BM25 và JEV, chưa bật đề xuất AI. | Đồng bộ quyết định CP2 trong `canvas.md`; giảm lộ thông tin nhóm nhỏ, chờ nguồn Lesson KB và hiệu chuẩn JEV. |
 | 27/11 19:39 | Cập nhật hướng dẫn snapshot, cấu hình secret và trạng thái triển khai trong README. | Tài liệu phải khớp luồng báo cáo và dữ liệu thực tế sau CP2. |
 | 27/11 19:58 | Chuẩn bị module thử nghiệm kiểm trích dẫn, số liệu và điều phối Liquid/JEV; chưa bật trong ứng dụng. | Cần có căn cứ để kiểm đầu ra; còn chờ Lesson KB và hiệu chuẩn JEV trước khi dùng thực tế. |
+| 27/11 20:05 | Cập nhật tài liệu thiết kế: Liquid API cho LFM3-1.7B, TypeSafe API cho JEV. | Khớp lựa chọn nhà cung cấp của nhóm; giữ báo cáo số liệu khi model lỗi. |
+| 27/11 21:01 | Hiện số liệu tổng hợp cho KC mẫu nhỏ; tiếp tục gắn cờ và không xếp ưu tiên dưới 10 lượt được chấm. | Theo quyết định của nhóm để đáp ứng câu thử về mẫu nhỏ; không hiện dữ liệu từng học viên. |
+| 27/11 21:04 | Thêm bí danh `Day NN` cho CLI và làm rõ prompt/JEV trong module thử nghiệm; chưa bật AI trong ứng dụng. | Hỗ trợ chọn bài theo cách gọi phổ biến và hạn chế diễn giải sai số liệu; cần kiểm thử thêm trước khi nối workflow. |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 

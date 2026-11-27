@@ -1,5 +1,7 @@
 # LearningPulse: thiết kế AI đã làm rõ
 
+> Tài liệu mô tả thiết kế đích. Trạng thái hiện tại: báo cáo số liệu và lưu nháp đã triển khai; chưa bật RAG, khuyến nghị AI hay JEV trong ứng dụng. Xem README để biết giới hạn.
+
 Tài liệu này gộp bản mô tả đề tài ở tab Thẻ 1 với kết quả buổi làm rõ yêu cầu ngày 27/11/2026. Khi hai nguồn khác nhau, tài liệu này theo kết quả làm rõ. Sơ đồ gốc và mã nguồn nằm trong repo nhóm, thư mục docs/.
 
 ## Tóm tắt
@@ -64,7 +66,7 @@ Toàn bộ app chạy trong một service trên Railway: FastAPI vừa phục v�
 | Workflow AI | LangGraph | Chặn đầu vào, số liệu, lỗ hổng, RAG, LLM, chặn đầu ra |
 | Bảng tổng hợp | DuckDB, Pandas | Số liệu theo bài và ý kiến thức, không có mã học viên |
 | Lesson KB | BM25 và metadata | Đoạn bài giảng theo bài và ý kiến thức (nguồn chưa chốt) |
-| LLM | OpenRouter | Model đề xuất và model chấm của JEV |
+| LLM | Liquid API, LFM3-1.7B | Model đề xuất; JEV dùng TypeSafe API |
 | Auth và lưu duyệt | Supabase | Đăng nhập, bản nháp, lịch sử duyệt |
 | Observability | Langfuse Cloud | Trace từng phiên |
 
@@ -78,7 +80,7 @@ Toàn bộ app chạy trong một service trên Railway: FastAPI vừa phục v�
 4. **Truy xuất bài giảng.** BM25 và lọc metadata trên Lesson KB.
 5. **LLM đề xuất.** Đầu vào chỉ gồm số đã tổng hợp và đoạn bài giảng; đầu ra theo schema Pydantic.
 6. **Chặn đầu ra.** Code kiểm số khớp DuckDB, trích dẫn có trong ngữ cảnh, đúng schema, không có mã học viên. JEV kiểm tính có căn cứ, sự phù hợp và suy diễn vượt bằng chứng.
-7. **Xử lý khi lỗi.** Lỗi lần 1 thì gọi lại LLM một lần kèm lý do. Lỗi lần 2 thì trả báo cáo chỉ có số liệu. OpenRouter lỗi thì báo lỗi và đề nghị thử lại sau.
+7. **Xử lý khi lỗi.** Lỗi lần 1 thì gọi lại LLM một lần kèm lý do. Lỗi lần 2 thì trả báo cáo chỉ có số liệu. Liquid API lỗi thì báo lỗi và giữ báo cáo số liệu để coach xem.
 8. **Coach duyệt.** Coach chấp nhận, từ chối hoặc sửa tay. Bản nháp và lịch sử duyệt lưu ở Supabase. Coach không ra lệnh cho AI viết lại, nên không mở thêm đường prompt injection.
 
 Mỗi lần bấm Phân tích là một lượt gọi LLM mới; hệ thống không cache kết quả.
@@ -91,7 +93,7 @@ answers.csv và events.csv đều có lesson_id, module_code và kc_code, nên g
 
 Pipeline: CSV gốc chỉ nằm trên máy local và không commit. ETL bằng DuckDB và Pandas chạy local, xuất bảng tổng hợp theo bài, module và ý kiến thức, không có mã học viên. Chỉ bảng tổng hợp được commit và đóng gói cùng app; server không bao giờ giữ dữ liệu dòng.
 
-| Dữ liệu | Server | OpenRouter | Langfuse | Supabase |
+| Dữ liệu | Server | Liquid API | Langfuse | Supabase |
 |---|---|---|---|---|
 | CSV gốc, mã học viên | Không | Không | Không | Không |
 | Số tổng hợp theo bài/KC | Có | Có | Có | Có, trong đề xuất |
@@ -140,7 +142,7 @@ Chạy ít nhất hai lượt evaluation và mô phỏng chi phí trên tối th
 | Đòi tên, mã hay danh sách học viên yếu | Chặn ở đầu vào, từ chối và nêu lý do |
 | Prompt injection trong text | Code hoặc JEV chặn, không gọi LLM đề xuất |
 | Câu hỏi ngoài phạm vi | JEV chặn, từ chối và nêu lý do |
-| OpenRouter lỗi, chậm hoặc hết quota | Báo lỗi, đề nghị thử lại sau |
+| Liquid API lỗi, chậm hoặc hết quota | Báo lỗi, đề nghị thử lại sau |
 | Coach sửa đề xuất | Lưu bản sửa, người sửa, thời điểm; không gọi lại AI |
 
 ## Rủi ro khi chạy thật
@@ -151,7 +153,7 @@ Chạy ít nhất hai lượt evaluation và mô phỏng chi phí trên tối th
 | LLM bịa số hoặc suy diễn | Coach ôn sai trọng tâm | Số do code tính, chặn đầu ra, coach duyệt |
 | Prompt injection | AI làm việc ngoài thẩm quyền | Không có ô chat tự do, chặn đầu vào, AI không có công cụ ghi |
 | Người ngoài truy cập | Lộ báo cáo nội bộ | Supabase Auth và allowlist kiểm ở FastAPI |
-| OpenRouter lỗi lúc demo | Không có đề xuất | Báo lỗi rõ ràng (xem Việc còn mở) |
+| Liquid API lỗi lúc demo | Không có đề xuất | Báo lỗi rõ ràng (xem Việc còn mở) |
 | Chi phí tăng | Vượt ngân sách | Workflow cố định, retry tối đa 1 lần, mô phỏng 50 phiên |
 | Railway redeploy mất trạng thái | Mất lịch sử duyệt | Trạng thái lưu ở Supabase |
 | Rò API key | Tài khoản bị lạm dụng | Key trong biến môi trường Railway, Gitleaks trong CI |
@@ -176,7 +178,7 @@ Chi phí mỗi phiên (tự ước tính): một lượt LLM đề xuất và m�
 - **Frontend:** React, Vite, TypeScript, pnpm, Tailwind CSS, shadcn/ui, Redux Toolkit, Recharts, Lucide React.
 - **Backend:** Python, uv, FastAPI, Pydantic.
 - **Phân tích dữ liệu:** DuckDB, Pandas.
-- **AI Engineering:** LangChain, LangGraph, OpenRouter, RAG (BM25 và lọc metadata), structured output.
+- **AI Engineering:** LangChain, LangGraph, Liquid API, RAG (BM25 và lọc metadata), structured output.
 - **Đánh giá AI:** JEV (TypeSafe AI), pytest, benchmark.
 - **Bảo mật AI:** guardrails tự viết, Promptfoo, Gitleaks.
 - **Auth và lưu duyệt:** Supabase Auth và Supabase Postgres.
@@ -197,5 +199,5 @@ Cả nhóm cùng hoàn thiện tài liệu và giữ đúng hạn các checkpoin
 1. **Nguồn Lesson KB:** nhóm tự viết hay trích từ tài liệu khoá học được BTC cho phép.
 2. **Ngưỡng mẫu nhỏ:** dưới bao nhiêu học viên trả lời lần đầu thì gắn cờ; chốt sau khi xem phân bố dữ liệu.
 3. **Ngưỡng đạt của guardrail đầu ra:** thang chấm và mức qua của JEV; phải chốt trước CP2 cùng eval/metric_spec.yaml.
-4. **Khi OpenRouter lỗi:** hiện tại chỉ báo lỗi. Bước số liệu và lỗ hổng không cần LLM, nên có thể hiện báo cáo số liệu thay thế.
+4. **Khi Liquid API lỗi:** hiện tại chỉ báo lỗi. Bước số liệu và lỗ hổng không cần LLM, nên có thể hiện báo cáo số liệu thay thế.
 5. **Allowlist:** lưu ở biến môi trường hay bảng Supabase, và ai quản lý.

@@ -10,13 +10,15 @@ Dữ liệu công cụ đọc (bài mẫu, thông báo mẫu, lịch…): để 
 """
 from tracing import tool, TOOLS  # noqa: F401  (TOOLS: danh sách công cụ đã đăng ký, dùng khi viết vòng lặp agent)
 from backend.analytics.snapshot import read_snapshot
-from backend.analytics.workflow import create_report
+from backend.analytics.workflow import create_report, resolve_lesson_id
 
 
 @tool
 def lesson_report(lesson_id: str) -> dict | None:
     """Báo cáo bài học. Input: mã bài; output: báo cáo tổng hợp hoặc None. Không tác động ra ngoài."""
-    return create_report(lesson_id, read_snapshot())
+    snapshot = read_snapshot()
+    resolved = resolve_lesson_id(lesson_id, snapshot)
+    return create_report(resolved, snapshot) if resolved else None
 
 
 @tool

@@ -1,5 +1,7 @@
 # LearningPulse — Kiến trúc AI
 
+> Tài liệu mô tả thiết kế đích. Trạng thái hiện tại: báo cáo số liệu và lưu nháp đã triển khai; chưa bật RAG, khuyến nghị AI hay JEV trong ứng dụng. Xem README để biết giới hạn.
+
 > Phiên bản 1 · 2026-11-27 · Sơ đồ: [architecture-diagram.html](architecture-diagram.html)
 > Nguồn: buổi phỏng vấn làm rõ yêu cầu của nhóm. Mục [§10 Việc còn mở](#10-việc-còn-mở) liệt kê những gì chưa chốt.
 
@@ -41,7 +43,7 @@ Từng học viên **không** bị ảnh hưởng trực tiếp, vì hệ thốn
 | RAG | BM25 + lọc metadata (bài, KC) | Lấy đoạn bài giảng liên quan đến lỗ hổng | `codebase/backend/rag/` |
 | Guardrails + JEV | Code tự viết + JEV (LLM-judge) | Chặn đầu vào, chặn đầu ra, eval offline | `codebase/backend/security/`, `codebase/backend/evaluation/` |
 | Schema | Pydantic | Định dạng đầu ra có cấu trúc của LLM, hợp đồng API | `codebase/backend/schemas/` |
-| LLM | OpenRouter | Model đề xuất + model chấm của JEV | gọi qua `codebase/ai.py` |
+| LLM | Liquid API, LFM3-1.7B | Model đề xuất | gọi qua `codebase/ai.py`; JEV dùng TypeSafe API |
 | Auth + lưu duyệt | Supabase (Auth + Postgres) | Đăng nhập, bảng đề xuất và lịch sử duyệt | — |
 | Quan sát | Langfuse Cloud | Trace từng phiên | — |
 | Khung BTC | `run.py`, `codebase/agent.py` | `answer(text)` gọi **chung** workflow với dashboard | không sửa khung |
@@ -97,7 +99,7 @@ Server Railway — chỉ đọc bảng tổng hợp
 
 **Ranh giới:**
 
-| Dữ liệu | Server | OpenRouter | Langfuse | Supabase |
+| Dữ liệu | Server | Liquid API | Langfuse | Supabase |
 |---|---|---|---|---|
 | CSV gốc, mã `hv` | ✗ | ✗ | ✗ | ✗ |
 | Chỉ số tổng hợp theo bài/KC | ✓ | ✓ | ✓ | ✓ (trong đề xuất) |
@@ -133,7 +135,7 @@ Server Railway — chỉ đọc bảng tổng hợp
 | Đòi tên, mã học viên hay danh sách học viên yếu nhất | 3 | Bị chặn đầu vào, từ chối + lý do |
 | Prompt injection trong text eval ("bỏ qua hướng dẫn…") | 3 | Code hoặc JEV chặn; không gọi LLM đề xuất |
 | Câu hỏi ngoài phạm vi (không liên quan bài học) | 3 | JEV chặn, từ chối + lý do |
-| OpenRouter lỗi, chậm hoặc hết quota | — | Báo lỗi, đề nghị thử lại sau |
+| Liquid API lỗi, chậm hoặc hết quota | — | Báo lỗi, đề nghị thử lại sau |
 | Coach sửa đề xuất | — | Lưu bản sửa + ai sửa + lúc nào; không gọi lại AI |
 
 ## 8. Rủi ro production
@@ -144,7 +146,7 @@ Server Railway — chỉ đọc bảng tổng hợp
 | LLM bịa số hoặc suy diễn | Coach ôn sai trọng tâm | Số do code tính; chặn đầu ra (code + JEV); coach duyệt |
 | Prompt injection | AI làm việc ngoài thẩm quyền | Dashboard không có ô nhập chữ tự do; chặn đầu vào; AI không có công cụ ghi |
 | Người ngoài truy cập | Lộ báo cáo nội bộ | Supabase Auth + allowlist kiểm ở FastAPI |
-| OpenRouter sập lúc demo | Không có đề xuất | Báo lỗi rõ ràng *(xem câu hỏi mở 5)* |
+| Liquid API sập lúc demo | Không có đề xuất | Báo lỗi rõ ràng *(xem câu hỏi mở 5)* |
 | Chi phí tăng | Vượt ngân sách | Workflow cố định, retry tối đa 1 lần; mô phỏng chi phí ≥ 50 phiên |
 | Railway redeploy mất trạng thái | Mất lịch sử duyệt | Trạng thái lưu ở Supabase, server không giữ trạng thái |
 | Rò API key | Bị lạm dụng tài khoản | Key nằm trong biến môi trường Railway; Gitleaks trong CI |
@@ -170,5 +172,5 @@ Server Railway — chỉ đọc bảng tổng hợp
 2. **Ngưỡng mẫu nhỏ:** dưới bao nhiêu học viên trả lời lần đầu thì gắn cờ. Chốt sau khi khảo sát phân bố dữ liệu.
 3. **Ngưỡng "đạt" của guardrail đầu ra:** JEV chấm theo thang nào, bao nhiêu thì qua. Phải chốt trước CP2 cùng `eval/metric_spec.yaml`.
 4. **Nội dung trace trên Langfuse:** đề xuất chỉ ghi số tổng hợp, prompt và output, không ghi dữ liệu thô.
-5. **Khi OpenRouter sập:** hiện tại chọn "chỉ báo lỗi". Bước chỉ số + lỗ hổng không cần LLM, nên vẫn có thể hiện báo cáo số liệu thay vì chỉ báo lỗi.
+5. **Khi Liquid API sập:** hiện tại chọn "chỉ báo lỗi". Bước chỉ số + lỗ hổng không cần LLM, nên vẫn có thể hiện báo cáo số liệu thay vì chỉ báo lỗi.
 6. **Allowlist:** lưu ở biến môi trường hay bảng Supabase, và ai quản lý.
