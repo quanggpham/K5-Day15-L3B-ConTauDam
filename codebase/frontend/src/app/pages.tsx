@@ -1,28 +1,5 @@
-import { Link, isRouteErrorResponse, useParams, useRouteError } from "react-router-dom"
-import { ComingSoon } from "@/components/ComingSoon"
+import { Link, isRouteErrorResponse, useRouteError } from "react-router-dom"
 import { EmptyState, ErrorState, stateButtonClass } from "@/components/states"
-
-export function ReportPage() {
-  const { runId } = useParams()
-  return (
-    <ComingSoon
-      title="Báo cáo"
-      detail={runId ? `Mã báo cáo: ${runId}` : undefined}
-      description="Nội dung báo cáo sẽ được đọc từ snapshot đã lưu khi màn hình này hoàn thiện."
-    />
-  )
-}
-
-export function ReportReviewPage() {
-  const { runId } = useParams()
-  return (
-    <ComingSoon
-      title="Duyệt báo cáo"
-      detail={runId ? `Mã báo cáo: ${runId}` : undefined}
-      description="Duyệt từng đề xuất và xem lịch sử duyệt sẽ có khi màn hình này hoàn thiện."
-    />
-  )
-}
 
 export function NotFoundPage() {
   return (

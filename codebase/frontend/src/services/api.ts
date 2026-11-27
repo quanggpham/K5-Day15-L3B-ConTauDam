@@ -15,13 +15,16 @@ export class ApiError extends Error {
   readonly status: number
   /** Thông điệp `detail` dạng chuỗi từ backend (nếu có). Không chứa token. */
   readonly detail: string | null
+  /** `detail` dạng object từ backend (vd {code, message, ...} của 409/422), không có thì null. */
+  readonly payload: Record<string, unknown> | null
 
-  constructor(kind: ApiErrorKind, status: number, detail: string | null) {
+  constructor(kind: ApiErrorKind, status: number, detail: string | null, payload: Record<string, unknown> | null = null) {
     super(detail ?? kind)
     this.name = "ApiError"
     this.kind = kind
     this.status = status
     this.detail = detail
+    this.payload = payload
   }
 }
 
@@ -69,17 +72,48 @@ function kindFromStatus(status: number): ApiErrorKind {
   return "unknown"
 }
 
-async function readDetail(response: Response): Promise<string | null> {
+async function readDetail(response: Response): Promise<{ detail: string | null; payload: Record<string, unknown> | null }> {
   try {
     const data: unknown = await response.json()
     if (data && typeof data === "object" && "detail" in data) {
       const { detail } = data as { detail: unknown }
-      return typeof detail === "string" ? detail : null
+      if (typeof detail === "string") return { detail, payload: null }
+      if (detail && typeof detail === "object" && !Array.isArray(detail)) {
+        return { detail: null, payload: detail as Record<string, unknown> }
+      }
     }
   } catch {
     // Thân phản hồi không phải JSON: bỏ qua.
   }
-  return null
+  return { detail: null, payload: null }
+}
+
+/** Mã lỗi nghiệp vụ (`detail.code`) của 409/422 nếu backend có trả. */
+export function apiErrorCode(error: unknown): string | null {
+  if (!isApiError(error)) return null
+  const code = error.payload?.code
+  return typeof code === "string" ? code : null
+}
+
+/** Tên tệp từ Content-Disposition (ưu tiên filename*), đã bỏ ký tự đường dẫn; null nếu không có. */
+export function filenameFromDisposition(header: string | null): string | null {
+  if (!header) return null
+  let name: string | null = null
+  const star = /filename\*\s*=\s*UTF-8''([^;]+)/i.exec(header)
+  if (star) {
+    try {
+      name = decodeURIComponent(star[1].trim())
+    } catch {
+      name = null
+    }
+  }
+  if (!name) {
+    const plain = /filename\s*=\s*(?:"([^"]*)"|([^;]+))/i.exec(header)
+    name = (plain?.[1] ?? plain?.[2] ?? "").trim() || null
+  }
+  if (!name) return null
+  const cleaned = name.replace(/[\\/:*?"<>|\u0000-\u001f]/g, "_").replace(/^\.+/, "").slice(0, 120)
+  return cleaned || null
 }
 
 function buildUrl(path: string, query: RequestOptions["query"]): string {
@@ -118,9 +152,9 @@ async function request(path: string, options: InternalOptions): Promise<Response
   }
   if (response.ok) return response
   const kind = kindFromStatus(response.status)
-  const detail = await readDetail(response)
+  const { detail, payload } = await readDetail(response)
   if (kind === "unauthorized" && token) handlers.onUnauthorized()
-  throw new ApiError(kind, response.status, detail)
+  throw new ApiError(kind, response.status, detail, payload)
 }
 
 async function requestJson<T>(path: string, options: InternalOptions): Promise<T> {
@@ -140,6 +174,16 @@ export const api = {
   /** Tải tệp (vd CSV export) kèm Bearer; trả Blob để UI tự kích hoạt tải xuống. */
   blob: async (path: string, options: RequestOptions = {}): Promise<Blob> =>
     (await request(path, { ...options, method: "GET" })).blob(),
+  /** Như `blob` nhưng kèm tên tệp từ Content-Disposition (null nếu không có hoặc không đọc được header). */
+  download: async (path: string, options: RequestOptions = {}): Promise<{ blob: Blob; filename: string | null }> => {
+    const response = await request(path, { ...options, method: "GET" })
+    try {
+      return { blob: await response.blob(), filename: filenameFromDisposition(response.headers.get("Content-Disposition")) }
+    } catch (error) {
+      if (isAbortError(error)) throw error
+      throw new ApiError("network", 0, null)
+    }
+  },
 }
 
 /** Thông điệp tiếng Việt, có hướng xử lý tiếp, cho từng loại lỗi. */
