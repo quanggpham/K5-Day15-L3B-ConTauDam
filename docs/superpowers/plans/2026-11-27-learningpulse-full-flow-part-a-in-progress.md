@@ -4,7 +4,8 @@
 > Trạng thái: 2026-11-28 (cập nhật sau review). Chưa kiểm tay trên trình duyệt; hai migration chưa chạy thử trên Postgres thật.
 
 ## Vùng file của phần A (người B tránh)
-`codebase/backend/api/`, `codebase/backend/analytics/`, `codebase/frontend/src/`, `tests/`, `spec.md`.
+`codebase/backend/`, `tests/`, `spec.md`, và logic frontend (`services/api.ts`, `hooks/`, `features/*/use*.ts`, `types.ts`, `features/auth/`).
+Giao diện frontend (bố cục, kiểu dáng, `components/`, `style.css`) chuyển sang phần B (B14–B21); phần A chỉ sửa UI khi đổi hợp đồng API và sẽ báo trước.
 
 ## Đã làm xong (code, có test; thứ tự PR đề xuất)
 - [x] A1. Snapshot v2, catalog, tổng hợp theo KC (mẫu số lượt đầu, <10 lượt gắn cờ, đồng hạng) - `analytics/`

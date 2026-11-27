@@ -7,8 +7,8 @@
 `AGENTS.md`, `data/DATA_CARD.md`, `docs/learningpulse-design.md`, `spec.md` §7, `docs/superpowers/plans/2026-11-27-learningpulse-full-flow.md`.
 
 ## Vùng file của phần B (được sửa)
-`supabase/` (chỉ để thử; sửa migration thì báo phần A), `eval/benchmark.csv`, `evidence/`, `data/` (không commit dữ liệu thật), `docs/` (file mới), Railway/CI cấu hình.
-**Không sửa:** `codebase/backend/api/`, `codebase/frontend/src/`, `tests/`, `spec.md`.
+`supabase/` (chỉ để thử; sửa migration thì báo phần A), `eval/benchmark.csv`, `evidence/`, `data/` (không commit dữ liệu thật), `docs/` (file mới), Railway/CI cấu hình, và **giao diện frontend** (xem "Cải thiện giao diện" bên dưới): `codebase/frontend/src/{components,features,style.css}` về bố cục, kiểu dáng, hình ảnh, trạng thái chờ.
+**Không sửa:** `codebase/backend/`, `tests/`, `spec.md`, và logic gọi API ở frontend (`services/api.ts`, `hooks/`, `features/*/use*.ts`, `features/*/types.ts`, `features/auth/`). Cần đổi những chỗ đó thì nhờ phần A.
 
 ## Ưu tiên cao (mở khoá phần A)
 - [ ] B1. Áp migration `20261127000000` → `…04` lên Supabase **test** (`supabase db reset`). Kiểm RPC `review_recommendation` (xung đột hai tab, ràng buộc, quyền), xoá `analysis_runs` cascade sang bảng audit, DELETE trực tiếp audit bị chặn. Báo lỗi SQL cho phần A. Migration chưa từng chạy thử.
@@ -26,6 +26,18 @@
 ## Hạ tầng và bằng chứng
 - [ ] B8. Dựng staging (Railway), kiểm Docker CI, kế hoạch rollback (giữ snapshot trước). Merge vào `main` tự deploy: xác nhận môi trường trước.
 - [ ] B9. Phỏng vấn/khảo sát trong `evidence/`: không bịa người được phỏng vấn, trích dẫn, số liệu; số không nguồn ghi *(tự ước tính)*.
+
+## Cải thiện giao diện frontend (ưu tiên cao: giao diện hiện còn xấu)
+Điều kiện: các PR frontend của phần A phải lên `main` trước (mã đang ở nhánh local của phần A; hỏi phần A nhánh để checkout sớm). Ảnh bố cục tham chiếu đã duyệt (sidebar trái, báo cáo giữa, Copilot phải, nền sáng tím): xin từ nhóm.
+- [ ] B14. Hệ thiết kế chung: màu, chữ, khoảng cách, bo góc, bóng; gom thành token trong `style.css`/theme Tailwind; thống nhất button, input, card, tabs, bảng, badge (shadcn/ui).
+- [ ] B15. AppShell: sidebar, header, panel Copilot, mobile (menu và Copilot mở theo yêu cầu); trạng thái active, icon, độ rộng, cuộn.
+- [ ] B16. Landing: bố cục hero, nhịp giữa các mục, minh hoạ báo cáo; không dùng số liệu/khách hàng/logo bịa, phần minh hoạ phải ghi "Minh hoạ".
+- [ ] B17. Login và Profile: màn đăng nhập gọn đẹp (hiện/ẩn mật khẩu, lỗi, hết phiên).
+- [ ] B18. Dashboard: thẻ chỉ số, biểu đồ, bảng KC; làm rõ phân cấp thông tin, màu không là tín hiệu duy nhất, ghi chú đơn vị lượt/người.
+- [ ] B19. Báo cáo và màn duyệt: tabs, danh sách đề xuất, lịch sử duyệt, diff trước/sau bản sửa, trạng thái rỗng "chưa có đề xuất vì thiếu KB".
+- [ ] B20. Trạng thái chờ/rỗng/lỗi: skeleton, chuyển cảnh nhẹ (tôn trọng `prefers-reduced-motion`), nội dung hướng dẫn.
+- [ ] B21. Rà soát a11y (tương phản AA, focus, thứ tự Tab, ARIA tabs/dialog) và responsive 360px–1440px; ghi bằng chứng ảnh chụp vào PR.
+Ràng buộc chung: không đổi số liệu, nhãn trạng thái hay hợp đồng API; không bịa dữ liệu; giữ tiếng Việt cho coach; không thêm dependency nặng khi chưa được nhóm duyệt; `pnpm build` phải xanh; mỗi PR một màn hoặc một nhóm component nhỏ kèm ảnh trước/sau.
 
 ## Sau khi phần A xong bước tương ứng
 - [ ] B10. Thêm test runner frontend (vitest; cần nhóm duyệt dependency).
