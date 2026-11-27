@@ -185,3 +185,8 @@ grant execute on function public.review_recommendation(uuid, uuid, integer, text
   to service_role;
 
 notify pgrst, 'reload schema';
+
+-- 3) Audit append-only: TRUNCATE không kích hoạt trigger theo dòng, và service_role có `grant all` từ migration 000003.
+--    Thu hồi để một key backend bị lộ cũng không xoá được toàn bộ lịch sử duyệt bằng TRUNCATE.
+-- DOWN: grant truncate on public.recommendation_reviews to service_role;
+revoke truncate on public.recommendation_reviews from service_role;
