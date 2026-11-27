@@ -15,7 +15,10 @@ SYSTEM = ('Bạn hỗ trợ coach chuẩn bị ôn tập. Chỉ dùng số liệ
 
 
 def generate_recommendations(report: dict, documents: list[dict], model, judge) -> dict:
-    selected = report.get('priority', [])[:3]
+    priority = report.get('priority', [])
+    if len(priority) > 3 and priority[2].get('incorrect_rate') == priority[3].get('incorrect_rate'):
+        return {'status': 'tie_needs_review', 'recommendations': []}
+    selected = priority[:3]
     if not selected:
         return {'status': 'insufficient_data', 'recommendations': []}
     evidence = []

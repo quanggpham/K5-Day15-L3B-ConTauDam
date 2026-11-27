@@ -108,6 +108,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 | 27/11 21:04 | Thêm bí danh `Day NN` cho CLI và làm rõ prompt/JEV trong module thử nghiệm; chưa bật AI trong ứng dụng. | Hỗ trợ chọn bài theo cách gọi phổ biến và hạn chế diễn giải sai số liệu; cần kiểm thử thêm trước khi nối workflow. |
 | 27-11 21:12 | Bổ sung từ chối sớm các yêu cầu rõ ràng về thông tin cá nhân, bí mật và tự phê duyệt/gửi. | Bảo vệ phạm vi theo các tiêu chí giữ đúng thẩm quyền trong `eval/metric_spec.yaml`; chưa bật xử lý câu hỏi tự do. |
 | 27-11 21:10 | Đồng bộ nhãn nhà cung cấp trong sơ đồ kiến trúc sang Liquid API. | Khớp lựa chọn LFM3-1.7B qua Liquid API của nhóm. |
+| 27-11 21:14 | Hiển thị đồng hạng khi tỷ lệ sai bằng nhau; phần AI thử nghiệm không cắt nhóm đồng hạng tại ranh giới chọn. | Tránh áp thứ tự thiếu căn cứ; theo yêu cầu câu thử B08 và tiêu chí xử lý thiếu căn cứ. |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 

@@ -68,3 +68,12 @@ def test_low_judge_score_and_model_failure_return_no_recommendations():
     assert len(calls) == 2
     def offline(*args): raise RuntimeError('provider down')
     assert generate_recommendations(report, docs, offline, lambda *args: {})['status'] == 'model_error'
+
+
+def test_tie_at_selection_boundary_requires_review():
+    report, docs = inputs()
+    report['priority'] = [dict(report['priority'][0], kc_code=f'K{i}', incorrect_rate=0.4) for i in range(4)]
+    def unexpected(*args): raise AssertionError('must not arbitrarily split a tie')
+    result = generate_recommendations(report, docs, unexpected, unexpected)
+    assert result['status'] == 'tie_needs_review'
+    assert result['recommendations'] == []

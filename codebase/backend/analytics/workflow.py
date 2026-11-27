@@ -19,5 +19,9 @@ def create_report(lesson_id: str, snapshot: dict) -> dict | None:
         return None
     priority = sorted((row for row in metrics if not row.get('insufficient_data') and row.get('incorrect_rate') is not None),
                       key=lambda row: (-row['incorrect_rate'], row['kc_code']))
-    return {'lesson_id': lesson_id, 'metrics': metrics, 'priority': priority,
+    ranked = []
+    for index, row in enumerate(priority):
+        rank = ranked[-1]['rank'] if ranked and row['incorrect_rate'] == ranked[-1]['incorrect_rate'] else index + 1
+        ranked.append({**row, 'rank': rank})
+    return {'lesson_id': lesson_id, 'metrics': metrics, 'priority': ranked,
             'notice': 'Chưa có căn cứ bài giảng; chưa tạo đề xuất AI. Ngưỡng ưu tiên: ít nhất 10 lượt được chấm; nhóm ít lượt chỉ dùng tham khảo.'}

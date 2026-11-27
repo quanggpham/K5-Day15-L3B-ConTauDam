@@ -13,3 +13,13 @@ def test_report_ranks_only_sufficient_graded_groups():
     assert result['metrics'][1]['insufficient_data'] is True
     assert 'Chưa có căn cứ' in result['notice']
     assert create_report('no', snapshot) is None
+
+
+def test_equal_rates_share_rank():
+    snapshot = {'L1': [
+        {'kc_code':'B','graded_count':20,'incorrect_count':8,'ungraded_count':0,'incorrect_rate':0.4},
+        {'kc_code':'A','graded_count':10,'incorrect_count':4,'ungraded_count':0,'incorrect_rate':0.4},
+        {'kc_code':'C','graded_count':10,'incorrect_count':1,'ungraded_count':0,'incorrect_rate':0.1},
+    ]}
+    result = create_report('L1', snapshot)
+    assert [(item['kc_code'],item['rank']) for item in result['priority']] == [('A',1),('B',1),('C',3)]
