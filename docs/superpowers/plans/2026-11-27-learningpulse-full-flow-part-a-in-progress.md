@@ -1,7 +1,7 @@
 # LearningPulse full flow — Phần A: đang làm (code API + UI)
 
 > Tách từ `2026-11-27-learningpulse-full-flow.md`. Phần B (việc chia cho người thứ hai) ở `...-part-b-teammate.md`. Hai phần không sửa chung file; xem "Vùng file" bên dưới.
-> Trạng thái: 2026-11-28. Chưa kiểm tay trên trình duyệt; hai migration chưa chạy thử trên Postgres thật.
+> Trạng thái: 2026-11-28 (cập nhật sau review). Chưa kiểm tay trên trình duyệt; hai migration chưa chạy thử trên Postgres thật.
 
 ## Vùng file của phần A (người B tránh)
 `codebase/backend/api/`, `codebase/backend/analytics/`, `codebase/frontend/src/`, `tests/`, `spec.md`.
@@ -18,16 +18,18 @@
 - [x] A9. Báo cáo 5 tab, panel Copilot, màn duyệt - `frontend/src/features/{reports,reviews}`
 - [x] L1–L4. Landing page (hero, bài toán, luồng, minh hoạ, FAQ), nối route `/` - `frontend/src/features/landing`
 
-## Đang làm / còn lại
-- [ ] A10. Test hồi quy (quyền sở hữu, idempotency, CSV, 409) - `tests/` (test-unit-lead đang chạy)
-- [ ] A10b. `review-code` toàn diff (đang chạy)
-- [ ] A10c. Sửa các phát hiện mức thấp của review-security:
-  cursor sai → 400 thay vì 503; hạn mức tạo run/coach; allowlist cột trả về (recommendation/evaluations);
-  `replayed` chỉ khi `new_version` = version hiện tại; ngưỡng số học viên (k-anonymity) cho trạng thái `ok`;
-  CSP và header bảo mật cho SPA; cân nhắc revoke TRUNCATE trên bảng audit.
+## Đã làm thêm sau review (review-code + review-security)
+- [x] A10. Test hồi quy 180 ca (quyền sở hữu, idempotency, CSV, 409, riêng tư) + test hợp đồng build_snapshot → báo cáo đã lưu - `tests/`
+- [x] A10b. review-code: sửa BLOCKER (run lưu thiếu khoá LessonView → tab Tổng quan trống, Copilot khoá), delta/thứ tự bài (natural sort, chỉ so bài liền trước), KC 0% khỏi ưu tiên, cấu hình snapshot v2 khi deploy
+- [x] A10c (một phần). Cursor sai → 422; allowlist cột trả về; replay RPC chỉ khi còn là trạng thái hiện tại
+
+## Còn lại
+- [ ] A10d. Review-security còn lại: hạn mức tạo run/coach; ngưỡng số học viên (k-anonymity) cho trạng thái `ok`; CSP + header bảo mật cho SPA; cân nhắc revoke TRUNCATE trên bảng audit
 - [ ] A11. Ghi thay đổi sau CP2 vào `spec.md` §10; dựng bảng checklist H01–H06 (đánh dấu "Chưa kiểm")
-- [ ] L5. Landing: đối chiếu lại câu "Hiện đã có", thứ tự Tab nav desktop, chụp thử desktop/mobile
+- [ ] L5. Landing: đối chiếu câu "Hiện đã có", thứ tự Tab nav desktop, chụp thử desktop/mobile
 - [ ] Chạy `pnpm audit --prod` và `pip-audit` (review-security chưa chạy được)
+- [ ] Mở các PR code còn lại, từng cái một (PR #5 snapshot+dashboard đã mở)
+- [ ] Chờ kết quả B1 (migration thật) để sửa lỗi SQL nếu có
 
 ## Quy ước làm việc
 - Mỗi bước một commit nhỏ; PR từng phần theo thứ tự trên, mỗi PR đủ CI (`pytest`, `pnpm build`, `docker build`).
