@@ -5,10 +5,12 @@ from fastapi import Depends, FastAPI, HTTPException
 from codebase.backend.security.auth import require_coach
 from codebase.backend.analytics.snapshot import read_snapshot
 from codebase.backend.analytics.workflow import create_report
+from codebase.backend.api.dashboard import router as dashboard_router
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI(title="LearningPulse")
+app.include_router(dashboard_router)
 DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 
 @app.get("/api/health")

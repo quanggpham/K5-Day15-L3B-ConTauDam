@@ -15,3 +15,19 @@ def read_snapshot() -> dict:
         return data
     except (OSError, ValueError):
         raise HTTPException(503, 'Chưa có dữ liệu tổng hợp hợp lệ') from None
+
+
+def read_snapshot_v2() -> dict | None:
+    """Đọc snapshot v2 (catalog + lessons). Trả None nếu chưa có file; 503 nếu file hỏng/sai phiên bản."""
+    path = Path(os.getenv('AGGREGATE_SNAPSHOT_V2_PATH', 'data/aggregate.v2.json'))
+    try:
+        with path.open(encoding='utf-8') as f:
+            data = json.load(f)
+    except FileNotFoundError:
+        return None
+    except (OSError, ValueError):
+        raise HTTPException(503, 'Chưa có dữ liệu tổng hợp hợp lệ') from None
+    if (not isinstance(data, dict) or data.get('version') != 2
+            or not isinstance(data.get('catalog'), list) or not isinstance(data.get('lessons'), dict)):
+        raise HTTPException(503, 'Chưa có dữ liệu tổng hợp hợp lệ')
+    return data
