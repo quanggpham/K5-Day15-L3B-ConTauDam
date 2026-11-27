@@ -37,5 +37,7 @@ def export_snapshot(db, minimum_learners: int = 5) -> dict:
         else:
             item = {'kc_code': kc, 'graded_count': graded, 'incorrect_count': incorrect,
                     'ungraded_count': ungraded, 'incorrect_rate': incorrect / graded if graded else None}
+            if graded < 10:
+                item['insufficient_data'] = True
         result.setdefault(lesson, []).append(item)
     return result

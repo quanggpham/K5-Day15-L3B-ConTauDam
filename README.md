@@ -75,6 +75,8 @@ Backend có `/api/me` để xác thực token với Supabase Auth và kiểm tra
 
 ### Chuẩn bị báo cáo tổng hợp
 
-Chạy `uv run python -m codebase.backend.analytics.ingest`, sau đó `uv run python -m codebase.backend.analytics.export_snapshot`. Snapshot `data/aggregate.json` được ignore, không chứa mã học viên; nhóm dưới 5 học viên có lượt chấm đúng/sai ở lần đầu bị che số đếm và tỷ lệ. Ngưỡng 5 là giả định tạm cần nhóm chốt. Backend đọc `AGGREGATE_SNAPSHOT_PATH`; Railway dùng `/data/aggregate.json` trên volume. CLI nhận chính xác mã bài học và trả báo cáo cùng luồng với dashboard; câu hỏi tự do hiện chưa hỗ trợ. Chưa có Lesson KB, JEV và AI recommendation hoạt động; báo cáo không phải kết quả đánh giá model.
+Chạy `uv run python -m codebase.backend.analytics.ingest`, sau đó `uv run python -m codebase.backend.analytics.export_snapshot`. Snapshot `data/aggregate.json` được ignore, không chứa mã học viên; nhóm dưới 5 học viên có lượt chấm đúng/sai ở lần đầu bị che số đếm và tỷ lệ. Ngoài ra KC dưới 10 lượt được chấm ở lần đầu không được xếp ưu tiên, theo quyết định CP2 trong canvas. Backend đọc `AGGREGATE_SNAPSHOT_PATH`; Railway dùng `/data/aggregate.json` trên volume. CLI nhận chính xác mã bài học và trả báo cáo cùng luồng với dashboard; câu hỏi tự do hiện chưa hỗ trợ. Chưa có Lesson KB, JEV và AI recommendation hoạt động; báo cáo không phải kết quả đánh giá model.
 
 `LIQUID_API_KEY` được đồng bộ từ GitHub Actions secret sang Railway trong bước deploy. Adapter Liquid đã chuẩn bị nhưng chưa nối vào luồng báo cáo. Điền `MODEL_PROVIDER=liquid`, `MODEL_NAME=lfm3-1.7b` chỉ khi kiểm thử adapter; mặc định là fake.
+
+Các module BM25 theo `lesson_id`/`kc_code` và JEV đánh giá hai tiêu chí đã có kiểm thử với dữ liệu giả, nhưng chưa nối vào workflow: nhóm cần bổ sung nguồn Lesson KB được phép và chốt cách chấm/hiệu chuẩn trước khi bật đề xuất AI.

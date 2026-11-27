@@ -1,0 +1,11 @@
+from types import SimpleNamespace
+from codebase.backend.evaluation.jev import judge_recommendation
+
+
+def test_judge_sends_separate_questions_and_returns_scores():
+    class FakeClient:
+        def system_one(self, *, state, questions):
+            assert state['evidence']['kc_code'] == 'KC1'
+            assert set(questions) == {'grounded', 'relevant'}
+            return SimpleNamespace(nouls={'grounded': SimpleNamespace(noul=0.9), 'relevant': SimpleNamespace(noul=0.8)})
+    assert judge_recommendation(FakeClient(), {'kc_code':'KC1'}, {'content':'Ôn lại ví dụ'}) == {'grounded':0.9,'relevant':0.8}
