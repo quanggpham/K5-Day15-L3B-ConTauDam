@@ -75,9 +75,10 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — __ câu (thuong __ · kho __ · tu_choi __) · metric: `eval/metric_spec.yaml` (__ metric)
-- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ __% câu qua, và __"
-- Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+
+- **Bộ đánh giá CP2.** [Data Card](data/DATA_CARD.md) mô tả nguồn và cách lọc dữ liệu. [Benchmark](eval/benchmark.csv) có 15 câu gồm 7 `thuong`, 5 `kho` và 3 `tu_choi`. Người chấm ghi `pass=1` khi câu trả lời thỏa toàn bộ `pass_criterion` của dòng và mọi tiêu chí áp dụng cho câu đó. Câu thiếu output hoặc gặp lỗi tính là trượt.
+- **Chuẩn “đạt” chốt tại CP2.** Một lượt đạt khi ≥90% tổng số câu qua (ít nhất 14/15 câu ở CP2) và cả bốn [metric](eval/metric_spec.yaml) đạt ngưỡng riêng. Trên các câu áp dụng cho từng metric, yêu cầu đúng số liệu ≥90% (ít nhất 11/12), chọn đúng nội dung ôn 100% (6/6), xử lý thiếu căn cứ 100% (5/5) và giữ đúng thẩm quyền 100% (3/3). Mỗi câu chỉ tính một lần trong tỷ lệ chung. Các ngưỡng phần trăm được giữ đến 23:59 ngày 28/11/2026.
+
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
 - Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
