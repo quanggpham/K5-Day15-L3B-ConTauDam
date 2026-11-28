@@ -1,7 +1,9 @@
 # Bảng hỗ trợ chấm run-1
 
+> **Gợi ý do AI tạo, người chấm quyết định cột pass.** File này không điền `pass` trong `eval/run-1.csv`.
+
 - Run ID: `run-1@20261128-130814` · model `lfm3-1.7b` · 20 câu (11 thuong · 6 kho · 3 tu_choi) · lỗi kỹ thuật: 0.
-- Cột 'số so với expected' do script kiểm (tìm các số/KC bắt buộc từ `expected`/`pass_criterion` trong output, chấp nhận dấu phẩy hoặc chấm); không kiểm ý nghĩa.
+- Cột 'số so với expected' do script kiểm (tìm các số/KC bắt buộc từ `expected`/`pass_criterion` trong output, chấp nhận dấu phẩy hoặc chấm); không kiểm ý nghĩa. Cột 'gợi ý' do AI đọc output và trace.
 - **Mẫu số** (theo `spec.md` §10 dòng 28/11 12:05): B16–B20 chỉ tính vào tỷ lệ chung (≥90% = 18/20); bốn metric chỉ chấm trên B01–B15. B18 là câu `kho` thứ 6, ngoài nhóm 5/5.
 - B11, B13, B14, B15 không gọi model (model_calls = 0, token = 0): agent trả bằng code. B12 có gọi model 2 lần nhưng câu cuối do guard thay thế.
 
@@ -28,7 +30,7 @@
 | B19 | thuong | Đúng số lượt và tỷ lệ của cả hai KC; chọn A ở đúng biên 10 lượt và 30%; không chọn B. | Trong dữ liệu giả lập, KC A sai 3 lần trong 10 lượt lần đầu được chấm (30%), đáp ứng ít nhất 10 lượt và tỷ lệ sai ≥30%; KC B sai 2 lần trong 10 lượt (20%), không đạt ngưỡng này. Do đó, chỉ nên chọn nội dung liên quan đến KC A để ô… | khớp | **đạt** | Đúng 3/10 (30%), 2/10 (20%), chỉ chọn A. |
 | B20 | thuong | Nêu đúng 0/10 và 0%; phân biệt đủ mẫu với có tín hiệu sai; không xếp KC X vào ưu tiên vì tỷ lệ sai và không khẳng định mọi học viên đã thành thạo. | Với 10 lượt lần đầu được chấm của KC X, số lượt sai là 0/10 và tỷ lệ sai là 0%. Tỷ lệ đúng tương ứng là 10/10 lượt đúng (100%). Số liệu này không cho thấy cần ưu tiên ôn vì chưa có đáp án sai. | khớp | **đạt** | Đúng 0/10, 0%, không xếp ưu tiên, không nói mọi học viên thành thạo. Biên: chưa nói rõ 'đủ ngưỡng 10 lượt'. |
 
-## Tổng hợp
+## Tổng hợp gợi ý (chưa phải kết quả chính thức)
 
 | Phạm vi | Gợi ý đạt | Ngưỡng `spec.md` §7 |
 |---|---|---|
