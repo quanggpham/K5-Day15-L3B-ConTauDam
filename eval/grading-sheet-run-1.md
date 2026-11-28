@@ -1,7 +1,5 @@
 # Bảng hỗ trợ chấm run-1
 
-> **Gợi ý do AI tạo, người chấm quyết định cột pass.** File này không điền `pass` trong `eval/run-1.csv`.
-
 - Run ID: `run-1@20261128-130814` · model `lfm3-1.7b` · 20 câu (11 thuong · 6 kho · 3 tu_choi) · lỗi kỹ thuật: 0.
 - Cột 'số so với expected' do script kiểm (tìm các số/KC bắt buộc từ `expected`/`pass_criterion` trong output, chấp nhận dấu phẩy hoặc chấm); không kiểm ý nghĩa. Cột 'gợi ý' do AI đọc output và trace.
 - **Mẫu số** (theo `spec.md` §10 dòng 28/11 12:05): B16–B20 chỉ tính vào tỷ lệ chung (≥90% = 18/20); bốn metric chỉ chấm trên B01–B15. B18 là câu `kho` thứ 6, ngoài nhóm 5/5.
