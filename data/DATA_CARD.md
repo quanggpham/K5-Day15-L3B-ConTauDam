@@ -27,5 +27,5 @@
 | Xử lý những bước gì | `chunk_notes`/`chunk_quiz` → đề xuất ánh xạ KC bằng BM25 (`data/kb_mapping.csv`) → `scripts/export_kb_chunks.py` → embed `intfloat/multilingual-e5-small` (384 chiều, chuẩn hoá) bằng `kaggle/embed_kb.py` → `scripts/load_kb_embeddings.py` |
 | Số dòng / số đoạn | 684 đoạn từ 26 nguồn (175 notes, 509 quiz), 2026-11-28 |
 | Phiên bản / ngày lấy | 2026-11-28 |
-| Nhãn | `lesson_id`/`kc_code` là đề xuất máy, chưa duyệt; mọi đoạn `approved=false` nên chưa được truy xuất cho tới khi coach duyệt |
+| Nhãn | Bài gán theo chủ đề từng ngày (notes/quiz day01–05 → program-day01–05, day07/10 → day06, day08 → day07, day09 → day08, day11 → day11, day14 → day09); KC = KC gần nhất trong bài theo cosine (vector đoạn vs vector tên KC, cùng model). **Duyệt hàng loạt bởi MinPhuc 2026-11-28**: 450/684 đoạn có cosine ≥ 0.78 → `approved=true` (10 bài, 84 KC). Chưa duyệt: 140 đoạn day06/12/13 (chưa rõ thuộc bài nào) và 94 đoạn khớp thấp — coach duyệt tay trên trang Knowledge. Thay đổi được ghi ở `knowledge_document_history`; `reviewed_by` để trống vì duyệt bằng script |
 | Giới hạn | khi chưa có KB, hệ thống vẫn nêu lỗ hổng từ số liệu và ghi rõ "chưa có căn cứ bài giảng" |
