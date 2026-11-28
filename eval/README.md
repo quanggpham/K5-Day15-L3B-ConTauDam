@@ -38,11 +38,13 @@
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | `run-1@20261128-130814` | lfm3-1.7b | Code `c92e73b`: CLI tìm mọi bài trong câu, model viết câu trả lời từ số tổng hợp, code kiểm từng con số | __/20 *(chờ chấm)* | | |
-| 2 | | | | __/__ | | |
+| 1 | `run-1@20261128-130814` | lfm3-1.7b | Code `c92e73b`: CLI tìm mọi bài trong câu, model viết câu trả lời từ số tổng hợp, code kiểm từng con số | 13/20 | 65% | chưa (cần ≥ 90%) |
+| 2 | `run-2@20261128-140358` | lfm3-1.7b | Code có cả PR #23 (`333aa5a`) và lần sửa nhóm "mất số bắt buộc" (`codebase/agent.py`, `input_guard.py`, tạo lại `data/extra_counts.json`, prompt): số bù của tỷ lệ người hỏi đưa, báo cáo dự phòng giữ phân số, từ chối nhúng giữ phân số, thêm phân số từng bài khi so sánh | 15/20 (bản chấm nháp, chờ nhóm duyệt) | 75% | chưa (cần ≥ 90%) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+- Nhóm lỗi lớn nhất lượt 1: mất số bắt buộc (B10, B12, B14, B17, B18; 5 câu), nhóm này 0/5 → 4/5 ở lượt 2; tổng 13/20 (65%) → 15/20 (75%), vẫn dưới chuẩn 90%.
+- Đã sửa: coi số bù của tỷ lệ người hỏi đưa là có căn cứ, báo cáo dự phòng và câu từ chối nhúng giữ phân số người hỏi đưa, thêm phân số từng bài khi so sánh, prompt nêu "0 lượt được chấm hợp lệ", tạo lại `data/extra_counts.json`. Lượt 2 chạy cả trên PR #23 nên chênh lệch không chỉ do lần sửa này.
+- Còn lại: B10 (kết luận hiểu sai từ số lượt chat), B08 (ưu tiên khi đồng hạng), B06; B02 và B04 tệ đi (model xếp nhầm KC), chưa rõ do nhiễu hay prompt. Chi tiết: `eval/report.md`.
