@@ -1,6 +1,13 @@
 import pytest
 
+from codebase.backend.api import knowledge
 from codebase.backend.security import rate_limit
+
+
+@pytest.fixture(autouse=True)
+def _no_query_embedder(monkeypatch):
+    """Không tải model embedding thật trong test; test tìm kiếm vector tự thay embedder giả."""
+    monkeypatch.setattr(knowledge, 'query_embedder', lambda: None)
 
 
 @pytest.fixture(autouse=True)

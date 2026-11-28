@@ -12,6 +12,7 @@ READ_COLUMNS = 'id,lesson_id,kc_code,text,approved'
 CACHE_TTL_SECONDS = 300.0
 MAX_APPROVED_DOCUMENTS = 5000  # chặn truy vấn không giới hạn; KB hiện chỉ cỡ vài nghìn đoạn
 UPSERT_BATCH_SIZE = 200
+EMBEDDING_BATCH_SIZE = 100  # ~100 x 384 số mỗi request; RPC nhận tối đa 500
 
 
 class KnowledgeStore:
@@ -27,13 +28,14 @@ class KnowledgeStore:
         self._now = now
         self._cache: tuple[float, list[dict]] | None = None
 
-    def _request(self, method: str, *, params=None, json=None, prefer: str | None = None) -> httpx.Response:
+    def _request(self, method: str, *, params=None, json=None, prefer: str | None = None,
+                 path: str = TABLE) -> httpx.Response:
         headers = dict(self._headers)
         if prefer:
             headers['Prefer'] = prefer
         try:
             with self._client_factory(timeout=self._timeout) as client:
-                return client.request(method, f'{self._base}/{TABLE}', params=params, json=json, headers=headers)
+                return client.request(method, f'{self._base}/{path}', params=params, json=json, headers=headers)
         except httpx.HTTPError:
             # Không nối exception gốc: có thể chứa URL/headers.
             raise RepositoryError('supabase_unreachable') from None
@@ -78,3 +80,37 @@ class KnowledgeStore:
             sent += len(batch)
         self._cache = None
         return sent
+
+    def _rpc(self, function: str, body: dict):
+        response = self._request('POST', json=body, path=f'rpc/{function}')
+        if response.status_code >= 300:
+            raise RepositoryError(f'supabase_status_{response.status_code}')
+        try:
+            return response.json()
+        except ValueError:
+            raise RepositoryError('supabase_bad_json') from None
+
+    def ingest_document(self, document_key: str, documents: list[dict]) -> int:
+        """Nạp các đoạn của một tài liệu qua RPC ingest_knowledge_document (một transaction, giữ lịch sử).
+        Đoạn mới nhận approved=false; đoạn cũ cùng tài liệu không còn trong lô thì thôi is_current."""
+        rows = [{key: d[key] for key in ('id', 'lesson_id', 'kc_code', 'text', 'source')} for d in documents]
+        result = self._rpc('ingest_knowledge_document', {'p_key': document_key, 'p_rows': rows, 'p_actor': None})
+        self._cache = None
+        return result
+
+    def set_embeddings(self, model: str, vectors: dict[str, str]) -> int:
+        """Ghi vector (dạng text pgvector) theo lô; trả số đoạn đã cập nhật."""
+        items = sorted(vectors.items())
+        updated = 0
+        for start in range(0, len(items), EMBEDDING_BATCH_SIZE):
+            rows = [{'id': chunk_id, 'embedding': vector} for chunk_id, vector in items[start:start + EMBEDDING_BATCH_SIZE]]
+            updated += self._rpc('set_knowledge_embeddings', {'p_model': model, 'p_rows': rows})
+        return updated
+
+    def match_documents(self, embedding: str, lesson_id: str, kc_code: str, limit: int) -> list[dict]:
+        """Đoạn đã duyệt gần nhất theo cosine trong đúng bài + KC (RPC match_knowledge_documents)."""
+        rows = self._rpc('match_knowledge_documents', {'p_embedding': embedding, 'p_lesson_id': lesson_id,
+                                                       'p_kc_code': kc_code, 'p_limit': limit})
+        if not isinstance(rows, list):
+            raise RepositoryError('supabase_bad_shape')
+        return rows

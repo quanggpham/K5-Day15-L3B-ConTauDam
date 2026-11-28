@@ -10,12 +10,16 @@ from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Upload
 from pydantic import BaseModel, ConfigDict, Field
 from codebase.backend.analytics.snapshot import read_snapshot_v2
 from codebase.backend.rag.ingestion import MAX_BYTES, extract_chunks
+from codebase.backend.rag.embedding import load_query_embedder, to_vector_literal
 from codebase.backend.rag.kb_mapping import kc_catalog, propose_mapping
 from codebase.backend.rag.retrieval import retrieve
 from codebase.backend.security.auth import require_coach
 
 router = APIRouter(prefix='/api/knowledge', tags=['knowledge'])
 COLUMNS = 'id,lesson_id,kc_code,text,source,approved,version,reviewed_by,reviewed_at,updated_by,updated_at'
+SEARCH_LIMIT = 3
+# Thay được trong test; trả None khi chưa cài extra `embed` -> tìm bằng BM25.
+query_embedder = load_query_embedder
 
 
 def catalog():
@@ -79,6 +83,14 @@ def search(lesson_id: str, kc_code: str, query: str, user: dict = Depends(requir
         raise HTTPException(422, 'Câu truy vấn phải có từ 1 đến 500 ký tự.')
     if (lesson_id, kc_code) not in {(row['lesson_id'], row['kc_code']) for row in catalog()}:
         raise HTTPException(422, 'Bài và KC không thuộc danh mục.')
+    embed = query_embedder()
+    if embed is not None:
+        matches = request('POST', body={'p_embedding': to_vector_literal(embed(query)), 'p_lesson_id': lesson_id,
+                                        'p_kc_code': kc_code, 'p_limit': SEARCH_LIMIT},
+                          table='rpc/match_knowledge_documents')
+        # Rỗng khi các đoạn đã duyệt chưa được nạp vector: dùng BM25 để vẫn có căn cứ.
+        if matches:
+            return matches
     documents = []
     for offset in range(0, 5001, 200):
         batch = request('GET', {'select': COLUMNS, 'lesson_id': f'eq.{lesson_id}', 'kc_code': f'eq.{kc_code}',

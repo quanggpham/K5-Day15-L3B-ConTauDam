@@ -59,8 +59,12 @@ def write_mapping(rows: list[dict], path: Path) -> None:
         writer.writerows(rows)
 
 
-def load_mapping(path: Path, catalog: list[KbTarget]) -> dict[str, KbTarget]:
-    """Đọc CSV đã duyệt; chỉ lấy dòng confirmed=yes. Cặp (lesson_id, kc_code) phải có trong danh mục."""
+def load_mapping(path: Path, catalog: list[KbTarget], *, include_unconfirmed: bool = False) -> dict[str, KbTarget]:
+    """Đọc CSV ánh xạ; mặc định chỉ lấy dòng confirmed=yes. Cặp (lesson_id, kc_code) phải có trong danh mục.
+
+    include_unconfirmed=True lấy cả đề xuất chưa duyệt (dùng khi embed toàn bộ KB): document vẫn approved=false
+    nên không được truy xuất cho tới khi coach duyệt.
+    """
     known = {(t['lesson_id'], t['kc_code']) for t in catalog}
     with path.open(encoding='utf-8-sig', newline='') as file:
         reader = csv.DictReader(file)
@@ -69,7 +73,7 @@ def load_mapping(path: Path, catalog: list[KbTarget]) -> dict[str, KbTarget]:
             raise ValueError(f'{path}: thiếu cột {sorted(missing)}')
         mapping: dict[str, KbTarget] = {}
         for line, row in enumerate(reader, start=2):
-            if row['confirmed'].strip().casefold() != 'yes':
+            if not include_unconfirmed and row['confirmed'].strip().casefold() != 'yes':
                 continue
             target = (row['lesson_id'].strip(), row['kc_code'].strip())
             if target not in known:
