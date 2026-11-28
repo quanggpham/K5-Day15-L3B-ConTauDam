@@ -11,7 +11,7 @@
 - **Giá** (USD / 1 triệu token):
   - `lfm3-1.7b` (rẻ, model đang dùng): vào 0,08 · ra 0,20 — https://www.liquid.ai/pricing · xem 28/11/2026
   - `claude-sonnet-5.5` (mạnh): vào 2,00 · ra 10,00 — https://platform.claude.com/docs/en/about-claude/pricing (chép từ `further-reading/model-prices.md` của repo đề, BTC xem 25/11/2026)
-- **Tỉ lệ đạt** dùng để tính: __/20 (__%) — lượt `run-2` *(chờ chấm cột `pass`)*
+- **Tỉ lệ đạt** dùng để tính: 15/20 (75%) — lượt `run-2@20261128-140358` (lượt 2)
 - Đo token trên model `lfm3-1.7b`, tính giá model `lfm3-1.7b` và `claude-sonnet-5.5` (bộ tách token khác nhau nên số token thật trên Sonnet có thể lệch).
 
 ## 2. Kết quả mô phỏng
@@ -26,8 +26,8 @@ Lượt mô phỏng: `cost/simulate-1.csv` · run ID `simulate-1@20261128-130838
 
 | Model | Chi phí / phiên | Chi phí / task thành công | / tháng — thấp (5) | / tháng — cơ sở (10) | / tháng — cao (20) | / người / tháng (cơ sở) |
 |---|---:|---:|---:|---:|---:|---:|
-| lfm3-1.7b | $0.0012 | $0.0012 ÷ tỉ lệ đạt run-2 = __ | $0.0568 | $0.1135 | $0.2271 | $0.0114 |
-| claude-sonnet-5.5 | $0.0532 | $0.0532 ÷ tỉ lệ đạt run-2 = __ | $2.59 | $5.17 | $10.34 | $0.5172 |
+| lfm3-1.7b | $0.0012 | $0.0012 ÷ 0,75 = **$0.0016** | $0.0568 | $0.1135 | $0.2271 | $0.0114 |
+| claude-sonnet-5.5 | $0.0532 | $0.0532 ÷ 0,75 = **$0.0709** | $2.59 | $5.17 | $10.34 | $0.5172 |
 
 Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đạt — **không coi như đạt 100%**.
 
@@ -35,7 +35,7 @@ Chi phí / task thành công = chi phí trung bình mỗi phiên ÷ tỉ lệ đ
 
 - Impact / người / tháng (`spec.md` §2): __ *(chờ nhóm điền số coach × lần × phút ở §2)*
 - Chi phí / người / tháng (cơ sở, model `lfm3-1.7b`): $0.0114 · (`claude-sonnet-5.5`: $0.5172)
-- **Kết luận một dòng — đáng làm không:** chi phí model gần như không đáng kể (< $1 / coach / tháng kể cả model mạnh); câu hỏi quyết định là **chất lượng** (tỉ lệ đạt) và giờ công coach duyệt, không phải tiền model. *(Chốt sau khi có tỉ lệ đạt run-2 và impact §2.)*
+- **Kết luận một dòng — đáng làm không:** chi phí model gần như không đáng kể (< $1 / coach / tháng kể cả model mạnh); câu hỏi quyết định là **chất lượng** (tỉ lệ đạt) và giờ công coach duyệt, không phải tiền model. Lượt 2 mới đạt 75% (< chuẩn 90%) → **iterate**: chưa đủ tốt để coach tin dùng, dù chi phí không phải rào cản. *(Impact §2 chờ nhóm điền số.)*
 
 ## 4. *(Muốn sâu hơn, không bắt buộc)*
 
