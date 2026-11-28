@@ -1,9 +1,15 @@
-"""Bản nháp demo chưa hiệu chuẩn, không lưu và không thay cổng AI chính."""
+"""Bản nháp demo chưa hiệu chuẩn, chỉ lưu theo yêu cầu của coach."""
+import base64
+import hashlib
+import hmac
 import json
 import os
+import time
+import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, ConfigDict, Field
 from codebase.ai import call_demo_model
+from codebase.backend.api.reviews import MAX_CONTENT
 from codebase.backend.api.copilot import _kcs, _stored_lesson
 from codebase.backend.api.knowledge import request as knowledge_request
 from codebase.backend.api.run_repository import RepositoryError, RunRepository, get_run_repository
@@ -23,6 +29,22 @@ SYSTEM = ('Bạn hỗ trợ coach lập một bản nháp hoạt động ôn t�
 class DemoBody(BaseModel):
     model_config = ConfigDict(extra='forbid')
     kc_code: str = Field(min_length=1, max_length=200)
+
+
+class SaveDraftBody(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    token: str = Field(min_length=1, max_length=100_000)
+
+
+def _signature(payload: str) -> str:
+    key = os.getenv('SUPABASE_SERVICE_ROLE_KEY', '').strip()
+    if not key:
+        raise HTTPException(503, 'Chưa cấu hình kho lưu báo cáo.')
+    return hmac.new(key.encode(), ('learningpulse-demo-draft-v1:' + payload).encode(), 'sha256').hexdigest()
+
+
+def _source_digest(source: dict) -> str:
+    return hashlib.sha256(json.dumps([source['text'], source['source']], ensure_ascii=False).encode()).hexdigest()
 
 
 def load_sources(lesson_id, kc_code):
@@ -77,12 +99,22 @@ def demo_preview(run_id: str, body: DemoBody, user: dict = Depends(require_coach
         try:
             output = json.loads(result['text'])
             validate_recommendation(output, evidence, safe_sources)
+            if len(output['content']) > MAX_CONTENT:
+                raise ValueError('Bản nháp quá dài')
             fresh = {s['id']: s for s in reviewed_sources(lesson_id, body.kc_code)}
             for source in safe_sources:
                 current = fresh.get(source['id'])
                 if not current or any(current.get(k) != source.get(k) for k in ('text', 'lesson_id', 'kc_code', 'approved')):
                     raise HTTPException(409, 'Nguồn đã thay đổi; hãy tạo lại bản nháp.')
-            return {'status': 'demo_unvalidated', 'kc_code': body.kc_code, 'content': output['content'],
+            cited = [s for s in sources if s['id'] in output['citations']]
+            ranked = [row for row in lesson.get('priority', []) if type(row.get('rank')) is int]
+            priority = next((row['rank'] for row in ranked if row.get('kc_code') == body.kc_code),
+                            max((row['rank'] for row in ranked), default=0) + 1)
+            draft = {'id': str(uuid.uuid4()), 'priority': priority, 'owner': user['id'], 'run': run_id, 'lesson': lesson_id,
+                     'expires': int(time.time()) + 1800, 'proposal': output,
+                     'sources': {s['id']: _source_digest(s) for s in cited}}
+            payload = base64.urlsafe_b64encode(json.dumps(draft, ensure_ascii=False).encode()).decode()
+            return {'save_token': payload + '.' + _signature(payload), 'status': 'demo_unvalidated', 'kc_code': body.kc_code, 'content': output['content'],
                     'sources': [{k: s[k] for k in ('id', 'text', 'source')}
                                 for s in sources if s['id'] in output['citations']],
                     'model': result['model'], 'tokens_in': result['tokens_in'], 'tokens_out': result['tokens_out'],
@@ -90,3 +122,34 @@ def demo_preview(run_id: str, body: DemoBody, user: dict = Depends(require_coach
         except (ValueError, TypeError, KeyError):
             continue
     raise HTTPException(502, 'AI chưa trả đề xuất hợp lệ; hãy thử lại hoặc dùng báo cáo số liệu.')
+
+
+@router.post('/api/analysis-runs/{run_id}/demo-preview/save')
+def save_demo_preview(run_id: str, body: SaveDraftBody, user: dict = Depends(require_coach),
+                      repo: RunRepository = Depends(get_run_repository)):
+    if os.getenv('DEMO_AI_ENABLED', '').lower() != 'true':
+        raise HTTPException(503, 'Bản nháp AI demo chưa được bật.')
+    payload, _, tag = body.token.partition('.')
+    if not tag.isascii() or not hmac.compare_digest(_signature(payload), tag):
+        raise HTTPException(422, 'Bản nháp không hợp lệ. Hãy tạo lại.')
+    draft = json.loads(base64.urlsafe_b64decode(payload))
+    if (draft['owner'], draft['run']) != (user['id'], run_id):
+        raise HTTPException(404, 'Không tìm thấy bản nháp.')
+    if draft['expires'] <= time.time():
+        raise HTTPException(409, 'Bản nháp đã hết hạn. Hãy tạo lại.')
+    proposal = draft['proposal']
+    current = {s['id']: s for s in reviewed_sources(draft['lesson'], proposal['kc_code'])}
+    if any(sid not in current or _source_digest(current[sid]) != digest
+           for sid, digest in draft['sources'].items()):
+        raise HTTPException(409, 'Nguồn đã thay đổi; hãy tạo lại bản nháp.')
+    citations = [{'source_id': sid, 'source': current[sid]['source'], 'text': current[sid]['text'],
+                  'origin': 'demo_unvalidated'} for sid in draft['sources']]
+    try:
+        saved = repo.save_demo_draft(user['id'], run_id, {
+            **proposal, 'id': draft['id'], 'priority': draft['priority'], 'citations': citations,
+            'review_status': 'pending', 'needs_rereview': True, 'jev_score': None})
+    except RepositoryError:
+        raise HTTPException(503, 'Chưa lưu được bản nháp. Hãy thử lại.') from None
+    if not saved:
+        raise HTTPException(404, 'Không tìm thấy báo cáo.')
+    return {'recommendation_id': draft['id']}

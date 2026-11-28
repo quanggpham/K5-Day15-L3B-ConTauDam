@@ -71,6 +71,8 @@ class RunRepository(Protocol):
     def get_run_detail(self, owner_id: str, run_id: str) -> dict | None:
         """{'run','recommendations','evaluations','reviews'} hoặc None (giống get_run)."""
 
+    def save_demo_draft(self, owner_id: str, run_id: str, row: dict) -> bool: ...
+
     def apply_review(self, owner_id: str, run_id: str, *, recommendation_id: str, expected_version: int,
                      decision: str, comment: str | None, content: str | None,
                      actor_email: str | None) -> dict:
@@ -181,6 +183,16 @@ class InMemoryRunRepository:
                    'updated_at': self._clock(), **fields}
             self.recommendations.append(row)
             return dict(row)
+
+    def save_demo_draft(self, owner_id, run_id, row):
+        with self._lock:
+            run = self.runs.get(run_id)
+            if not run or run['user_id'] != owner_id:
+                return False
+            if not any(rec['id'] == row['id'] for rec in self.recommendations):
+                self.recommendations.append({**row, 'analysis_run_id': run_id, 'version': 1,
+                                             'review_status': 'pending', 'updated_at': self._clock()})
+            return True
 
     def apply_review(self, owner_id, run_id, *, recommendation_id, expected_version, decision, comment,
                      content, actor_email):
@@ -341,6 +353,15 @@ class SupabaseRunRepository:
             'select': REVIEW_COLUMNS, 'run_id': f'eq.{rid}', 'order': 'at.asc,id.asc',
             'limit': str(CHILD_LIMIT)}))
         return {'run': run, 'recommendations': recs, 'evaluations': evals, 'reviews': reviews}
+
+    def save_demo_draft(self, owner_id, run_id, row):
+        run = self.get_run(owner_id, run_id)
+        if run is None:
+            return False
+        self._rows(self._request('POST', 'recommendations', params={'on_conflict': 'id'},
+                                 json={**row, 'analysis_run_id': run['id']},
+                                 prefer='resolution=ignore-duplicates,return=representation'))
+        return True
 
     def apply_review(self, owner_id, run_id, *, recommendation_id, expected_version, decision, comment,
                      content, actor_email):
