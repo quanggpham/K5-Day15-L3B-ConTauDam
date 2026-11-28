@@ -179,17 +179,17 @@
   <p class="kicker">Chi phí khi dùng thật</p>
   <h1>Chi phí trên mỗi task thành công và theo quy mô thật</h1>
   <div class="grid g3" style="margin-bottom:22px">
-    <div class="card"><h2>Chi phí / task thành công</h2><p><span class="ph">[chờ simulate]</span></p></div>
-    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B <span class="small">(dự kiến)</span></p><p class="small">Giá và số token: <span class="ph">[chờ simulate]</span></p></div>
-    <div class="card"><h2>Số phiên mô phỏng</h2><p><span class="ph">[chờ simulate]</span></p></div>
+    <div class="card"><h2>Chi phí / task thành công</h2><p>$0.0012 / phiên ÷ tỉ lệ đạt <span class="ph">[chờ run-2]</span></p></div>
+    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B</p><p class="small">$0,08 vào · $0,20 ra / 1M token (liquid.ai/pricing, 28/11) · TB 2.557 vào · 4.811 ra / phiên</p></div>
+    <div class="card"><h2>Số phiên mô phỏng</h2><p>50 phiên · 0 lỗi · seed 42</p><p class="small">simulate-1@20261128-130838</p></div>
   </div>
   <table>
     <tr><th>Kịch bản / tháng</th><th>Chi phí</th></tr>
-    <tr><td>Thấp</td><td><span class="ph">[chờ simulate]</span></td></tr>
-    <tr><td>Cơ sở</td><td><span class="ph">[chờ simulate]</span></td></tr>
-    <tr><td>Cao</td><td><span class="ph">[chờ simulate]</span></td></tr>
+    <tr><td>Thấp (5 coach, tự ước tính)</td><td>LFM3 $0.06 · Sonnet 5.5 $2.59 / tháng</td></tr>
+    <tr><td>Cơ sở (10 coach)</td><td>LFM3 $0.11 · Sonnet 5.5 $5.17 / tháng</td></tr>
+    <tr><td>Cao (20 coach)</td><td>LFM3 $0.23 · Sonnet 5.5 $10.34 / tháng</td></tr>
   </table>
-  <p style="margin-top:16px">So với impact / người / tháng: <span class="ph">[chờ spec §2 + simulate]</span></p>
+  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: <span class="ph">[chờ spec §2]</span></p>
   <div class="src">Nguồn: <code>cost/cost-estimate.md</code> (chờ) · <code>cost/simulate-N.csv</code> (chờ) · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
 </section>
 

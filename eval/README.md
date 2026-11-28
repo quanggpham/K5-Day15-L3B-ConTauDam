@@ -38,7 +38,7 @@
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | | | | __/__ | | |
+| 1 | `run-1@20261128-130814` | lfm3-1.7b | Code `c92e73b`: CLI tìm mọi bài trong câu, model viết câu trả lời từ số tổng hợp, code kiểm từng con số | __/20 *(chờ chấm)* | | |
 | 2 | | | | __/__ | | |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
