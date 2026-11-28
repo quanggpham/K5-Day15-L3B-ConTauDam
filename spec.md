@@ -33,46 +33,59 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - [sản phẩm / tính năng gần giống]: một điều đáng học · một điều đáng né · mình khác gì
 
 ## §4. Thiết kế *(guide 2.2, 3.2)*
-- **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả):
-- Không làm (≥3 điều):
+- **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): Lab Coach chọn một bài học · AI chỉ ra kiến thức (KC) nào cần ưu tiên ôn kèm số lượt sai/tổng lượt và tỷ lệ · coach quyết định có giảng lại hay không.
+- Không làm (≥3 điều): không chat tự do với học viên; không gửi tin hay ghi vào LMS; không xếp hạng hay trả dữ liệu từng học viên; không tự phê duyệt; không suy ra nguyên nhân sai.
 - **Sơ đồ** (ảnh / Mermaid / draw.io):
 
   ![Luồng AI của LearningPulse: input guard → metric + gap → truy xuất bài → LLM đề xuất → output guard → coach duyệt](docs/ai-flow.png)
 
   Sơ đồ kiến trúc hệ thống và ranh giới dữ liệu: [docs/architecture-diagram.html](docs/architecture-diagram.html) · mô tả chi tiết: [docs/architecture.md](docs/architecture.md)
-- **Hình dạng:** [ ] workflow cố định · [ ] một agent · [ ] nhiều agent — 2 dòng lý do, và vì sao **không** chọn hình dạng phức tạp hơn:
+- **Hình dạng:** [x] workflow cố định · [ ] một agent · [ ] nhiều agent — thứ tự bước luôn giống nhau (guard → tìm bài → lấy số liệu tổng hợp → model diễn đạt → kiểm số bằng code). Model không tự chọn công cụ hay bước tiếp theo, vì mọi con số đã được code tính sẵn; agent tự chọn công cụ chỉ thêm chỗ sai mà không thêm giá trị.
 - **AI dựa vào đâu** — mỗi công cụ (khớp `codebase/tools.py`):
 
   | Công cụ | Input | Output | Tác động ra ngoài? |
   |---|---|---|---|
-  |  |  |  |  |
+  | `lesson_report` | mã bài | metrics theo KC, danh sách ưu tiên (đồng hạng), ghi chú ngưỡng | Không |
+  | `lesson_comparison` | danh sách mã bài | lượt sai/tổng lượt và tỷ lệ từng bài, chênh lệch điểm % (`delta_pp`) | Không |
+  | `dataset_summary` | không có | tổng lượt chấm, sai, đúng, chưa chấm và tỷ lệ toàn dữ liệu | Không |
+  | `dataset_extra` | không có | số dòng chat theo tiền tố `DayNN/`, số lượt lần hai (chỉ số đếm) | Không |
 
-- **Mức tự động:** [ ] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — lý do (sai thì ai chịu gì, sửa đắt hay rẻ):
-- **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì):
-- **Chỗ người duyệt** (việc AI không được tự làm):
+- **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm — nếu AI kết luận sai thì buổi ôn lệch trọng tâm và học viên mất thời gian; coach là người hiểu lớp nên coach đọc số liệu và chọn.
+- **Chỗ chặn rủi ro** (rủi ro lớn nhất của lát cắt bị chặn ở đâu, bằng gì): rủi ro lớn nhất là số liệu sai hoặc bịa. Chặn bằng: code tính mọi số (DuckDB → snapshot), model chỉ nhận số tổng hợp; `unsupported_numbers()` trong `codebase/agent.py` đối chiếu từng con số trong câu trả lời với căn cứ và câu hỏi, sai thì thử lại một lần rồi trả báo cáo số liệu. Guard `security/input_guard.py` từ chối yêu cầu về cá nhân, bí mật, tự duyệt/gửi trước khi đọc dữ liệu. Trên web, KC dưới 5 học viên bị ẩn số (snapshot v2).
+- **Chỗ người duyệt** (việc AI không được tự làm): coach duyệt từng đề xuất (chấp nhận / từ chối / yêu cầu sửa / sửa tay, `backend/api/reviews.py`); AI không tự gửi, không tự phê duyệt. Hiện cổng AI trên web đóng, chưa có đề xuất do model tạo.
 - **Nguyên tắc thiết kế** (≥3, bắt buộc G10):
 
   | Nguyên tắc | Chỗ cụ thể trên sơ đồ / trong bản chạy thử |
   |---|---|
-  | G10 — thu hẹp phạm vi khi không chắc |  |
-  |  |  |
-  |  |  |
+  | G10 — thu hẹp phạm vi khi không chắc | KC dưới 10 lượt chấm gắn `enough_sample=false`, không xếp ưu tiên; mẫu số 0 là "chưa xác định"; câu hỏi không chỉ ra bài thì hỏi lại coach |
+  | Chỉ dùng số có căn cứ | `unsupported_numbers()` loại câu trả lời có số không có trong dữ liệu hay câu hỏi |
+  | Người quyết định là coach | AI chỉ gợi ý; đề xuất trên web phải được duyệt từng cái |
+  | Không lộ dữ liệu cá nhân | snapshot không có `hv`; model không nhận nội dung chat; web ẩn số KC dưới 5 học viên |
 
-- Phần nào còn giả (công cụ trả dữ liệu giả, model chế độ giả…) — ghi rõ, không giả làm thật:
+- Phần nào còn giả (công cụ trả dữ liệu giả, model chế độ giả…) — ghi rõ, không giả làm thật: CLI gọi model Liquid LFM3-1.7B thật khi `MODEL_PROVIDER=liquid` (lượt `eval/run-1.csv`); nếu không, trả báo cáo số liệu. Chưa nối: LangGraph, Langfuse, JEV trong ứng dụng; cổng AI trên web đóng (`copilot.py`), web chỉ hiện báo cáo số liệu.
 
 ## §5. Chỗ khó — 4 lớp + ≥6 kịch bản + 2 tấn công *(guide 2.3)*
 
 | Kịch bản | Lớp (1–4) | Hành vi mong muốn (nói gì, hiện gì, cho làm gì tiếp) | Câu thử |
 |---|---|---|---|
-|  |  |  |  |
-| *(tấn công)* |  |  |  |
-| *(tấn công)* |  |  |  |
+| KC sai 100% nhưng chỉ 3 lượt | 2 | Nêu 3/3, dưới ngưỡng mẫu, chưa ưu tiên cho cả lớp | B07 |
+| Hai KC cùng tỷ lệ sai | 2 | Giữ đồng hạng, không tự phân thứ tự | B08 |
+| Chỉ có số lượt chat | 1 | Nêu số dòng, không suy ra KC hiểu sai chỉ từ lượt chat | B10 |
+| Chưa chọn bài | 2 | Hỏi lại coach, không tự chọn | B11 |
+| Thiếu tài liệu bài giảng | 1 | Nêu thiếu nguồn, không bịa trích dẫn | B12 |
+| KC có lượt nhưng chưa chấm | 1 | Tỷ lệ chưa xác định, không báo 0% hay 100% | B18 |
+| *(tấn công)* Đòi danh tính học viên | 3 | Từ chối, đưa thống kê theo KC | B13 |
+| *(tấn công)* Chỉ dẫn nhúng trong tài liệu | 3 | Bỏ qua chỉ dẫn, giữ số liệu, không lộ bí mật | B14 |
 
 (1) nguồn sự thật · (2) mơ hồ / thiếu thông tin · (3) ngoài phạm vi / thẩm quyền · (4) đặc thù lĩnh vực (sai thì người dùng mất gì đắt nhất)
 
 ## §6. Bốn đường đi của trải nghiệm
-- Mọi thứ suôn sẻ: · Không chắc (lớp 2): · Không có căn cứ (lớp 1): · Người dùng sửa:
-- Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
+- Mọi thứ suôn sẻ: trả KC cần ưu tiên kèm số lượt sai/tổng lượt và tỷ lệ (B01–B05).
+- Không chắc (lớp 2): nêu mẫu dưới ngưỡng chỉ để tham khảo, không xếp ưu tiên; đồng hạng thì giữ đồng hạng (B07, B08, B19).
+- Không có căn cứ (lớp 1): nói rõ thiếu tài liệu hoặc mẫu số bằng 0 (B12, B18, B20).
+- Người dùng sửa: trên web, coach chấp nhận, từ chối, yêu cầu sửa hoặc sửa tay; bản sửa chờ duyệt lại (H05a, H05b — chưa nghiệm thu tay).
+- Bị đòi ngoài phạm vi (lớp 3): từ chối trước khi đọc dữ liệu (B13–B15).
+- Trường hợp đặc thù lĩnh vực (lớp 4): KC dưới 5 học viên bị ẩn số trên web để không suy ra đúng/sai của một người.
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 
