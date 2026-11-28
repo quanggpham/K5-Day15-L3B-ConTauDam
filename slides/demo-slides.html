@@ -31,7 +31,7 @@
   .card { border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; background: #fff; }
   .card.soft { background: var(--accent-soft); border-color: #c5d7f3; }
   .card h2 { font-size: 20px; margin: 0 0 8px; color: var(--accent); }
-  .big { font-size: 64px; font-weight: 800; line-height: 1; color: var(--accent); }
+  .big { font-size: 84px; font-weight: 800; line-height: 1; color: var(--accent); }
   .big small { font-size: 22px; font-weight: 600; color: var(--muted); }
   .lbl { font-size: 18px; color: var(--muted); margin-top: 6px; }
   /* Chỗ trống chờ số: vàng đậm để không thể bỏ sót */
@@ -49,6 +49,15 @@
   .verdict { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
   .verdict .card { text-align: center; }
   .verdict .card h2 { font-size: 30px; }
+  .stat { text-align: center; padding: 22px 16px; }
+  .stat .big { font-size: 96px; }
+  .stat .lbl { font-size: 20px; }
+  .big.ok { color: var(--ok); }
+  .big.bad { color: #b4531a; }
+  .arrow { font-size: 40px; color: var(--muted); align-self: center; text-align: center; }
+  .bar { height: 14px; border-radius: 7px; background: var(--line); position: relative; margin-top: 10px; }
+  .bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 7px; background: var(--accent); }
+  .bar b { position: absolute; top: -5px; bottom: -5px; width: 3px; background: var(--ink); }
   @media print {
     html, body { background: #fff; }
     .slide { margin: 0; }
@@ -61,44 +70,37 @@
 <section class="slide" id="s1">
   <div class="num">1 / 8</div>
   <p class="kicker">Người dùng và nỗi đau</p>
-  <h1>Lab Coach AI20K phải đoán nên ôn lại kiến thức nào trước buổi học</h1>
-  <div class="grid g2" style="margin-bottom:20px">
-    <div>
-      <p><b>Ai:</b> giảng viên và Lab Coach AI20K.</p>
-      <p><b>Việc đang làm:</b> tổng hợp kết quả học tập pre-class, chọn kiến thức cần giảng lại.</p>
-      <p><b>Vướng ở đâu:</b> kết quả nằm rải rác theo từng lượt trả lời; khó thấy ngay kiến thức nào học viên chưa hiểu.</p>
-    </div>
-    <div class="card soft">
-      <h2>Trích dẫn người dùng</h2>
-      <p class="small" style="margin-bottom:6px">Chưa có phỏng vấn Lab Coach (nguồn phỏng vấn chưa đạt ngưỡng).</p>
-      <p>Chưa có — trích dẫn hiện chỉ là ví dụ nguyên văn từ data (<code>evidence/summary.md</code> §3).</p>
-    </div>
+  <h1>Lab Coach AI20K phải đoán nên ôn lại kiến thức nào</h1>
+  <div class="grid g3" style="margin-bottom:6px; gap:28px">
+    <div><p style="font-size:20px"><b>Ai:</b> giảng viên và Lab Coach AI20K.</p></div>
+    <div><p style="font-size:20px"><b>Việc đang làm:</b> tổng hợp kết quả học tập pre-class, chọn kiến thức cần giảng lại.</p></div>
+    <div><p style="font-size:20px"><b>Vướng ở đâu:</b> kết quả nằm rải rác theo từng lượt trả lời; khó thấy ngay kiến thức nào học viên chưa hiểu.</p></div>
   </div>
-  <div class="grid g3">
-    <div class="card"><div class="big">17,11%<small></small></div><div class="lbl">424 / 2.478 lượt trả lời lần đầu bị sai</div></div>
-    <div class="card"><div class="big">56,25%</div><div class="lbl">90 / 160 kiến thức (KC) đủ mẫu (≥ 10 lượt chấm) để kết luận</div></div>
-    <div class="card"><div class="big">80%</div><div class="lbl">Day05 <code>ai_product_canvas</code>: 12 / 15 lượt sai</div></div>
+  <div class="grid g3" style="margin:16px 0 18px">
+    <div class="card stat"><div class="big">17,11%</div><div class="lbl">424 / 2.478 lượt lần đầu bị sai</div></div>
+    <div class="card stat"><div class="big">56,25%</div><div class="lbl">90 / 160 KC đủ mẫu (≥ 10 lượt)</div></div>
+    <div class="card stat"><div class="big">80%</div><div class="lbl">Day05 <code>ai_product_canvas</code>: 12 / 15 sai</div></div>
   </div>
-  <div class="src">Nguồn: <code>evidence/summary.md</code> §2 · <code>evidence/data-mining.md</code> §3–§4 · cách đếm chạy lại: <code>evidence/count.py</code> · data BTC pre-class AI20K khoá 5, 05–25/11/2026</div>
+  <p class="small">Chưa có phỏng vấn Lab Coach; trích dẫn người dùng hiện chỉ là ví dụ từ data (<code>evidence/summary.md</code> §3).</p>
+  <div class="src">Nguồn: <code>evidence/summary.md</code> §2 · <code>evidence/data-mining.md</code> §3–§4 · cách đếm: <code>evidence/count.py</code> · data BTC pre-class AI20K khoá 5, 05–25/11/2026</div>
 </section>
 
 <!-- 2. Vì sao chọn bài này -->
 <section class="slide" id="s2">
   <div class="num">2 / 8</div>
   <p class="kicker">Vì sao chọn bài này</p>
-  <h1>Impact và các hướng đã cân nhắc</h1>
-  <div class="card" style="margin-bottom:20px">
-    <h2>Bảng impact rút gọn (người × lần / tháng × phút)</h2>
-    <p>Có nguồn: 721 tài khoản học viên hưởng lợi gián tiếp · 13 bài có data 05–25/11 = 13 lần coach phải chọn nội dung ôn (<code>data/DATA_CARD.md</code>).</p>
-    <p class="small">Chưa đo: số coach, phút tổng hợp tay mỗi bài → impact / tháng chưa tính được (cần phỏng vấn coach).</p>
+  <h1>Có data thật, đo được, và coach vẫn quyết định</h1>
+  <div class="grid g3" style="margin-bottom:22px">
+    <div class="card stat"><div class="big">721</div><div class="lbl">tài khoản học viên hưởng lợi gián tiếp</div></div>
+    <div class="card stat"><div class="big">13</div><div class="lbl">bài có data (05–25/11) = 13 lần coach chọn nội dung ôn</div></div>
+    <div class="card stat"><div class="big">17,11%</div><div class="lbl">424 / 2.478 lượt lần đầu sai, trên 160 KC</div></div>
   </div>
-  <div class="card" style="margin-bottom:20px">
-    <h2>Hướng đã loại và lý do</h2>
-    <p>Trợ giảng hỏi–đáp: 1.259/1.260 dòng chat không có <code>lesson_id</code>, không đo được chất lượng; chat tự do dễ bị prompt injection.</p>
-    <p>Trợ lý Discord: không có data hay người dùng trong repo.</p>
+  <div class="grid g2">
+    <div class="card"><h2>Đã loại: trợ giảng hỏi–đáp</h2><p style="font-size:19px">1.259 / 1.260 dòng chat không có <code>lesson_id</code>; chat tự do dễ bị prompt injection.</p></div>
+    <div class="card"><h2>Đã loại: trợ lý Discord</h2><p style="font-size:19px">Không có data hay người dùng trong repo.</p></div>
   </div>
-  <p class="small">Số có sẵn để đối chiếu: 424 / 2.478 lượt lần đầu sai (17,11%) trên 160 KC của 13 bài (<code>evidence/data-mining.md</code> §3).</p>
-  <div class="src">Nguồn: <code>spec.md</code> §2 · <code>evidence/data-mining.md</code> §3</div>
+  <p class="small" style="margin-top:12px">Chưa đo: số coach và phút tổng hợp tay mỗi bài, nên impact / tháng chưa tính được.</p>
+  <div class="src">Nguồn: <code>data/DATA_CARD.md</code> · <code>spec.md</code> §2 · <code>evidence/data-mining.md</code> §3</div>
 </section>
 
 <!-- 3. Giải pháp -->
@@ -144,54 +146,40 @@
 <section class="slide" id="s5">
   <div class="num">5 / 8</div>
   <p class="kicker">Đánh giá thế nào</p>
-  <h1>Bộ 20 câu thử, 4 metric, chuẩn "đạt" chốt từ CP2</h1>
-  <div class="grid g2" style="grid-template-columns: 5fr 7fr">
-    <div>
-      <div class="card" style="margin-bottom:16px">
-        <h2>Dataset và bộ câu thử</h2>
-        <p style="font-size:19px"><code>answers.csv</code>, <code>chat.csv</code> của BTC (2.478 lượt lần đầu có chấm). Bộ câu thử: <b>20 câu</b> = 11 thuong · 6 kho · 3 tu_choi.</p>
-      </div>
-      <div class="card soft">
-        <h2>Chuẩn "đạt"</h2>
-        <p style="font-size:19px">≥ 90% tổng số câu qua (18/20) <b>và</b> cả 4 metric đạt ngưỡng riêng.</p>
-      </div>
-    </div>
-    <div>
-      <table>
-        <tr><th>Metric</th><th>Ngưỡng</th></tr>
-        <tr><td><code>dung_so_lieu</code></td><td>≥ 90% (≥ 11/12)</td></tr>
-        <tr><td><code>chon_dung_noi_dung_on</code></td><td>100% (6/6)</td></tr>
-        <tr><td><code>xu_ly_thieu_can_cu</code></td><td>100% (5/5)</td></tr>
-        <tr><td><code>giu_dung_tham_quyen</code></td><td>100% (3/3)</td></tr>
-      </table>
-      <table style="margin-top:16px">
-        <tr><th>Lượt</th><th>Qua / tổng</th><th>4 metric</th></tr>
-        <tr><td>Lượt 1 <span class="small">run-1@20261128-130814</span></td><td>13/20 (65%) — chưa đạt (cần 18/20)</td><td class="small">số liệu 8/12 · nội dung ôn 5/6 · thiếu căn cứ 2/5 · thẩm quyền 2/3</td></tr>
-        <tr><td>Lượt 2 (sau 1 cải tiến) <span class="small">run-2@20261128-140358</span></td><td>15/20 (75%) — chưa đạt</td><td class="small">số liệu 9/12 · nội dung ôn 4/6 · thiếu căn cứ 3/5 · thẩm quyền 3/3</td></tr>
-      </table>
-      <p class="small" style="margin-top:10px">Đã sửa nhóm "mất số bắt buộc": 0/5 → 4/5. Lỗi còn lại: model xếp nhầm KC ít sai lên đầu (B02, B04), đồng hạng (B08), kết luận từ số dòng chat (B10).</p>
-    </div>
+  <h1>Bộ 20 câu thử, chuẩn "đạt" chốt từ CP2: chưa đạt, và ghi thật</h1>
+  <div class="grid" style="grid-template-columns: 1fr 60px 1fr; margin-bottom:18px">
+    <div class="card stat"><div class="big bad">13/20</div><div class="lbl">Lượt 1 · 65%</div><div class="small">run-1@20261128-130814</div></div>
+    <div class="arrow">→</div>
+    <div class="card stat"><div class="big bad">15/20</div><div class="lbl">Lượt 2 · 75% (sau 1 cải tiến)</div><div class="small">run-2@20261128-140358</div></div>
   </div>
-  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code>, <code>eval/run-1.csv</code>, <code>eval/run-2.csv</code></div>
+  <p style="font-size:20px; margin-bottom:12px">Chuẩn đạt: <b>≥ 90% (18/20)</b> và cả 4 metric đạt ngưỡng riêng.</p>
+  <table>
+    <tr><th>Metric</th><th>Chuẩn</th><th>Lượt 1</th><th>Lượt 2</th></tr>
+    <tr><td><code>dung_so_lieu</code></td><td>≥ 11/12</td><td>8/12</td><td>9/12</td></tr>
+    <tr><td><code>chon_dung_noi_dung_on</code></td><td>6/6</td><td>5/6</td><td>4/6</td></tr>
+    <tr><td><code>xu_ly_thieu_can_cu</code></td><td>5/5</td><td>2/5</td><td>3/5</td></tr>
+    <tr><td><code>giu_dung_tham_quyen</code></td><td>3/3</td><td>2/3</td><td>3/3</td></tr>
+  </table>
+  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · <code>eval/report.md</code>, <code>eval/run-1.csv</code>, <code>eval/run-2.csv</code></div>
 </section>
 
 <!-- 6. Chi phí -->
 <section class="slide" id="s6">
   <div class="num">6 / 8</div>
   <p class="kicker">Chi phí khi dùng thật</p>
-  <h1>Chi phí trên mỗi task thành công và theo quy mô thật</h1>
+  <h1>Model nhỏ rẻ gấp hơn 40 lần (tự tính), chi phí không phải điểm nghẽn</h1>
   <div class="grid g3" style="margin-bottom:22px">
-    <div class="card"><h2>Chi phí / task thành công</h2><p><b>$0.0016</b> (LFM3) · $0.0709 (Sonnet 5.5)<br><span class="small">$0.0012 / phiên ÷ 75% đạt (run-2)</span></p></div>
-    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B</p><p class="small">$0,08 vào · $0,20 ra / 1M token (liquid.ai/pricing, 28/11) · TB 2.557 vào · 4.811 ra / phiên</p></div>
-    <div class="card"><h2>Số phiên mô phỏng</h2><p>50 phiên · 0 lỗi · seed 42</p><p class="small">simulate-1@20261128-130838</p></div>
+    <div class="card stat"><div class="big ok">$0.0016</div><div class="lbl">/ task thành công · LFM3</div><div class="small">Sonnet 5.5: $0.0709</div></div>
+    <div class="card stat"><div class="big ok">$0.011</div><div class="lbl">/ coach / tháng · LFM3</div><div class="small">Sonnet 5.5: $0.52</div></div>
+    <div class="card stat"><div class="big">50</div><div class="lbl">phiên mô phỏng · 0 lỗi</div><div class="small">simulate-1@20261128-130838</div></div>
   </div>
   <table>
-    <tr><th>Kịch bản / tháng</th><th>Chi phí</th></tr>
-    <tr><td>Thấp (5 coach, tự ước tính)</td><td>LFM3 $0.06 · Sonnet 5.5 $2.59 / tháng</td></tr>
-    <tr><td>Cơ sở (10 coach)</td><td>LFM3 $0.11 · Sonnet 5.5 $5.17 / tháng</td></tr>
-    <tr><td>Cao (20 coach)</td><td>LFM3 $0.23 · Sonnet 5.5 $10.34 / tháng</td></tr>
+    <tr><th>Kịch bản / tháng</th><th>LFM3</th><th>Sonnet 5.5</th></tr>
+    <tr><td>Thấp (5 coach, tự ước tính)</td><td>$0.06</td><td>$2.59</td></tr>
+    <tr><td>Cơ sở (10 coach)</td><td>$0.11</td><td>$5.17</td></tr>
+    <tr><td>Cao (20 coach)</td><td>$0.23</td><td>$10.34</td></tr>
   </table>
-  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: chưa tính được vì chưa đo phút tiết kiệm của coach — chi phí model không phải rào cản.</p>
+  <p class="small" style="margin-top:10px">$0,08 vào · $0,20 ra / 1M token (liquid.ai/pricing, 28/11) · $0.0012 / phiên ÷ 75% đạt (run-2). So với impact: chưa tính được vì chưa đo phút tiết kiệm của coach.</p>
   <div class="src">Nguồn: <code>cost/cost-estimate.md</code> · <code>cost/simulate-1.csv</code> · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
 </section>
 
@@ -199,18 +187,17 @@
 <section class="slide" id="s7">
   <div class="num">7 / 8</div>
   <p class="kicker">Kết luận</p>
-  <h1>Go, iterate hay stop</h1>
-  <div class="verdict" style="margin-bottom:24px">
-    <div class="card"><h2>Go</h2><p class="small">Nếu số trang 5 đạt chuẩn và trang 6 đáng làm.</p></div>
-    <div class="card"><h2>Iterate</h2><p class="small">Nếu một số còn trượt nhưng sửa được.</p></div>
-    <div class="card"><h2>Stop</h2><p class="small">Nếu chi phí vượt impact hoặc lỗi không sửa được.</p></div>
+  <h1>Quyết định: ITERATE</h1>
+  <div class="grid g3" style="margin-bottom:22px">
+    <div class="card stat"><div class="big">17,11%</div><div class="lbl">Pain có thật: 424 / 2.478 lượt sai (trang 1)</div></div>
+    <div class="card stat"><div class="big bad">75%</div><div class="lbl">Đạt 15/20, cần 90% · tu_choi 3/3, kho 4/6 (trang 5)</div></div>
+    <div class="card stat"><div class="big ok">$0.011</div><div class="lbl">/ coach / tháng (LFM3); Sonnet 5.5 $0.52 (trang 6)</div></div>
   </div>
-  <p><b>Quyết định: ITERATE</b> — chi phí không phải rào cản, chất lượng chưa đạt chuẩn 90%.</p>
-  <ul>
-    <li>Pain (trang 1): 424 / 2.478 lượt lần đầu sai (17,11%); 90 / 160 KC đủ mẫu.</li>
-    <li>Đánh giá (trang 5): 65% → 75% (cần 90%); tu_choi 3/3, kho 4/6</li>
-    <li>Chi phí (trang 6): $0.011 / coach / tháng (LFM3) · $0.52 (Sonnet 5.5) — không phải điểm nghẽn</li>
-  </ul>
+  <div class="verdict">
+    <div class="card"><h2>Go</h2><p class="small">Số trang 5 đạt chuẩn và trang 6 đáng làm.</p></div>
+    <div class="card soft"><h2>Iterate</h2><p class="small">Chất lượng chưa đạt 90% nhưng sửa được.</p></div>
+    <div class="card"><h2>Stop</h2><p class="small">Chi phí vượt impact hoặc lỗi không sửa được.</p></div>
+  </div>
   <div class="src">Nguồn: tổng hợp từ trang 1, 5, 6 · <code>evidence/data-mining.md</code> · <code>eval/report.md</code> · <code>cost/cost-estimate.md</code></div>
 </section>
 
@@ -218,20 +205,17 @@
 <section class="slide" id="s8">
   <div class="num">8 / 8</div>
   <p class="kicker">Nếu có thêm 1 tuần</p>
-  <h1>Việc tiếp theo, trỏ về rủi ro còn mở</h1>
+  <h1>Ba việc, trỏ về rủi ro còn mở</h1>
   <div class="grid g3">
     <div class="card"><h2>1. Khoá đăng ký tự do</h2>
-      <p style="font-size:19px">Mọi tài khoản Supabase Auth đều vào được; cần khoá đăng ký.</p>
-      <p class="small">Nguồn: <code>spec.md</code> §9, commit <code>f71c525</code></p></div>
-    <div class="card"><h2>2. Kiểm số chưa đủ</h2>
-      <p style="font-size:19px">Code chỉ bắt số không có trong căn cứ, không bắt số thật nhưng gán nhầm KC; coach vẫn phải đọc lại.</p>
-      <p class="small">Nguồn: <code>spec.md</code> §9 (thấy ở <code>eval/run-1.csv</code>)</p></div>
+      <p style="font-size:21px">Mọi tài khoản Supabase Auth đều vào được; cần khoá đăng ký.</p>
+      <p class="small">spec.md §9 · commit <code>f71c525</code></p></div>
+    <div class="card"><h2>2. Kiểm số chặt hơn</h2>
+      <p style="font-size:21px">Code chưa bắt số thật nhưng gán nhầm KC; coach vẫn phải đọc lại.</p>
+      <p class="small">spec.md §9 · eval/run-1.csv</p></div>
     <div class="card"><h2>3. Nối AI vào web</h2>
-      <p style="font-size:19px">Đề xuất AI, JEV, Langfuse chưa nối; cổng AI trên web đang đóng; checklist H01–H06 chưa nghiệm thu tay.</p>
-      <p class="small">Nguồn: <code>spec.md</code> §4, §6; <code>README.md</code></p></div>
+      <p style="font-size:21px">Đề xuất AI, JEV, Langfuse chưa nối; cổng AI trên web đang đóng.</p></div>
   </div>
-  <p style="margin-top:22px">Lỗi còn lại sau lượt 2: (1) để code chọn và xếp hạng KC, model chỉ diễn đạt (B02, B04, B08); (2) kiểm sau model KC nêu ra khớp thứ hạng; (3) chạy mỗi bản nhiều lần để tách nhiễu. Chưa có phản hồi người dùng thử.</p>
-  <p class="small">Việc tuần tới: phỏng vấn ≥3 Lab Coach để đo phút tiết kiệm và kiểm lại pain.</p>
   <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 · <code>validation/log.md</code></div>
 </section>
 
