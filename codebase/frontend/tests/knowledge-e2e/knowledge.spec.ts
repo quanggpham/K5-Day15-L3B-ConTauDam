@@ -43,7 +43,7 @@ for (const screen of [{ name: "desktop", width: 1280, height: 800 }, { name: "mo
     await page.getByRole("combobox", { name: "KC", exact: true }).selectOption("K1")
     await page.getByRole("textbox", { name: "Nội dung cần tìm", exact: true }).fill("khái niệm")
     await page.getByRole("button", { name: "Tìm căn cứ" }).click()
-    await expect(page.getByText("Khái niệm đã sửa", { exact: true })).toBeVisible()
+    await expect(page.getByRole("listitem").getByText("Khái niệm đã sửa", { exact: true })).toBeVisible()
     await page.getByRole("button", { name: "Xem lịch sử" }).click()
     await expect(page.getByText("Chưa có phiên bản trước.")).toBeVisible()
     expect(errors).toEqual([])

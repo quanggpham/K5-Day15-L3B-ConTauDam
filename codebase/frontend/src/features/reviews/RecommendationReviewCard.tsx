@@ -53,6 +53,9 @@ export function RecommendationReviewCard({ runId, rec, reviews, currentUserId, o
   const conflict = feedback?.kind === "conflict"
   const version = typeof rec.version === "number" ? rec.version : null
   const locked = pending || reloading || conflict || version === null
+  const demoSources = Array.isArray(rec.citations) ? rec.citations.filter(
+    (source) => source?.origin === "demo_unvalidated"
+  ) : []
   const contentValue = contentDraft ?? rec.content ?? ""
   const hasDraft = contentDraft !== null && contentDraft !== (rec.content ?? "")
 
@@ -105,13 +108,21 @@ export function RecommendationReviewCard({ runId, rec, reviews, currentUserId, o
       <header className="flex flex-wrap items-center gap-2">
         <h2 id={titleId} className="text-base font-semibold text-violet-950">
           {kcLabel(rec)}
-          {rec.priority != null && <span className="font-normal text-slate-700"> · ưu tiên {rec.priority}</span>}
+          {demoSources.length === 0 && rec.priority != null && <span className="font-normal text-slate-700"> · ưu tiên {rec.priority}</span>}
         </h2>
         <ReviewStatusChip status={rec.review_status} />
         <span className="text-xs text-slate-700">Phiên bản {version ?? NOT_RECORDED}</span>
       </header>
 
+      {demoSources.length > 0 && <p className="text-sm font-medium text-amber-900">Bản nháp AI demo · Chưa hiệu chuẩn JEV</p>}
       <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-900">{rec.content ?? NOT_RECORDED}</p>
+      {demoSources.length > 0 && <details className="text-sm">
+        <summary className="cursor-pointer font-medium">Nguồn đã trích dẫn</summary>
+        <ul className="space-y-2">{demoSources.map((source) => <li key={source.source_id}>
+          <p className="font-medium">{source.source} · {source.source_id}</p>
+          <p className="whitespace-pre-wrap break-words">{source.text}</p>
+        </li>)}</ul>
+      </details>}
       <div className="space-y-2">
         <EditedFlag rec={rec} />
         <JevScore rec={rec} />

@@ -1,7 +1,7 @@
 # Hiệu chỉnh JEV: mẫu chấm tay và đề xuất ngưỡng (B7, chờ nhóm duyệt)
 
-> Trạng thái: **đề xuất**, chưa áp dụng. JEV chưa bật trong ứng dụng (xem `docs/architecture.md`).
-> Chưa có số liệu chạy thật; mọi ngưỡng dưới đây là *(tự ước tính)* cho tới khi có kết quả chấm tay.
+> Pipeline bản nháp demo có thể hiển thị điểm JEV để coach tham khảo. Luồng chính vẫn chờ hiệu chuẩn ngưỡng.
+> Mọi ngưỡng dưới đây là *(tự ước tính)* cho tới khi có kết quả chấm tay.
 
 ## 1. JEV hiện chấm gì
 

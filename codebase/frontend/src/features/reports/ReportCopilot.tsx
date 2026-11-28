@@ -1,4 +1,4 @@
-import { Lock, Sparkles } from "lucide-react"
+import { Sparkles } from "lucide-react"
 import { useId, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { ErrorState, LoadingState, stateSecondaryButtonClass } from "@/components/states"
@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { controlClass, labelClass } from "@/components/ui/controls"
 import { NOT_RECORDED } from "@/lib/format"
 import { apiErrorMessage, isApiError } from "@/services/api"
-import { COPILOT_ACTIONS, actionLabel, aiReasonText, evidenceFieldLabel, type CopilotAction, type CopilotResult } from "./copilotTypes"
+import { COPILOT_ACTIONS, actionLabel, evidenceFieldLabel, type CopilotAction, type CopilotResult } from "./copilotTypes"
 import { useReportRun } from "./ReportRunContext"
 import { readStoredSnapshot } from "./snapshot"
 import type { RunDetail } from "./types"
@@ -55,13 +55,12 @@ export default function ReportCopilot() {
 }
 
 function CopilotBody({ detail }: { detail: RunDetail }) {
-  const { run, retry, pending, result, problem, aiLock, clearAiLock, setProblem } = useCopilot(detail.run_id)
+  const { run, retry, pending, result, problem, setProblem } = useCopilot(detail.run_id)
   const stored = readStoredSnapshot(detail)
   const kcCodes = stored.state === "ok" ? stored.lesson.kcs.map((kc) => kc.kc_code) : []
   const [kcCode, setKcCode] = useState("")
   const kcRef = useRef<HTMLSelectElement>(null)
   const ids = useId()
-  const lockId = `${ids}-lock`
   const kcHintId = `${ids}-kc-hint`
   const busy = pending !== null
   const usable = stored.state === "ok"
@@ -112,56 +111,36 @@ function CopilotBody({ detail }: { detail: RunDetail }) {
           ))}
         </select>
         <p id={kcHintId} className="mt-1 text-xs text-slate-700">
-          Danh sách lấy từ snapshot đã lưu. Bắt buộc với "Giải thích ưu tiên" và "3 câu hỏi kiểm tra lại".
+          Danh sách lấy từ snapshot đã lưu. Chọn KC để giải thích ưu tiên hoặc tạo bản nháp demo.
         </p>
       </div>
 
       {usable && <DemoPreview runId={detail.run_id} kcCode={kcCode} />}
 
       <ul className="space-y-3" aria-label="Thao tác Copilot">
-        {COPILOT_ACTIONS.map((def) => {
-          const locked = def.generative && aiLock !== null
+        {COPILOT_ACTIONS.filter((def) => !def.generative).map((def) => {
           const descId = `${ids}-${def.id}-desc`
           return (
             <li key={def.id}>
               <button
                 type="button"
                 className={actionButton}
-                disabled={!usable || busy || locked}
-                aria-describedby={locked ? `${descId} ${lockId}` : descId}
+                disabled={!usable || busy}
+                aria-describedby={descId}
                 onClick={() => start(def.id, def.kc === "required")}
               >
                 <span className="flex items-center gap-2">
-                  {locked && <Lock aria-hidden="true" className="size-4 shrink-0" />}
                   {def.label}
                   {pending?.action === def.id && <span className="font-normal text-slate-700">(đang xử lý...)</span>}
                 </span>
               </button>
               <p id={descId} className="mt-1 text-xs leading-5 text-slate-700">
-                {locked ? "Đang khoá: chưa đủ điều kiện mở AI." : def.description}
+                {def.description}
               </p>
             </li>
           )
         })}
       </ul>
-
-      {aiLock !== null && (
-        <div id={lockId} role="status" className="rounded-lg border border-amber-300 bg-amber-50 px-3 py-3 text-sm text-amber-950">
-          <p className="font-semibold">Hai thao tác tạo nội dung đang bị khoá</p>
-          <p className="mt-1">Máy chủ chưa mở AI cho báo cáo này vì:</p>
-          <ul className="mt-1 list-disc space-y-1 pl-5">
-            {aiLock.map((reason) => (
-              <li key={reason}>{aiReasonText(reason)}</li>
-            ))}
-          </ul>
-          <p className="mt-2">
-            Giải thích ưu tiên và so sánh bài trước vẫn dùng được (tạo bằng code từ snapshot đã lưu). Báo cáo số liệu và CSV không bị ảnh hưởng.
-          </p>
-          <button type="button" onClick={clearAiLock} disabled={busy} className={`${stateSecondaryButtonClass} mt-2 h-9 text-xs`}>
-            Kiểm tra lại điều kiện AI
-          </button>
-        </div>
-      )}
 
       {busy && (
         <p role="status" className="text-sm text-slate-700">
