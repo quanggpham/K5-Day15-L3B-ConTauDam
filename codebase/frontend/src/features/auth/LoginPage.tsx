@@ -113,7 +113,7 @@ export default function LoginPage() {
             <LoginForm submitting={submitting} error={error} onSubmit={handleSubmit} />
           </div>
         </div>
-        <p className="mt-4 text-center text-sm text-slate-600">Chỉ email trong danh sách cho phép mới vào được.</p>
+        <p className="mt-4 text-center text-sm text-slate-600">Cần tài khoản đã được tạo trong Supabase Auth.</p>
       </main>
     </div>
   )

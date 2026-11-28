@@ -4,7 +4,7 @@ import { useLandingCta } from "./useLandingCta"
 
 // Nội dung lấy từ docs/learningpulse-design.md và README (trạng thái hiện tại).
 const AVAILABLE_NOW = [
-  "Đăng nhập bằng email trong danh sách cho phép",
+  "Đăng nhập bằng tài khoản đã được tạo trong Supabase Auth",
   "Dashboard số liệu theo bài học và ý kiến thức, xếp theo tỷ lệ sai ở lần trả lời đầu; ý kiến thức chưa đủ dữ liệu được gắn cờ, không xếp ưu tiên",
   "Tạo phân tích, lưu bản nháp và xem lại trong lịch sử",
   "Báo cáo đã lưu có các tab và cho tải CSV",
@@ -48,7 +48,7 @@ export default function Hero() {
           <p className="text-sm text-slate-600">
             {cta.authenticated
               ? "Bạn đã đăng nhập."
-              : "Chỉ email trong danh sách cho phép mới vào được."}
+              : "Cần tài khoản đã được tạo trong Supabase Auth."}
           </p>
         </div>
       </div>
