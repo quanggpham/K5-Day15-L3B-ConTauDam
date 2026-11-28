@@ -11,6 +11,7 @@ from codebase.backend.api.export import router as export_router
 from codebase.backend.api.reviews import router as reviews_router
 from codebase.backend.api.copilot import router as copilot_router
 from codebase.backend.security.headers import security_headers
+from codebase.backend.api.knowledge import router as knowledge_router
 from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
@@ -33,6 +34,7 @@ app.include_router(analysis_runs_router)
 app.include_router(export_router)
 app.include_router(reviews_router)
 app.include_router(copilot_router)
+app.include_router(knowledge_router)
 DIST = Path(__file__).resolve().parents[1] / "frontend" / "dist"
 
 @app.get("/api/health")

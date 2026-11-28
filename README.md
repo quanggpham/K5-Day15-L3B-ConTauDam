@@ -93,3 +93,11 @@ Module thử nghiệm `backend/agents/recommend.py` yêu cầu mỗi KC có ngu�
 - **Service role:** `SUPABASE_SERVICE_ROLE_KEY` chỉ backend dùng (ghi báo cáo, duyệt, audit, luôn lọc theo chủ sở hữu từ phiên đăng nhập); không đưa vào frontend hay `/api/config`. Thiếu biến này các API ghi trả 503.
 - **Áp migration:** `…000003` và `…000004` thu hồi quyền ghi trực tiếp của browser trên bảng báo cáo, nên áp cùng lúc với deploy code mới (code cũ còn ghi trực tiếp từ browser sẽ lỗi). Thử trên Supabase test (`supabase db reset`) trước; hai migration chưa từng chạy trên Postgres thật. Workflow deploy không tự chạy migration.
 - **Ẩn số liệu nhóm nhỏ:** trong snapshot v2 (dashboard, báo cáo đã lưu, CSV, Copilot), KC có dưới 5 học viên bị ẩn toàn bộ số (`MIN_LEARNERS` trong `codebase/backend/analytics/metrics.py`). Luồng CLI/`answer()` v1 dùng cho benchmark chưa áp quy tắc này.
+
+### Nạp và duyệt Lesson KB
+
+Coach đăng nhập mở **KB bài giảng**, chọn bài, khai nguồn được phép và tải PDF có lớp chữ hoặc Markdown UTF-8 (tối đa 10 MB, 100 trang PDF). PDF scan cần được chuyển thành văn bản trước; ứng dụng không OCR. Kiểm tra nội dung và KC đề xuất, lưu sửa rồi duyệt từng đoạn. Các đoạn đã duyệt dùng chung; sửa nội dung hoặc ánh xạ sẽ tạo phiên bản mới và yêu cầu duyệt lại. Tải bản khác với cùng bài, nguồn và tên tệp sẽ thay phiên bản hiện tại; đoạn cũ ngừng được truy xuất. Có thể tìm thử căn cứ đã duyệt theo bài/KC ngay trên trang.
+
+Nạp hàng loạt dùng `uv run python scripts/ingest_kb.py --files <thu_muc> --propose data/kb_mapping.csv`, sau đó người có chuyên môn kiểm tra và ghi `confirmed=yes` cho từng dòng đúng. Chạy lại với `--files <thu_muc> --mapping data/kb_mapping.csv` để dry-run, thêm `--apply --confirm-rights` mới ghi Supabase. Các file notes/quiz có cấu trúc cũ vẫn dùng `--notes` và `--quiz`. Script cần snapshot v2; chỉ nạp tài liệu có quyền sử dụng.
+
+Migration `20261128000005` và `20261128000006` cần kiểm trên Supabase test cùng các migration còn thiếu trước production; kiểm `supabase/tests/knowledge_review_check.sql`. Việc nạp KB không bật tính năng tạo nội dung AI. Không gửi dữ liệu học viên hoặc raw chat vào KB.

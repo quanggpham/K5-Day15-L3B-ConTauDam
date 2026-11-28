@@ -32,6 +32,7 @@ export const routes: RouteObject[] = [
                   { path: "/history", lazy: async () => ({ Component: (await import("@/features/history/HistoryPage")).default }), handle: handle({ title: "Lịch sử" }) },
                   { path: "/reports/:runId", lazy: async () => ({ Component: (await import("@/features/reports/ReportPage")).default }), handle: handle({ title: "Báo cáo", copilot: ReportCopilotRoute }) },
                   { path: "/reports/:runId/review", lazy: async () => ({ Component: (await import("@/features/reviews/ReviewPage")).default }), handle: handle({ title: "Duyệt báo cáo", copilot: ReportCopilotRoute }) },
+                  { path: "/knowledge", lazy: async () => ({ Component: (await import("@/features/knowledge/KnowledgePage")).default }), handle: handle({ title: "KB bài giảng" }) },
                   { path: "/profile", lazy: async () => ({ Component: (await import("@/features/profile/ProfilePage")).default }), handle: handle({ title: "Hồ sơ" }) },
                 ],
               },

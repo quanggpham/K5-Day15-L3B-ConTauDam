@@ -1,4 +1,4 @@
-import { Activity, FilePlus2, History, LayoutDashboard, UserRound, type LucideIcon } from "lucide-react"
+import { Activity, BookOpen, FilePlus2, History, LayoutDashboard, UserRound, type LucideIcon } from "lucide-react"
 import { NavLink, Link } from "react-router-dom"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/features/auth/useAuth"
@@ -7,6 +7,7 @@ const ITEMS: { to: string; label: string; icon: LucideIcon }[] = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/analysis/new", label: "Tạo phân tích", icon: FilePlus2 },
   { to: "/history", label: "Lịch sử", icon: History },
+  { to: "/knowledge", label: "KB bài giảng", icon: BookOpen },
   { to: "/profile", label: "Hồ sơ", icon: UserRound },
 ]
 

@@ -133,10 +133,13 @@ async function request(path: string, options: InternalOptions): Promise<Response
   const headers: Record<string, string> = { ...options.headers }
   const token = options.auth === false ? null : handlers.getAccessToken()
   if (token) headers.Authorization = `Bearer ${token}`
-  let body: string | undefined
+  let body: BodyInit | undefined
   if (options.body !== undefined) {
-    headers["Content-Type"] = "application/json"
-    body = JSON.stringify(options.body)
+    if (options.body instanceof FormData) body = options.body
+    else {
+      headers["Content-Type"] = "application/json"
+      body = JSON.stringify(options.body)
+    }
   }
   let response: Response
   try {
