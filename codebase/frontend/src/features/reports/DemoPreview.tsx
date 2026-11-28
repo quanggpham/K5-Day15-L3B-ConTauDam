@@ -54,7 +54,7 @@ export default function DemoPreview({ runId, kcCode }: { runId: string; kcCode: 
 
   return <section className="space-y-2 rounded-lg border border-amber-300 bg-amber-50 p-3" aria-label="Bản nháp AI demo">
     <h3 className="text-sm font-semibold text-amber-950">Bản nháp AI demo</h3>
-    <p className="text-xs text-amber-950">Chưa hiệu chuẩn JEV, cần coach kiểm tra. Kết quả không tự lưu hoặc duyệt.</p>
+    <p className="text-xs text-amber-950">Điểm JEV để tham khảo. Coach kiểm tra nguồn và quyết định lưu hoặc duyệt.</p>
     {draftActions.map(({ kind, label }) => <button key={kind} type="button"
       onClick={() => void generate(kind)} disabled={!kcCode || pending !== null || saving}
       className="w-full rounded-lg bg-violet-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">

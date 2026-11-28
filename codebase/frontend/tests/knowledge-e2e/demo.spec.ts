@@ -11,7 +11,7 @@ test("bản nháp demo hiển thị cảnh báo, output và nguồn", async ({ p
     await route.fulfill({ json: { recommendation_id: "synthetic-rec" } })
   })
   await page.goto("/tests/knowledge-e2e/demo.html")
-  await expect(page.getByText(/Chưa hiệu chuẩn JEV/)).toBeVisible()
+  await expect(page.getByText(/Điểm JEV để tham khảo/)).toBeVisible()
   await expect(page.getByRole("button", { name: "Kế hoạch ôn 15 phút" })).toBeEnabled()
   await page.getByRole("button", { name: "3 câu hỏi kiểm tra lại" }).click()
   await expect(page.getByText("Ôn tập bằng ví dụ.")).toBeVisible()
