@@ -1,28 +1,72 @@
-"""Công cụ của bài toán — NHÓM VIẾT. Điền ở guide bước 2.2 (thiết kế) và 3.2 (code).
+"""Công cụ của bài toán. Mỗi hàm có @tool; docstring ghi: tên · input · output · có tác động ra ngoài không.
 
-Mỗi công cụ là một hàm Python có @tool. Docstring ghi đúng 4 ý như sơ đồ ở spec.md §4:
-    tên · input · output · có tác động ra ngoài không (gửi tin, sửa dữ liệu, chấm điểm…)
-Khung tự ghi mỗi lần gọi công cụ vào trace (tên, input, output rút gọn, thời gian, lỗi).
-
-Số công cụ, kiểu công cụ do thiết kế của nhóm quyết định — có bài chỉ cần một công cụ tra cứu.
-Công cụ có tác động ra ngoài: KHÔNG tự làm. Trả về bản nháp chờ người duyệt (guide bước 2.2, "chỗ người duyệt").
-Dữ liệu công cụ đọc (bài mẫu, thông báo mẫu, lịch…): để trong data/ và mô tả ở data/DATA_CARD.md.
+Mọi công cụ chỉ đọc số liệu đã tổng hợp (snapshot JSON), không đọc dữ liệu từng học viên.
 """
-from tracing import tool, TOOLS  # noqa: F401  (TOOLS: danh sách công cụ đã đăng ký, dùng khi viết vòng lặp agent)
+import json
+import os
+
+from tracing import tool
 from backend.analytics.snapshot import read_snapshot
-from backend.analytics.workflow import create_report, resolve_lesson_id
+from backend.analytics.workflow import create_report
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+EXTRA_COUNTS_PATH = os.path.join(ROOT, 'data', 'extra_counts.json')
+
+
+def _totals(metrics: list[dict]) -> tuple[int, int, int]:
+    return (sum(m.get('graded_count') or 0 for m in metrics),
+            sum(m.get('incorrect_count') or 0 for m in metrics),
+            sum(m.get('ungraded_count') or 0 for m in metrics))
 
 
 @tool
 def lesson_report(lesson_id: str) -> dict | None:
-    """Báo cáo bài học. Input: mã bài; output: báo cáo tổng hợp hoặc None. Không tác động ra ngoài."""
-    snapshot = read_snapshot()
-    resolved = resolve_lesson_id(lesson_id, snapshot)
-    return create_report(resolved, snapshot) if resolved else None
+    """Báo cáo bài học. Input: mã bài; output: {"lesson_id", "metrics", "priority", "notice"} hoặc None.
+    Không tác động ra ngoài."""
+    return create_report(lesson_id, read_snapshot())
 
 
 @tool
-def search_example(query: str) -> list:
-    """(ví dụ — thay bằng công cụ của nhóm) Tra dữ liệu mẫu theo câu hỏi.
-    Input: câu hỏi (str). Output: danh sách đoạn {"code", "text"}. Không tác động ra ngoài."""
-    return [{"code": "VD-1", "text": "(ví dụ) đoạn dữ liệu giả — thay bằng dữ liệu thật của bài toán"}]
+def lesson_comparison(lesson_ids: list[str]) -> dict | None:
+    """So sánh các bài. Input: danh sách mã bài; output: {"lessons": [{"lesson_id", "graded_count",
+    "incorrect_count", "ungraded_count", "incorrect_rate"}], "delta_pp": {bài A: {bài B: tỷ lệ sai A trừ B,
+    điểm %}}} hoặc None nếu có bài không tồn tại. Không tác động ra ngoài."""
+    snapshot = read_snapshot()
+    rows = []
+    for lesson_id in dict.fromkeys(lesson_ids):
+        if lesson_id not in snapshot:
+            return None
+        graded, incorrect, ungraded = _totals(snapshot[lesson_id])
+        rows.append({'lesson_id': lesson_id, 'graded_count': graded, 'incorrect_count': incorrect,
+                     'ungraded_count': ungraded, 'incorrect_rate': incorrect / graded if graded else None})
+    delta = {a['lesson_id']: {b['lesson_id']: round((a['incorrect_rate'] - b['incorrect_rate']) * 100, 2)
+                              for b in rows
+                              if a is not b and a['incorrect_rate'] is not None and b['incorrect_rate'] is not None}
+             for a in rows}
+    return {'lessons': rows, 'delta_pp': delta}
+
+
+@tool
+def dataset_summary() -> dict:
+    """Tổng toàn bộ dữ liệu. Input: không có; output: {"lessons", "graded_count", "incorrect_count",
+    "correct_count", "ungraded_count", "incorrect_rate", "correct_rate"}. Mẫu số là lượt lần đầu có chấm
+    đúng/sai, không phải số học viên. Không tác động ra ngoài."""
+    snapshot = read_snapshot()
+    graded, incorrect, ungraded = _totals([m for metrics in snapshot.values() for m in metrics])
+    correct = graded - incorrect
+    return {'lessons': sorted(snapshot), 'graded_count': graded, 'incorrect_count': incorrect,
+            'correct_count': correct, 'ungraded_count': ungraded,
+            'incorrect_rate': incorrect / graded if graded else None,
+            'correct_rate': correct / graded if graded else None}
+
+
+@tool
+def dataset_extra() -> dict:
+    """Số đếm phụ trợ toàn dữ liệu (số dòng chat theo bài, số lượt trả lời). Input: không có;
+    output: dict hoặc {} nếu chưa xuất. Chỉ số đếm, không có nội dung chat. Không tác động ra ngoài."""
+    try:
+        with open(EXTRA_COUNTS_PATH, encoding='utf-8') as f:
+            data = json.load(f)
+    except (OSError, ValueError):
+        return {}
+    return data if isinstance(data, dict) else {}

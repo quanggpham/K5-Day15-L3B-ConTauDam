@@ -51,3 +51,4 @@ data/aggregate.json
 data/aggregate.v2.json
 data/kb_mapping.csv
 .opencode/
+data/extra_counts.json
