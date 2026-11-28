@@ -2,6 +2,8 @@
 import math
 import re
 
+from .input_guard import contains_sensitive
+
 
 def validate_recommendation(recommendation: dict, evidence: dict, sources: list[dict]) -> dict:
     if not isinstance(recommendation, dict) or set(recommendation) != {'kc_code', 'content', 'citations'}:
@@ -17,7 +19,7 @@ def validate_recommendation(recommendation: dict, evidence: dict, sources: list[
                  and s.get('kc_code') == evidence.get('kc_code') and isinstance(s.get('id'), str)}
     if not set(citations) <= permitted:
         raise ValueError('Trích dẫn không hợp lệ')
-    if re.search(r'\bL\d{4,}\b|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', content, re.IGNORECASE):
+    if contains_sensitive(content):
         raise ValueError('Có khả năng chứa thông tin cá nhân')
     allowed = set()
     for key in ('graded_count', 'incorrect_count', 'ungraded_count', 'incorrect_rate'):

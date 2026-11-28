@@ -1,7 +1,7 @@
 """Generate proposals only when source documents and a judge are available."""
 import json
 import math
-import re
+from ..security.input_guard import contains_sensitive
 from ..rag.retrieval import retrieve
 from ..security.output_guard import validate_recommendation
 
@@ -15,22 +15,27 @@ SYSTEM = ('Bạn hỗ trợ coach chuẩn bị ôn tập. Chỉ dùng số liệ
 
 
 def generate_recommendations(report: dict, documents: list[dict], model, judge) -> dict:
-    priority = report.get('priority', [])
+    priority = [row for row in report.get('priority', []) if row.get('status') != 'small_group'
+                and not row.get('insufficient_data')]
     if len(priority) > 3 and priority[2].get('incorrect_rate') == priority[3].get('incorrect_rate'):
         return {'status': 'tie_needs_review', 'recommendations': []}
     selected = priority[:3]
     if not selected:
         return {'status': 'insufficient_data', 'recommendations': []}
+    documents = [doc for doc in documents if doc.get('is_current') is True
+                 and doc.get('reviewed_by') and doc.get('reviewed_at')]
     evidence = []
     for row in selected:
         sources = retrieve(documents, report['lesson_id'], row['kc_code'], row['kc_code'].replace('_', ' '))
         if not sources:
             return {'status': 'missing_knowledge', 'recommendations': []}
-        if any(re.search(r'\bL\d{4,}\b|[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}', source['text'], re.IGNORECASE) for source in sources):
-            return {'status': 'unsafe_knowledge', 'recommendations': []}
         sources = [{key: source[key] for key in ('id', 'lesson_id', 'kc_code', 'text', 'approved')} for source in sources]
-        evidence.append({**row, 'lesson_id': report['lesson_id'], 'sources': sources})
+        evidence.append({key: row[key] for key in ('kc_code', 'graded_count', 'incorrect_count',
+                         'ungraded_count', 'incorrect_rate', 'insufficient_data') if key in row}
+                        | {'lesson_id': report['lesson_id'], 'sources': sources})
     user = json.dumps({'evidence': evidence}, ensure_ascii=False)
+    if contains_sensitive(user):
+        return {'status': 'unsafe_knowledge', 'recommendations': []}
     for attempt in range(2):
         try:
             result = model(SYSTEM, user if not attempt else user + '\nLần trước không hợp lệ; chỉ trả JSON đúng căn cứ.')

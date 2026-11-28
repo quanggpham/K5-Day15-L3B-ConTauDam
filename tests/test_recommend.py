@@ -4,7 +4,7 @@ from codebase.backend.agents.recommend import generate_recommendations
 
 def inputs():
     report = {'lesson_id':'L1','priority':[{'kc_code':'K1','graded_count':10,'incorrect_count':4,'ungraded_count':0,'incorrect_rate':0.4}]}
-    docs = [{'id':'D1','lesson_id':'L1','kc_code':'K1','approved':True,'text':'Giải thích khái niệm K1 bằng ví dụ.'}]
+    docs = [{'id':'D1','lesson_id':'L1','kc_code':'K1','approved':True,'is_current':True,'reviewed_by':'coach','reviewed_at':'2026-11-28','text':'Giải thích khái niệm K1 bằng ví dụ.'}]
     return report, docs
 
 
@@ -77,3 +77,11 @@ def test_tie_at_selection_boundary_requires_review():
     result = generate_recommendations(report, docs, unexpected, unexpected)
     assert result['status'] == 'tie_needs_review'
     assert result['recommendations'] == []
+
+
+def test_cosine_approval_without_coach_does_not_call_model():
+    report, docs = inputs()
+    docs[0]['reviewed_by'] = None
+    def unexpected(*args):
+        raise AssertionError('must not call')
+    assert generate_recommendations(report, docs, unexpected, unexpected)['status'] == 'missing_knowledge'

@@ -78,7 +78,7 @@ def test_invented_number_is_retried_once_then_falls_back_to_report(agent):
     agent.state['reply'] = 'KC1 sai 99% lượt.'
     out = agent.answer('Trong Day 05, KC nào sai nhiều nhất?')['output']
     assert len(agent.state['calls']) == 2
-    assert '99' in agent.state['calls'][1][1]
+    assert '99' not in agent.state['calls'][1][1]
     assert '"kc_code": "KC1"' in out and '99' not in out
 
 
@@ -107,3 +107,22 @@ def test_model_without_tokens_is_treated_as_not_connected(agent, monkeypatch):
                         lambda s, u: {'text': '[giả] 12', 'model': 'fake', 'tokens_in': 0, 'tokens_out': 0})
     out = agent.answer('Day 05 nên ôn gì?')['output']
     assert '"kc_code": "KC1"' in out and '[giả]' not in out
+def test_sensitive_cli_data_stays_out_of_model_input_and_response(agent):
+    for marker in ('coach@example.invalid', 'L123456', '2A202603952', 'sk-syntheticfixture000000000000'):
+        assert 'định danh' in agent.answer(f'Ôn Day 05, tham chiếu {marker}')['output']
+    assert agent.state['calls'] == []
+    agent.state['reply'] = 'Liên hệ coach@example.invalid.'
+    assert 'coach@example.invalid' not in agent.answer('Ôn Day 05')['output']
+    assert all('coach@example.invalid' not in prompt for _, prompt in agent.state['calls'])
+
+
+def test_cli_excludes_small_group_metrics(agent, monkeypatch):
+    report = {'priority': [], 'notice': '', 'metrics': [
+        {'kc_code': 'private_group', 'status': 'small_group', 'graded_count': 73},
+        {'kc_code': 'KC1', 'status': 'ok', 'graded_count': 15, 'incorrect_rate': 0.8},
+    ]}
+    monkeypatch.setattr(agent, 'lesson_report', lambda lesson_id: report)
+    agent.state['reply'] = 'KC1: 80% sai.'
+    assert agent.answer('Xem Day 05')['output'] == 'KC1: 80% sai.'
+    payload = agent.state['calls'][0][1]
+    assert 'private_group' not in payload and '73' not in payload

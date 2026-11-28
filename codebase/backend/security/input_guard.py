@@ -2,7 +2,20 @@
 import re
 
 
+_SENSITIVE = re.compile(
+    r'[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}|\bL\d{4,}\b|\b2A\d{7,}\b|'
+    r'\b(?:sk-[A-Za-z0-9_-]{16,}|gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{20,})\b',
+    re.IGNORECASE,
+)
+
+
+def contains_sensitive(text: str) -> bool:
+    return bool(_SENSITIVE.search(text))
+
+
 def refusal(text: str) -> str | None:
+    if contains_sensitive(text):
+        return 'Vui lòng bỏ thông tin định danh hoặc khóa khỏi câu hỏi.'
     value = ' '.join(text.casefold().split())
     if re.search(r'api[\s_-]*key|secret|mật khẩu|bí mật|bỏ qua.{0,30}(quy tắc|hướng dẫn)|ignore.{0,30}(instructions|rules)', value):
         return 'Không thực hiện chỉ dẫn vượt quy tắc hoặc tiết lộ bí mật.'
