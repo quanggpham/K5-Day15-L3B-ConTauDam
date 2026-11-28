@@ -23,3 +23,23 @@ def test_equal_rates_share_rank():
     ]}
     result = create_report('L1', snapshot)
     assert [(item['kc_code'],item['rank']) for item in result['priority']] == [('A',1),('B',1),('C',3)]
+
+
+from codebase.backend.analytics.workflow import resolve_lesson_id, resolve_lesson_ids
+
+SNAP = {'program-day05:a-b': [], 'program-day07:c-d': [], 'program-day12:e-f': []}
+
+
+def test_resolve_finds_every_lesson_mentioned_in_a_sentence():
+    text = 'So sánh tỷ lệ sai lần đầu của Day05 và Day 07 cho Lab Coach'
+    assert resolve_lesson_ids(text, SNAP) == ['program-day05:a-b', 'program-day07:c-d']
+
+
+def test_resolve_reports_dataset_wide_or_unspecified_question_as_empty():
+    assert resolve_lesson_ids('Tỷ lệ sai lần đầu toàn bộ dữ liệu là bao nhiêu?', SNAP) == []
+    assert resolve_lesson_ids('Tôi chưa chọn ngày hoặc bài học.', SNAP) == []
+
+
+def test_resolve_keeps_first_match_and_rejects_ambiguous_day():
+    assert resolve_lesson_id('Trong Day 07 nên ôn KC nào?', SNAP) == 'program-day07:c-d'
+    assert resolve_lesson_id('Day 99', SNAP) is None
