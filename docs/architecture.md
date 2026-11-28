@@ -40,7 +40,7 @@ Từng học viên **không** bị ảnh hưởng trực tiếp, vì hệ thốn
 | API | FastAPI, Pydantic | Kiểm JWT + allowlist, REST, phục vụ bản build tĩnh của frontend | `codebase/backend/api/`, `main.py` |
 | Workflow AI | LangGraph | Luồng cố định: chặn đầu vào → chỉ số → lỗ hổng → RAG → LLM → chặn đầu ra | `codebase/backend/agents/` |
 | Phân tích | DuckDB, Pandas | Tính chỉ số theo bài/KC, phát hiện lỗ hổng, gắn cờ mẫu nhỏ | `codebase/backend/analytics/` |
-| RAG | BM25 + lọc metadata (bài, KC) | Lấy đoạn bài giảng liên quan đến lỗ hổng | `codebase/backend/rag/` |
+| RAG | pgvector (multilingual-e5-small, cosine) + BM25 fallback, lọc metadata (bài, KC) | Lấy đoạn bài giảng liên quan đến lỗ hổng | `codebase/backend/rag/` |
 | Guardrails + JEV | Code tự viết + JEV (LLM-judge) | Chặn đầu vào, chặn đầu ra, eval offline | `codebase/backend/security/`, `codebase/backend/evaluation/` |
 | Schema | Pydantic | Định dạng đầu ra có cấu trúc của LLM, hợp đồng API | `codebase/backend/schemas/` |
 | LLM | Liquid API, LFM3-1.7B | Model đề xuất | gọi qua `codebase/ai.py`; JEV dùng TypeSafe API |
@@ -67,7 +67,7 @@ Xem sơ đồ 2 trong [architecture-diagram.html](architecture-diagram.html).
    - Đọc bảng tổng hợp (DuckDB) theo bài và `kc_code`: tỷ lệ sai ở lần trả lời đầu (`lan_thu = 1`), số lần làm lại, tỷ lệ hoàn thành, hành vi học.
    - Code (không phải LLM) xếp hạng ứng viên lỗ hổng.
    - KC có quá ít lượt trả lời vẫn hiện nhưng **gắn cờ "chưa đủ dữ liệu"** và **không được xếp ưu tiên**.
-4. **Truy xuất bài giảng.** BM25 + lọc metadata theo bài/KC trên Lesson KB.
+4. **Truy xuất bài giảng.** BM25 + lọc metadata theo bài/KC trên Lesson KB. Màn tìm căn cứ (`/api/knowledge/search`) dùng embedding pgvector (`match_knowledge_documents`) khi backend cài extra `embed`, rỗng thì quay về BM25; workflow đề xuất vẫn dùng BM25.
 5. **LLM đề xuất.** Đầu vào gồm số đã tổng hợp và đoạn bài giảng. LLM trả kết quả có cấu trúc (schema Pydantic): thứ tự ưu tiên, lý do, phương pháp giảng lại, và trích dẫn tới chỉ số cùng đoạn bài.
 6. **Chặn đầu ra.**
    - Code kiểm: mọi con số khớp DuckDB, mọi trích dẫn có trong ngữ cảnh đã đưa vào, đúng schema, không có `hv`.
