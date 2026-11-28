@@ -110,9 +110,9 @@ function passedText(passed: boolean | null): string {
 
 export function EvaluationTab({ detail }: { detail: RunDetail }) {
   const { evaluations, recommendations } = detail
-  const scored = recommendations.filter((rec) => rec.jev_score !== null && rec.jev_score !== undefined)
-  if (evaluations.length === 0 && scored.length === 0) {
-    return <AiUnavailable context="evaluation" aiStatus={detail.ai_status} aiStatusReason={detail.ai_status_reason} />
+  if (evaluations.length === 0 && recommendations.length === 0) {
+    return <EmptyState title="Chưa có bản nháp đã lưu"
+      description="Trong Copilot, chọn KC và tạo bản nháp. Khi thấy điểm JEV, bấm Lưu bản nháp để duyệt rồi quay lại tab này." />
   }
   return (
     <div className="space-y-6">
@@ -153,6 +153,11 @@ export function EvaluationTab({ detail }: { detail: RunDetail }) {
         <h3 id="eval-jev" className="text-lg font-semibold text-violet-950">
           Điểm JEV theo đề xuất
         </h3>
+        {recommendations.length > 0 && recommendations.every((rec) => rec.jev_score == null) && (
+          <p className="text-sm text-slate-700">
+            Các đề xuất đã lưu chưa có điểm cho phiên bản hiện tại. Để xem điểm mới, tạo bản nháp trong Copilot và lưu sau khi thấy điểm JEV.
+          </p>
+        )}
         {recommendations.length === 0 ? (
           <p className="text-sm text-slate-700">Báo cáo chưa có đề xuất nào nên chưa có điểm JEV.</p>
         ) : (

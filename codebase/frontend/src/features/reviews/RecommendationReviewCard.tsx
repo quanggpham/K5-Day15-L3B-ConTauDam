@@ -114,7 +114,7 @@ export function RecommendationReviewCard({ runId, rec, reviews, currentUserId, o
         <span className="text-xs text-slate-700">Phiên bản {version ?? NOT_RECORDED}</span>
       </header>
 
-      {demoSources.length > 0 && <p className="text-sm font-medium text-amber-900">Bản nháp AI demo · Chưa hiệu chuẩn JEV</p>}
+      {demoSources.length > 0 && <p className="text-sm font-medium text-amber-900">Bản nháp AI demo · Điểm JEV để tham khảo</p>}
       <p className="whitespace-pre-wrap break-words text-sm leading-6 text-slate-900">{rec.content ?? NOT_RECORDED}</p>
       {demoSources.length > 0 && <details className="text-sm">
         <summary className="cursor-pointer font-medium">Nguồn đã trích dẫn</summary>

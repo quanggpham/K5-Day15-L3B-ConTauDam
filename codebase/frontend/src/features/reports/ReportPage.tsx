@@ -1,7 +1,7 @@
 import { Download, ListChecks } from "lucide-react"
 import { Link } from "react-router-dom"
 import { ErrorState, LoadingState, stateButtonClass, stateSecondaryButtonClass } from "@/components/states"
-import { aiStatusLabel, runStatusLabel } from "@/features/history/labels"
+import { runStatusLabel } from "@/features/history/labels"
 import { NOT_RECORDED, formatDateTime } from "@/lib/format"
 import { apiErrorMessage, isApiError } from "@/services/api"
 import { notRecordedFieldLabel } from "./labels"
@@ -47,7 +47,7 @@ function ReportView({ detail }: { detail: RunDetail }) {
       <dl className="mt-3 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-2 lg:grid-cols-4">
         <Meta label="Tạo lúc" value={formatDateTime(detail.created_at)} />
         <Meta label="Trạng thái" value={runStatusLabel(detail.status)} />
-        <Meta label="Trạng thái AI" value={detail.ai_status ? aiStatusLabel(detail.ai_status) : NOT_RECORDED} />
+        <Meta label="Có điểm JEV" value={`${detail.recommendations.filter((rec) => rec.jev_score != null).length} / ${detail.recommendations.length} đề xuất đã lưu`} />
         <Meta label="Phiên bản snapshot" value={detail.snapshot_version ?? NOT_RECORDED} />
       </dl>
 
