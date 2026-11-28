@@ -71,7 +71,7 @@
     <div class="card soft">
       <h2>Trích dẫn người dùng</h2>
       <p class="small" style="margin-bottom:6px">Chưa có phỏng vấn Lab Coach (nguồn phỏng vấn chưa đạt ngưỡng).</p>
-      <p><span class="ph">[chờ phỏng vấn Lab Coach]</span></p>
+      <p>Chưa có — trích dẫn hiện chỉ là ví dụ nguyên văn từ data (<code>evidence/summary.md</code> §3).</p>
     </div>
   </div>
   <div class="grid g3">
@@ -89,14 +89,16 @@
   <h1>Impact và các hướng đã cân nhắc</h1>
   <div class="card" style="margin-bottom:20px">
     <h2>Bảng impact rút gọn (người × lần / tháng × phút)</h2>
-    <p><span class="ph">[chờ spec §2]</span></p>
+    <p>Có nguồn: 721 tài khoản học viên hưởng lợi gián tiếp · 13 bài có data 05–25/11 = 13 lần coach phải chọn nội dung ôn (<code>data/DATA_CARD.md</code>).</p>
+    <p class="small">Chưa đo: số coach, phút tổng hợp tay mỗi bài → impact / tháng chưa tính được (cần phỏng vấn coach).</p>
   </div>
   <div class="card" style="margin-bottom:20px">
     <h2>Hướng đã loại và lý do</h2>
-    <p><span class="ph">[chờ spec §2]</span></p>
+    <p>Trợ giảng hỏi–đáp: 1.259/1.260 dòng chat không có <code>lesson_id</code>, không đo được chất lượng; chat tự do dễ bị prompt injection.</p>
+    <p>Trợ lý Discord: không có data hay người dùng trong repo.</p>
   </div>
   <p class="small">Số có sẵn để đối chiếu: 424 / 2.478 lượt lần đầu sai (17,11%) trên 160 KC của 13 bài (<code>evidence/data-mining.md</code> §3).</p>
-  <div class="src">Nguồn: <code>spec.md</code> §2 (hiện còn trống) · <code>evidence/data-mining.md</code> §3</div>
+  <div class="src">Nguồn: <code>spec.md</code> §2 · <code>evidence/data-mining.md</code> §3</div>
 </section>
 
 <!-- 3. Giải pháp -->
@@ -170,7 +172,7 @@
       <p class="small" style="margin-top:10px">Đã sửa nhóm "mất số bắt buộc": 0/5 → 4/5. Lỗi còn lại: model xếp nhầm KC ít sai lên đầu (B02, B04), đồng hạng (B08), kết luận từ số dòng chat (B10).</p>
     </div>
   </div>
-  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code> (chờ), <code>eval/run-N.csv</code></div>
+  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code>, <code>eval/run-1.csv</code>, <code>eval/run-2.csv</code></div>
 </section>
 
 <!-- 6. Chi phí -->
@@ -189,8 +191,8 @@
     <tr><td>Cơ sở (10 coach)</td><td>LFM3 $0.11 · Sonnet 5.5 $5.17 / tháng</td></tr>
     <tr><td>Cao (20 coach)</td><td>LFM3 $0.23 · Sonnet 5.5 $10.34 / tháng</td></tr>
   </table>
-  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: <span class="ph">[chờ spec §2]</span></p>
-  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> (chờ) · <code>cost/simulate-N.csv</code> (chờ) · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
+  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: chưa tính được vì chưa đo phút tiết kiệm của coach — chi phí model không phải rào cản.</p>
+  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> · <code>cost/simulate-1.csv</code> · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
 </section>
 
 <!-- 7. Kết luận -->
@@ -229,8 +231,8 @@
       <p class="small">Nguồn: <code>spec.md</code> §4, §6; <code>README.md</code></p></div>
   </div>
   <p style="margin-top:22px">Lỗi còn lại sau lượt 2: (1) để code chọn và xếp hạng KC, model chỉ diễn đạt (B02, B04, B08); (2) kiểm sau model KC nêu ra khớp thứ hạng; (3) chạy mỗi bản nhiều lần để tách nhiễu. Chưa có phản hồi người dùng thử.</p>
-  <p class="small">Kiểm lại bằng phỏng vấn Lab Coach: <span class="ph">[chờ phỏng vấn]</span></p>
-  <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 (chờ) · <code>validation/log.md</code></div>
+  <p class="small">Việc tuần tới: phỏng vấn ≥3 Lab Coach để đo phút tiết kiệm và kiểm lại pain.</p>
+  <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 · <code>validation/log.md</code></div>
 </section>
 
 </body>
