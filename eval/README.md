@@ -38,8 +38,8 @@
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | `run-1@20261128-130814` | lfm3-1.7b | Code `c92e73b`: CLI tìm mọi bài trong câu, model viết câu trả lời từ số tổng hợp, code kiểm từng con số | __/20 *(chờ chấm)* | | |
-| 2 | | | | __/__ | | |
+| 1 | `run-1@20261128-130814` | lfm3-1.7b | Code `c92e73b`: CLI tìm mọi bài trong câu, model viết câu trả lời từ số tổng hợp, code kiểm từng con số | 13/20 | 65% | chưa (cần ≥ 90%) |
+| 2 | `run-2@20261128-140358` | lfm3-1.7b | Code có cả PR #23 (`333aa5a`) và lần sửa nhóm "mất số bắt buộc" (`codebase/agent.py`, `input_guard.py`, tạo lại `data/extra_counts.json`, prompt): số bù của tỷ lệ người hỏi đưa, báo cáo dự phòng giữ phân số, từ chối nhúng giữ phân số, thêm phân số từng bài khi so sánh | 15/20 (bản chấm nháp, chờ nhóm duyệt) | 75% | chưa (cần ≥ 90%) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
