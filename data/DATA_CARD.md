@@ -22,10 +22,10 @@
 
 | | |
 |---|---|
-| Dùng để làm gì | nguồn cho bước truy xuất bài giảng (BM25 và lọc metadata `lesson_id`, `kc_code`) |
-| Từ đâu | chưa chốt: nhóm tự viết lại, hoặc trích từ tài liệu khoá được BTC cho phép |
-| Xử lý những bước gì | chưa có |
-| Số dòng / số đoạn | chưa có |
-| Phiên bản / ngày lấy | chưa có |
-| Nhãn | ghi khi có nguồn |
+| Dùng để làm gì | nguồn cho bước truy xuất bài giảng (embedding pgvector, fallback BM25; lọc metadata `lesson_id`, `kc_code`) |
+| Từ đâu | notes + quiz do thành viên nhóm (MinPhuc) tự soạn (xác nhận 2026-11-28). Notes được mở rộng bằng agent từ notes gốc + kiến thức chung, không thêm số liệu mới (`docs/notes-detailed/`); Day 06/08 soạn từ quiz, chưa có slide gốc |
+| Xử lý những bước gì | `chunk_notes`/`chunk_quiz` → đề xuất ánh xạ KC bằng BM25 (`data/kb_mapping.csv`) → `scripts/export_kb_chunks.py` → embed `intfloat/multilingual-e5-small` (384 chiều, chuẩn hoá) bằng `kaggle/embed_kb.py` → `scripts/load_kb_embeddings.py` |
+| Số dòng / số đoạn | 684 đoạn từ 26 nguồn (175 notes, 509 quiz), 2026-11-28 |
+| Phiên bản / ngày lấy | 2026-11-28 |
+| Nhãn | `lesson_id`/`kc_code` là đề xuất máy, chưa duyệt; mọi đoạn `approved=false` nên chưa được truy xuất cho tới khi coach duyệt |
 | Giới hạn | khi chưa có KB, hệ thống vẫn nêu lỗ hổng từ số liệu và ghi rõ "chưa có căn cứ bài giảng" |
