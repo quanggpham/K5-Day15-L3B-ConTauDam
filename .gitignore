@@ -50,3 +50,4 @@ data/kb_embeddings.jsonl
 data/aggregate.json
 data/aggregate.v2.json
 data/kb_mapping.csv
+.opencode/
