@@ -17,7 +17,8 @@ from tracing import note
 SYSTEM = (
     'Bạn hỗ trợ Lab Coach chọn nội dung cần ôn tập. Trả lời tiếng Việt, ngắn gọn (2–5 câu), không đánh số dòng.\n'
     'CHỈ dùng số liệu trong DỮ LIỆU (JSON) bên dưới. Ghi mã kiến thức (kc_code), số lượt sai/tổng lượt được chấm '
-    '(incorrect_count/graded_count) và tỷ lệ phần trăm có sẵn (incorrect_rate_pct, correct_rate_pct) đúng như dữ liệu.\n'
+    '(incorrect_count/graded_count) và tỷ lệ phần trăm có sẵn (incorrect_rate_pct, correct_rate_pct) đúng như dữ liệu. '
+    'Mỗi kiến thức hay bài được nhắc luôn viết theo dạng "tên: x/N lượt sai (y%)", ví dụ "kc_a: 12/15 lượt sai (80%)".\n'
     'Mẫu số là lượt trả lời lần đầu được chấm đúng/sai, không phải số học viên. KC có enough_sample=false '
     '(dưới 10 lượt được chấm) chỉ để tham khảo, không xếp ưu tiên. Các KC cùng rank là đồng hạng.\n'
     'Không tự tính số mới: chênh lệch giữa các bài có sẵn trong "delta_pp" (điểm phần trăm). '
