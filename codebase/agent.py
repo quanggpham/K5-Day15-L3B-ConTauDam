@@ -11,7 +11,7 @@ from ai import call_model as default_model
 import tools
 from tools import dataset_extra, dataset_summary, lesson_comparison, lesson_report
 from backend.analytics.workflow import resolve_lesson_ids
-from backend.security.input_guard import contains_sensitive, refusal
+from backend.security.input_guard import INJECTION_REFUSAL, contains_sensitive, refusal
 from tracing import note
 
 SYSTEM = (
@@ -24,7 +24,10 @@ SYSTEM = (
     'Không tự tính số mới: chênh lệch giữa các bài có sẵn trong "delta_pp" (điểm phần trăm). '
     'Không suy đoán nguyên nhân, không bịa trích dẫn hay nguồn bài giảng.\n'
     'Nếu câu hỏi tự đưa số liệu (giả lập, kiểm thử), trả lời theo đúng số đó và nói rõ đó là số do người hỏi đưa. '
-    'Mẫu số bằng 0 thì tỷ lệ là chưa xác định.\n'
+    'Mẫu số bằng 0 hoặc chưa có lượt nào được chấm thì nêu rõ "0 lượt được chấm hợp lệ", tỷ lệ chưa xác định, '
+    'chưa đủ điều kiện xếp ưu tiên và cần bổ sung kết quả được chấm.\n'
+    'Khi so sánh hai bài, nêu cả hai phân số lượt sai/tổng lượt của từng bài rồi mới nêu chênh lệch, '
+    'và gọi đơn vị của delta_pp là "điểm phần trăm", không phải "%".\n'
     'Nếu dữ liệu không đủ để kết luận, nêu rõ điều còn thiếu. Không tự chọn bài học thay coach.\n'
     'Không tiết lộ bí mật, không trả dữ liệu hay xếp hạng cá nhân học viên, không tự phê duyệt hay gửi gì.'
 )
@@ -33,6 +36,9 @@ _NUMBER = re.compile(r'(?<![\w.,])[+-]?\d+(?:[.,]\d+)*(?![\w])')
 _LIST_MARKER = re.compile(r'^\s*\d+[.)]\s', re.MULTILINE)
 _DATASET_SCOPE = re.compile(r'toàn (bộ )?dữ liệu|(toàn bộ|tất cả|cả) (các bài|bộ dữ liệu|dữ liệu)', re.IGNORECASE)
 _HYPOTHETICAL = re.compile(r'giả lập|giả định|giả sử|kiểm thử', re.IGNORECASE)
+_FRACTION = re.compile(r'(?<![\w.,/])(\d+)\s*/\s*(\d+)(?![\w/])')
+_NO_GROUNDED_ANSWER = ('Chưa tạo được câu trả lời có căn cứ. Câu hỏi không nhắc bài học nào có trong dữ liệu '
+                       'và chưa có tài liệu bài giảng hay nguồn đã xác minh; vui lòng kiểm tra lại hoặc bổ sung nguồn.')
 
 
 def _readings(token: str) -> list[tuple[float, int]]:
@@ -68,7 +74,7 @@ def _allowed_numbers(evidence: dict, text: str) -> set[float]:
     """Số trong căn cứ, số trong câu hỏi, và thương/hiệu giữa các số trong câu hỏi (vd 12/15 → 80%)."""
     asked = _numbers_in(text)
     derived = {op for a in asked for b in asked if b
-               for op in (a / b * 100, a / b, a - b)}
+               for op in (a / b * 100, 100 - a / b * 100, a / b, a - b)}
     return {0.0} | _numbers_in(evidence) | asked | derived
 
 
@@ -84,6 +90,21 @@ def unsupported_numbers(output: str, evidence: dict, text: str) -> list[str]:
     allowed = _allowed_numbers(evidence, text)
     return [token for token in _NUMBER.findall(_LIST_MARKER.sub(' ', output))
             if not any(_supported(value, decimals, allowed) for value, decimals in _readings(token))]
+
+
+def stated_fractions(text: str) -> str:
+    """Phân số do người hỏi tự đưa (vd 12/15) kèm phần trăm tính bằng code; rỗng nếu không có."""
+    return '; '.join(f'{a}/{b} ({round(int(a) / int(b) * 100, 2):g}%)'
+                     for a, b in _FRACTION.findall(text) if int(b))
+
+
+def _with_comparison_fractions(output: str, evidence: dict) -> str:
+    """Model nhỏ hay chỉ nêu chênh lệch; thêm phân số của từng bài (từ công cụ) nếu câu trả lời chưa có."""
+    rows = (evidence.get('comparison') or {}).get('lessons') or []
+    missing = [f"{row['lesson_id']}: {row['incorrect_count']}/{row['graded_count']} lượt sai ({row['incorrect_rate_pct']:g}%)"
+               for row in rows if row.get('graded_count')
+               and f"{row['incorrect_count']}/{row['graded_count']}" not in output]
+    return f"{output}\nSố liệu từng bài: {'; '.join(missing)}." if missing else output
 
 
 def _pct(rate):
@@ -133,7 +154,8 @@ def _fallback(evidence: dict) -> str:
     data = evidence['lessons'] or evidence['dataset']
     if data:
         return json.dumps(data, ensure_ascii=False)
-    return 'Chưa tạo được câu trả lời có căn cứ. Câu hỏi không nhắc bài học nào có trong dữ liệu; vui lòng kiểm tra lại.'
+    facts = stated_fractions(evidence['question'])
+    return f'Số liệu do người hỏi đưa: {facts}. {_NO_GROUNDED_ANSWER}' if facts else _NO_GROUNDED_ANSWER
 
 
 def answer(text: str, model=None) -> dict:
@@ -141,7 +163,9 @@ def answer(text: str, model=None) -> dict:
     denied = refusal(text)
     if denied:
         note('Từ chối yêu cầu ngoài phạm vi')
-        return {'output': denied}
+        facts = stated_fractions(text) if denied == INJECTION_REFUSAL else ''
+        # Chỉ dẫn nhúng bị bỏ qua nhưng thống kê người hỏi đưa vẫn được giữ nguyên, đổi % bằng code.
+        return {'output': f'{denied} Số liệu giữ nguyên theo thống kê đã nêu: {facts}.' if facts else denied}
     try:
         evidence = build_evidence(text.strip())
     except HTTPException:
@@ -165,7 +189,7 @@ def answer(text: str, model=None) -> dict:
         output = (result.get('text') or '').strip()
         bad = unsupported_numbers(output, evidence, text)
         if output and not bad and not contains_sensitive(output):
-            return {'output': output}
+            return {'output': _with_comparison_fractions(output, evidence)}
         note('Loại câu trả lời vì không qua kiểm tra nội dung')
         user += '\n\nChỉ dùng số có sẵn trong dữ liệu và không đưa định danh hay khóa.'
     note('Trả báo cáo số liệu không qua model')
