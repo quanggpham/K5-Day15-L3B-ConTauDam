@@ -100,9 +100,10 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - So với impact / người / tháng (§2): đáng làm không, vì sao:
 
 ## §9. Rủi ro & an toàn
-- Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
-- AI **không được** làm gì kể cả khi người dùng yêu cầu:
-- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào:
+*(Bản nháp từ code, nhóm xác nhận trước khi nộp.)*
+- Dữ liệu: BTC đã ẩn danh; snapshot chỉ có số tổng hợp theo bài/KC, không có mã học viên; trên web KC dưới 5 học viên bị ẩn toàn bộ số. Không thu dữ liệu mới. Không đưa dữ liệu từng dòng, nội dung chat hay mã học viên lên model; model chỉ nhận số tổng hợp và câu hỏi của coach.
+- AI **không được** làm gì kể cả khi người dùng yêu cầu: trả danh tính hay xếp hạng học viên; tiết lộ bí mật hay API key; tự phê duyệt hay gửi tin/lịch; bịa trích dẫn hoặc số liệu.
+- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào: học viên (ôn lệch trọng tâm; bị lộ kết quả cá nhân) và coach (mất thời gian vì kết luận sai). Chặn bằng: KC dưới 10 lượt chấm không xếp ưu tiên, kiểm từng con số bằng code, coach duyệt từng đề xuất. Kiểm số chỉ bắt số không có trong căn cứ, không bắt số có thật nhưng gán nhầm KC hay kết luận sai (thấy ở `eval/run-1.csv`), nên coach vẫn phải đọc lại. Rủi ro còn mở: mọi tài khoản Supabase Auth đều vào được (`f71c525`), cần khoá đăng ký tự do.
 
 ## §10. Phân công & changelog
 - Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
