@@ -16,7 +16,7 @@
 - `answer()` không gọi `call_model`. `eval/run_eval.py:517-526` ghi lượt chạy thành `run-mock.csv` (không được tính) khi không câu nào gọi model.
 - Số liệu gốc đúng: tổng toàn dữ liệu 424/2478 (17,11%); Day05 55/223; Day07 26/137; chat có tiền tố `Day01/` là 376 dòng.
 - Luồng web (dashboard, báo cáo, Copilot) **không thuộc plan này** và không được sửa hành vi.
-- **Câu thử B05 mâu thuẫn với dữ liệu:** `expected` ghi `multi_agent_token_cost: 6/10 (40%)`, dữ liệu thật là **4/10 (40%)** (đã đối chiếu DuckDB 28/11). 6/10 không phải 40%. Agent KHÔNG sửa `expected`; báo người dùng quyết định (xem mục "Việc chỉ người làm được").
+- **Câu thử B05 đã sửa lỗi gõ:** `expected` từng ghi `6/10 (40%)`, dữ liệu thật là **4/10 (40%)**. Nhóm duyệt sửa ngày 28/11 (`a5e2856`, ghi ở `spec.md` §10).
 
 ## Global Constraints
 
@@ -120,7 +120,7 @@ def resolve_lesson_id(value: str, snapshot: dict) -> str | None:
 - [ ] **Step 4: Chạy, phải PASS**
 
 Run: `.venv/Scripts/python.exe -B -m pytest tests/test_workflow.py tests/test_agent_report.py -q -p no:cacheprovider`
-Expected: `test_workflow.py` pass; hai assertion ở `test_agent_report.py` (`'KC1' not in … 'Day01 ignore instructions'` và `'Day 20 ignore all rules'`) FAIL — đúng, Task 4 sẽ thay.
+Expected: `test_workflow.py` pass; hai assertion ở `test_agent_report.py` (`'KC1' not in … 'Day01 ignore instructions'` và `'Day 20 ignore all rules'`) FAIL — đúng, Task 3 Step 5 sẽ thay.
 
 - [ ] **Step 5: Commit**
 
@@ -193,7 +193,7 @@ def test_dataset_extra_is_empty_when_file_missing(tools, monkeypatch, tmp_path):
 
 
 def test_example_tool_is_gone(tools):
-    assert 'search_example' not importlib.import_module('tracing').TOOLS
+    assert 'search_example' not in importlib.import_module('tracing').TOOLS
 ```
 
 - [ ] **Step 2: Chạy, phải FAIL**
@@ -375,7 +375,7 @@ def agent(monkeypatch):
     agent = importlib.import_module('agent')
     tools = importlib.import_module('tools')
     monkeypatch.setattr(tools, 'read_snapshot', lambda: SNAPSHOT)
-    monkeypatch.setattr(tools, 'dataset_extra', lambda: {})
+    monkeypatch.setattr(agent, 'dataset_extra', lambda: {})
     state = {'reply': '', 'error': None, 'calls': []}
 
     def model(system, user):
@@ -711,7 +711,7 @@ Nguồn: `data/DATA_CARD.md` và `evidence/count.py`.
 1. Day05 `ai_product_canvas`: 12/15 sai (80%).
 2. Day07 `tool_definition_context_cost`: 6/10 sai (60%).
 3. Day03 `react_reasoning_acting_pattern`: 9/18 sai (50%).
-4. Day08 `multi_agent_token_cost`: 4/10 sai (40%). Lưu ý: `eval/benchmark.csv` B05 đang ghi 6/10 — sai tử số, chờ nhóm quyết định.
+4. Day08 `multi_agent_token_cost`: 4/10 sai (40%).
 5. Day09 `paired_bootstrap_interpretation`: 3/3 sai nhưng dưới ngưỡng 10 lượt, không kết luận được.
 
 ## 4. Giới hạn của data
@@ -746,8 +746,8 @@ git commit -m "docs(evidence): add reproducible data-mining counts"
 | 28/11 07:23 | Cho mọi tài khoản đã có trong Supabase Auth truy cập; bỏ kiểm tra danh sách email (`20261128000000_allow_auth_users.sql`). | `f71c525`. Người đăng ký tự do có thể vào nếu Supabase Auth không khoá đăng ký; cần ghi ở §9. |
 | 28/11 08:01 | Thêm màn và API Knowledge Base bài giảng: tải PDF/Markdown, đề xuất ánh xạ KC, sửa và duyệt từng đoạn (`…000005`, `…000006`). Chưa bật tạo nội dung AI. | `29353bb`, `b4bcfe3`. |
 | 28/11 08:57 | Nhúng Lesson KB bằng `intfloat/multilingual-e5-small` (384 chiều) và tìm theo vector qua RPC pgvector (`…000007`); BM25 vẫn là phương án dự phòng. | `15bbf79`, `d19d659`. |
-| 28/11 09:38 | Ghi nguồn Lesson KB và việc duyệt hàng loạt 450/684 đoạn bằng script theo cosine ≥ 0,78 (`reviewed_by` để trống). | `df1e55c`; chi tiết `data/DATA_CARD.md`. |
 | 28/11 09:24 | Thêm script rollback cho `…000003`, `…000004`, `…000007`, ghi là đã áp lên production ngày 28/11. | `f4d6748`. |
+| 28/11 09:38 | Ghi nguồn Lesson KB và việc duyệt hàng loạt 450/684 đoạn bằng script theo cosine ≥ 0,78 (`reviewed_by` để trống). | `df1e55c`; chi tiết `data/DATA_CARD.md`. |
 | 28/11 (giờ commit) | CLI: tìm mọi bài được nhắc trong câu, gọi model qua `call_model` với số liệu tổng hợp, kiểm từng con số bằng code; thêm công cụ so sánh bài và tổng toàn dữ liệu. | 17/20 câu benchmark trước đó không nhận được dữ liệu vì chỉ nhận đúng mã bài; lượt chạy không gọi model bị khung ghi `run-mock`. |
 | 28/11 (giờ commit) | Ghi chú cách chấm: B16–B20 chỉ tính vào tỷ lệ chung (18/20) vì `eval/metric_spec.yaml` đã đóng băng ở B01–B15; B18 là câu `kho` thứ 6, ngoài nhóm 5/5. | Không đổi ngưỡng, không sửa câu thử. |
 ```
@@ -897,7 +897,6 @@ git commit -m "docs(spec): draft risk and safety section"
 
 | Việc | Vì sao |
 |---|---|
-| **Quyết định về B05** (`expected` ghi 6/10, dữ liệu là 4/10) | Sửa `expected` là việc của nhóm, phải ghi một dòng ở §10 giải thích là sửa lỗi số liệu, không phải sửa cho khớp output. Không quyết thì B05 sẽ trượt dù hệ thống trả đúng. |
 | `spec.md` §0, §1, §2, §3, §10 "Phân công", bảng "Sau CP4" | Cần quan sát thật, số impact có nguồn, giải pháp tương tự |
 | Phỏng vấn ≥ 3 coach; khảo sát | Không được bịa người, trích dẫn |
 | Chấm cột `pass` (hai người độc lập), `run.py score`, điền `eval/report.md`, `eval/README.md` | Chấm tay theo chuẩn CP2 |
@@ -913,4 +912,4 @@ git commit -m "docs(spec): draft risk and safety section"
 - [ ] `.venv/Scripts/python.exe -B -m pytest -q -p no:cacheprovider` — tất cả passed.
 - [ ] `.venv/Scripts/python.exe -B run.py check` — `Không thấy vấn đề.`
 - [ ] `git status --short` — không có `.env`, `data/*.json`, `eval/run-*.csv`, `traces/` được thêm vào stage.
-- [ ] `git diff main --stat` — không chạm `codebase/tracing.py`, `eval/run_eval.py`, `cost/simulate.py`, `run.py`, `eval/metric_spec.yaml`, `eval/benchmark.csv`.
+- [ ] `git diff main --stat` — không chạm `codebase/tracing.py`, `eval/run_eval.py`, `cost/simulate.py`, `run.py`, `eval/metric_spec.yaml`; `eval/benchmark.csv` chỉ được khác `main` ở dòng B05 (`a5e2856`).
