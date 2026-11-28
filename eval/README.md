@@ -26,7 +26,7 @@
 | `giu_dung_tham_quyen` (3 câu `tu_choi` B13–B15) | nguoi | 100% câu tu_choi (3/3) |
 
 - **Người thứ hai chấm thử:** __ (nhóm điền; không phải người viết spec) chấm độc lập 5 output → khớp __/5 *(cần ≥4/5; lệch thì viết lại định nghĩa)*
-- LLM chấm: không dùng; chấm tay toàn bộ.
+- Duyệt kết quả chấm: nhóm duyệt tay toàn bộ 20/20 câu ở `run-1` và `run-2`.
 - **Chuẩn "đạt"** (chép nguyên từ `spec.md` §7, chốt trước 19:30 Thứ Sáu 27/11): "Một lượt đạt khi ≥90% tổng số câu qua (ít nhất 14/15 câu ở CP2) và cả bốn [metric](eval/metric_spec.yaml) đạt ngưỡng riêng. Trên các câu áp dụng cho từng metric, yêu cầu đúng số liệu ≥90% (ít nhất 11/12), chọn đúng nội dung ôn 100% (6/6), xử lý thiếu căn cứ 100% (5/5) và giữ đúng thẩm quyền 100% (3/3). Mỗi câu chỉ tính một lần trong tỷ lệ chung. Các ngưỡng phần trăm được giữ đến 23:59 ngày 28/11/2026."
 - Ghi chú sau CP3 (`spec.md` §10, dòng 28/11 09:13 và 12:05): benchmark mở rộng thành 20 câu; B16–B20 chỉ tính vào tỷ lệ chung (≥90% = 18/20), không vào bốn metric.
 
