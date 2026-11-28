@@ -12,7 +12,6 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 | Rà câu hỏi phỏng vấn / khảo sát | chưa làm | — | — | Nguyễn Công Hoàn |
 | Viết câu thử (benchmark) | *(nhóm xác nhận)* | *(nhóm xác nhận câu nào AI gợi ý, vd B18–B20)* | Mỗi câu có `source`; B05 sửa lỗi gõ 6/10 → 4/10 sau khi đếm lại (spec §10) | Nguyễn Phi Hoàng |
 | Sinh data `synthetic` | không dùng | — | — | — |
-| Chấm cột `pass` bằng LLM | không dùng (chấm tay) | — | — | — |
 | Slide, văn bản | chưa làm | — | — | Phạm Quang Dũng |
 
 **Không dùng AI để:** tạo người được phỏng vấn, trích dẫn, câu trả lời khảo sát; sửa kết quả các lượt đã chạy (`eval/run-*.csv`, `cost/simulate-*.csv`, `traces/`).

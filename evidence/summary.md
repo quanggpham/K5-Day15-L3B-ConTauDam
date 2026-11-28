@@ -14,8 +14,8 @@
 ## 2. Số chính
 
 - Đào data: 424/2.478 lượt lần đầu sai (17,11%); 90/160 KC đủ mẫu ≥ 10 lượt chấm (56,25%) · cách đếm: `evidence/count.py`
-- Phỏng vấn: __/3 người gặp *(n nhỏ không ghi %)* · số lần / tháng: P1 __, P2 __, P3 __ · mỗi lần mất __–__ phút
-- Khảo sát: n = __ · __/__ (__%) …
+- Phỏng vấn: chưa làm (0/3 người).
+- Khảo sát: chưa làm (n = 0).
 
 Phỏng vấn nhiều vai thì đếm theo từng vai, không cộng chung.
 
@@ -27,11 +27,13 @@ Phỏng vấn nhiều vai thì đếm theo từng vai, không cộng chung.
 
 ## 3. ≥5 trích dẫn hoặc ví dụ nguyên văn (có nguồn, bỏ tên)
 
-1. "…" — P_ / dòng data __ / phiếu khảo sát __
-2.
-3.
-4.
-5.
+Chưa có trích dẫn lời người dùng (chưa phỏng vấn, chưa khảo sát). Năm ví dụ dưới đây là số đếm từ data, chép nguyên văn từ `evidence/data-mining.md` §4 (lượt trả lời lần đầu đã chấm, đếm bằng `evidence/count.py`):
+
+1. Day05 `ai_product_canvas`: 12/15 sai (80%). — `evidence/data-mining.md` §4, ví dụ 1
+2. Day07 `tool_definition_context_cost`: 6/10 sai (60%). — §4, ví dụ 2
+3. Day03 `react_reasoning_acting_pattern`: 9/18 sai (50%). — §4, ví dụ 3
+4. Day08 `multi_agent_token_cost`: 4/10 sai (40%). — §4, ví dụ 4
+5. Day09 `paired_bootstrap_interpretation`: 3/3 sai (100%) nhưng dưới ngưỡng 10 lượt, không kết luận được. — §4, ví dụ 5
 
 ## 4. Các nguồn có khớp nhau không
 

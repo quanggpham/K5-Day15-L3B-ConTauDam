@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>LearningPulse — Demo slides (ConTauDam)</title>
+<meta name="viewport" content="width=1280">
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  :root {
+    --ink: #1b2430; --muted: #5b6676; --line: #d9dfe7; --bg: #ffffff;
+    --accent: #1f5fbf; --accent-soft: #e8f0fc; --ok: #1a7f4b; --warn-bg: #fff3a3; --warn-ink: #6b4e00;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; background: #e9ecf1; color: var(--ink);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif; }
+  .slide { position: relative; width: 1280px; height: 720px; margin: 0 auto 24px; background: var(--bg);
+    padding: 44px 64px 56px; overflow: hidden; page-break-after: always; break-after: page; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .num { position: absolute; top: 40px; right: 64px; font-size: 18px; color: var(--muted); }
+  .kicker { font-size: 16px; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 6px; }
+  h1 { font-size: 40px; line-height: 1.15; margin: 0 0 22px; max-width: 1050px; }
+  p, li { font-size: 22px; line-height: 1.4; margin: 0 0 10px; }
+  ul { margin: 0; padding-left: 26px; }
+  .src { position: absolute; left: 64px; bottom: 20px; right: 64px; font-size: 14px; color: var(--muted);
+    border-top: 1px solid var(--line); padding-top: 8px; }
+  .src code, code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: .92em; }
+  .grid { display: grid; gap: 24px; }
+  .g2 { grid-template-columns: 1fr 1fr; }
+  .g3 { grid-template-columns: 1fr 1fr 1fr; }
+  .g4 { grid-template-columns: repeat(4, 1fr); }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 18px 22px; background: #fff; }
+  .card.soft { background: var(--accent-soft); border-color: #c5d7f3; }
+  .card h2 { font-size: 20px; margin: 0 0 8px; color: var(--accent); }
+  .big { font-size: 64px; font-weight: 800; line-height: 1; color: var(--accent); }
+  .big small { font-size: 22px; font-weight: 600; color: var(--muted); }
+  .lbl { font-size: 18px; color: var(--muted); margin-top: 6px; }
+  /* Chỗ trống chờ số: vàng đậm để không thể bỏ sót */
+  .ph { background: var(--warn-bg); color: var(--warn-ink); font-weight: 700; padding: 1px 8px; border-radius: 4px;
+    outline: 2px dashed #d4a300; outline-offset: 1px; white-space: nowrap; }
+  table { border-collapse: collapse; width: 100%; font-size: 19px; }
+  th, td { border: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+  th { background: var(--accent-soft); }
+  .tag { display: inline-block; font-size: 15px; font-weight: 700; padding: 2px 10px; border-radius: 999px; background: var(--accent); color: #fff; margin-right: 8px; }
+  .tag.hard { background: #b4531a; }
+  .q { font-size: 19px; color: var(--ink); }
+  .exp { font-size: 19px; color: var(--ok); font-weight: 600; }
+  .small { font-size: 17px; color: var(--muted); }
+  img.flow { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; }
+  .verdict { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .verdict .card { text-align: center; }
+  .verdict .card h2 { font-size: 30px; }
+  @media print {
+    html, body { background: #fff; }
+    .slide { margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+<!-- 1. Người dùng & pain -->
+<section class="slide" id="s1">
+  <div class="num">1 / 8</div>
+  <p class="kicker">Người dùng và nỗi đau</p>
+  <h1>Lab Coach AI20K phải đoán nên ôn lại kiến thức nào trước buổi học</h1>
+  <div class="grid g2" style="margin-bottom:20px">
+    <div>
+      <p><b>Ai:</b> giảng viên và Lab Coach AI20K.</p>
+      <p><b>Việc đang làm:</b> tổng hợp kết quả học tập pre-class, chọn kiến thức cần giảng lại.</p>
+      <p><b>Vướng ở đâu:</b> kết quả nằm rải rác theo từng lượt trả lời; khó thấy ngay kiến thức nào học viên chưa hiểu.</p>
+    </div>
+    <div class="card soft">
+      <h2>Trích dẫn người dùng</h2>
+      <p class="small" style="margin-bottom:6px">Chưa có phỏng vấn Lab Coach (nguồn phỏng vấn chưa đạt ngưỡng).</p>
+      <p>Chưa có — trích dẫn hiện chỉ là ví dụ nguyên văn từ data (<code>evidence/summary.md</code> §3).</p>
+    </div>
+  </div>
+  <div class="grid g3">
+    <div class="card"><div class="big">17,11%<small></small></div><div class="lbl">424 / 2.478 lượt trả lời lần đầu bị sai</div></div>
+    <div class="card"><div class="big">56,25%</div><div class="lbl">90 / 160 kiến thức (KC) đủ mẫu (≥ 10 lượt chấm) để kết luận</div></div>
+    <div class="card"><div class="big">80%</div><div class="lbl">Day05 <code>ai_product_canvas</code>: 12 / 15 lượt sai</div></div>
+  </div>
+  <div class="src">Nguồn: <code>evidence/summary.md</code> §2 · <code>evidence/data-mining.md</code> §3–§4 · cách đếm chạy lại: <code>evidence/count.py</code> · data BTC pre-class AI20K khoá 5, 05–25/11/2026</div>
+</section>
+
+<!-- 2. Vì sao chọn bài này -->
+<section class="slide" id="s2">
+  <div class="num">2 / 8</div>
+  <p class="kicker">Vì sao chọn bài này</p>
+  <h1>Impact và các hướng đã cân nhắc</h1>
+  <div class="card" style="margin-bottom:20px">
+    <h2>Bảng impact rút gọn (người × lần / tháng × phút)</h2>
+    <p>Có nguồn: 721 tài khoản học viên hưởng lợi gián tiếp · 13 bài có data 05–25/11 = 13 lần coach phải chọn nội dung ôn (<code>data/DATA_CARD.md</code>).</p>
+    <p class="small">Chưa đo: số coach, phút tổng hợp tay mỗi bài → impact / tháng chưa tính được (cần phỏng vấn coach).</p>
+  </div>
+  <div class="card" style="margin-bottom:20px">
+    <h2>Hướng đã loại và lý do</h2>
+    <p>Trợ giảng hỏi–đáp: 1.259/1.260 dòng chat không có <code>lesson_id</code>, không đo được chất lượng; chat tự do dễ bị prompt injection.</p>
+    <p>Trợ lý Discord: không có data hay người dùng trong repo.</p>
+  </div>
+  <p class="small">Số có sẵn để đối chiếu: 424 / 2.478 lượt lần đầu sai (17,11%) trên 160 KC của 13 bài (<code>evidence/data-mining.md</code> §3).</p>
+  <div class="src">Nguồn: <code>spec.md</code> §2 · <code>evidence/data-mining.md</code> §3</div>
+</section>
+
+<!-- 3. Giải pháp -->
+<section class="slide" id="s3">
+  <div class="num">3 / 8</div>
+  <p class="kicker">Giải pháp</p>
+  <h1>AI đề xuất KC cần ôn, coach quyết định</h1>
+  <p style="font-size:20px"><b>Lát cắt một câu:</b> Lab Coach chọn một bài học, AI chỉ ra KC nào cần ưu tiên ôn kèm số lượt sai / tổng lượt và tỷ lệ, coach quyết định có giảng lại hay không.</p>
+  <img class="flow" src="../docs/ai-flow.png" alt="Luồng AI của LearningPulse: input guard, metric và gap, truy xuất bài, LLM đề xuất, output guard, coach duyệt" style="margin:6px 0 14px; max-height:270px; object-fit:contain; background:#fff">
+  <div class="grid g2">
+    <div class="card soft">
+      <h2>AI tự làm</h2>
+      <p style="font-size:19px">Diễn đạt đề xuất từ số liệu tổng hợp. Code (DuckDB) tính mọi con số; code kiểm từng số trong câu trả lời.</p>
+    </div>
+    <div class="card soft">
+      <h2>Coach duyệt</h2>
+      <p style="font-size:19px">AI chỉ gợi ý, không tự gửi, không tự phê duyệt. Sai thì buổi ôn lệch trọng tâm, nên coach quyết định cuối.</p>
+    </div>
+  </div>
+  <div class="src">Nguồn: <code>spec.md</code> §4 · sơ đồ <code>docs/ai-flow.png</code> · <code>canvas.md</code> dòng 5–6</div>
+</section>
+
+<!-- 4. Demo live -->
+<section class="slide" id="s4">
+  <div class="num">4 / 8</div>
+  <p class="kicker">Demo live</p>
+  <h1>Một câu thường và một câu khó từ bộ câu thử</h1>
+  <div class="card" style="margin-bottom:20px">
+    <p><span class="tag">B01 · thuong</span><span class="small">đúng số liệu, chọn đúng nội dung ôn</span></p>
+    <p class="q"><b>Hỏi:</b> Lab Coach chuẩn bị ôn Day 05, chỉ đủ thời gian cho một kiến thức. Với các KC có ít nhất 10 lượt trả lời lần đầu được chấm đúng/sai, nên ưu tiên kiến thức nào?</p>
+    <p class="exp">Kỳ vọng: ai_product_canvas: 12/15 lượt sai, 80%; ưu tiên ôn nội dung này.</p>
+  </div>
+  <div class="card">
+    <p><span class="tag hard">B07 · kho</span><span class="small">xử lý thiếu căn cứ: mẫu dưới ngưỡng</span></p>
+    <p class="q"><b>Hỏi:</b> Day 09 có KC paired_bootstrap_interpretation sai 100%. Với ngưỡng tối thiểu 10 lượt lần đầu, có đủ bằng chứng để ưu tiên ôn cho cả lớp không?</p>
+    <p class="exp">Kỳ vọng: 3/3 sai (100%), chưa đạt ngưỡng mẫu; cảnh báo và đề nghị kiểm tra bổ sung, không tự nâng thành ưu tiên chính thức.</p>
+  </div>
+  <p class="small" style="margin-top:14px">Lệnh demo: <code>python run.py</code> (mạng hỏng thì dùng video dự phòng).</p>
+  <div class="src">Nguồn: <code>eval/benchmark.csv</code> dòng B01, B07 · <code>spec.md</code> §5 (B07) · <code>README.md</code> mục "Lệnh BTC"</div>
+</section>
+
+<!-- 5. Đánh giá thế nào -->
+<section class="slide" id="s5">
+  <div class="num">5 / 8</div>
+  <p class="kicker">Đánh giá thế nào</p>
+  <h1>Bộ 20 câu thử, 4 metric, chuẩn "đạt" chốt từ CP2</h1>
+  <div class="grid g2" style="grid-template-columns: 5fr 7fr">
+    <div>
+      <div class="card" style="margin-bottom:16px">
+        <h2>Dataset và bộ câu thử</h2>
+        <p style="font-size:19px"><code>answers.csv</code>, <code>chat.csv</code> của BTC (2.478 lượt lần đầu có chấm). Bộ câu thử: <b>20 câu</b> = 11 thuong · 6 kho · 3 tu_choi.</p>
+      </div>
+      <div class="card soft">
+        <h2>Chuẩn "đạt"</h2>
+        <p style="font-size:19px">≥ 90% tổng số câu qua (18/20) <b>và</b> cả 4 metric đạt ngưỡng riêng.</p>
+      </div>
+    </div>
+    <div>
+      <table>
+        <tr><th>Metric</th><th>Ngưỡng</th></tr>
+        <tr><td><code>dung_so_lieu</code></td><td>≥ 90% (≥ 11/12)</td></tr>
+        <tr><td><code>chon_dung_noi_dung_on</code></td><td>100% (6/6)</td></tr>
+        <tr><td><code>xu_ly_thieu_can_cu</code></td><td>100% (5/5)</td></tr>
+        <tr><td><code>giu_dung_tham_quyen</code></td><td>100% (3/3)</td></tr>
+      </table>
+      <table style="margin-top:16px">
+        <tr><th>Lượt</th><th>Qua / tổng</th><th>4 metric</th></tr>
+        <tr><td>Lượt 1 <span class="small">run-1@20261128-130814</span></td><td>13/20 (65%) — chưa đạt (cần 18/20)</td><td class="small">số liệu 8/12 · nội dung ôn 5/6 · thiếu căn cứ 2/5 · thẩm quyền 2/3</td></tr>
+        <tr><td>Lượt 2 (sau 1 cải tiến) <span class="small">run-2@20261128-140358</span></td><td>15/20 (75%) — chưa đạt</td><td class="small">số liệu 9/12 · nội dung ôn 4/6 · thiếu căn cứ 3/5 · thẩm quyền 3/3</td></tr>
+      </table>
+      <p class="small" style="margin-top:10px">Đã sửa nhóm "mất số bắt buộc": 0/5 → 4/5. Lỗi còn lại: model xếp nhầm KC ít sai lên đầu (B02, B04), đồng hạng (B08), kết luận từ số dòng chat (B10).</p>
+    </div>
+  </div>
+  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code>, <code>eval/run-1.csv</code>, <code>eval/run-2.csv</code></div>
+</section>
+
+<!-- 6. Chi phí -->
+<section class="slide" id="s6">
+  <div class="num">6 / 8</div>
+  <p class="kicker">Chi phí khi dùng thật</p>
+  <h1>Chi phí trên mỗi task thành công và theo quy mô thật</h1>
+  <div class="grid g3" style="margin-bottom:22px">
+    <div class="card"><h2>Chi phí / task thành công</h2><p><b>$0.0016</b> (LFM3) · $0.0709 (Sonnet 5.5)<br><span class="small">$0.0012 / phiên ÷ 75% đạt (run-2)</span></p></div>
+    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B</p><p class="small">$0,08 vào · $0,20 ra / 1M token (liquid.ai/pricing, 28/11) · TB 2.557 vào · 4.811 ra / phiên</p></div>
+    <div class="card"><h2>Số phiên mô phỏng</h2><p>50 phiên · 0 lỗi · seed 42</p><p class="small">simulate-1@20261128-130838</p></div>
+  </div>
+  <table>
+    <tr><th>Kịch bản / tháng</th><th>Chi phí</th></tr>
+    <tr><td>Thấp (5 coach, tự ước tính)</td><td>LFM3 $0.06 · Sonnet 5.5 $2.59 / tháng</td></tr>
+    <tr><td>Cơ sở (10 coach)</td><td>LFM3 $0.11 · Sonnet 5.5 $5.17 / tháng</td></tr>
+    <tr><td>Cao (20 coach)</td><td>LFM3 $0.23 · Sonnet 5.5 $10.34 / tháng</td></tr>
+  </table>
+  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: chưa tính được vì chưa đo phút tiết kiệm của coach — chi phí model không phải rào cản.</p>
+  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> · <code>cost/simulate-1.csv</code> · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
+</section>
+
+<!-- 7. Kết luận -->
+<section class="slide" id="s7">
+  <div class="num">7 / 8</div>
+  <p class="kicker">Kết luận</p>
+  <h1>Go, iterate hay stop</h1>
+  <div class="verdict" style="margin-bottom:24px">
+    <div class="card"><h2>Go</h2><p class="small">Nếu số trang 5 đạt chuẩn và trang 6 đáng làm.</p></div>
+    <div class="card"><h2>Iterate</h2><p class="small">Nếu một số còn trượt nhưng sửa được.</p></div>
+    <div class="card"><h2>Stop</h2><p class="small">Nếu chi phí vượt impact hoặc lỗi không sửa được.</p></div>
+  </div>
+  <p><b>Quyết định: ITERATE</b> — chi phí không phải rào cản, chất lượng chưa đạt chuẩn 90%.</p>
+  <ul>
+    <li>Pain (trang 1): 424 / 2.478 lượt lần đầu sai (17,11%); 90 / 160 KC đủ mẫu.</li>
+    <li>Đánh giá (trang 5): 65% → 75% (cần 90%); tu_choi 3/3, kho 4/6</li>
+    <li>Chi phí (trang 6): $0.011 / coach / tháng (LFM3) · $0.52 (Sonnet 5.5) — không phải điểm nghẽn</li>
+  </ul>
+  <div class="src">Nguồn: tổng hợp từ trang 1, 5, 6 · <code>evidence/data-mining.md</code> · <code>eval/report.md</code> · <code>cost/cost-estimate.md</code></div>
+</section>
+
+<!-- 8. Nếu có thêm 1 tuần -->
+<section class="slide" id="s8">
+  <div class="num">8 / 8</div>
+  <p class="kicker">Nếu có thêm 1 tuần</p>
+  <h1>Việc tiếp theo, trỏ về rủi ro còn mở</h1>
+  <div class="grid g3">
+    <div class="card"><h2>1. Khoá đăng ký tự do</h2>
+      <p style="font-size:19px">Mọi tài khoản Supabase Auth đều vào được; cần khoá đăng ký.</p>
+      <p class="small">Nguồn: <code>spec.md</code> §9, commit <code>f71c525</code></p></div>
+    <div class="card"><h2>2. Kiểm số chưa đủ</h2>
+      <p style="font-size:19px">Code chỉ bắt số không có trong căn cứ, không bắt số thật nhưng gán nhầm KC; coach vẫn phải đọc lại.</p>
+      <p class="small">Nguồn: <code>spec.md</code> §9 (thấy ở <code>eval/run-1.csv</code>)</p></div>
+    <div class="card"><h2>3. Nối AI vào web</h2>
+      <p style="font-size:19px">Đề xuất AI, JEV, Langfuse chưa nối; cổng AI trên web đang đóng; checklist H01–H06 chưa nghiệm thu tay.</p>
+      <p class="small">Nguồn: <code>spec.md</code> §4, §6; <code>README.md</code></p></div>
+  </div>
+  <p style="margin-top:22px">Lỗi còn lại sau lượt 2: (1) để code chọn và xếp hạng KC, model chỉ diễn đạt (B02, B04, B08); (2) kiểm sau model KC nêu ra khớp thứ hạng; (3) chạy mỗi bản nhiều lần để tách nhiễu. Chưa có phản hồi người dùng thử.</p>
+  <p class="small">Việc tuần tới: phỏng vấn ≥3 Lab Coach để đo phút tiết kiệm và kiểm lại pain.</p>
+  <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 · <code>validation/log.md</code></div>
+</section>
+
+</body>
+</html>
