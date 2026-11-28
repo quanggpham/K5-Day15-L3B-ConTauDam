@@ -25,8 +25,24 @@ jobs:
       - run: pnpm build
         working-directory: codebase/frontend
       - run: docker build -t learningpulse:ci .
+  ui-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.7.0
+      - run: pnpm install --frozen-lockfile
+        working-directory: codebase/frontend
+      - run: pnpm exec playwright install --with-deps chromium --only-shell
+        working-directory: codebase/frontend
+      - run: pnpm exec playwright test
+        working-directory: codebase/frontend
   deploy:
-    needs: ci
+    needs: [ci, ui-test]
     if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     environment: production
