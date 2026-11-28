@@ -11,7 +11,7 @@ from ai import call_model as default_model
 import tools
 from tools import dataset_extra, dataset_summary, lesson_comparison, lesson_report
 from backend.analytics.workflow import resolve_lesson_ids
-from backend.security.input_guard import refusal
+from backend.security.input_guard import contains_sensitive, refusal
 from tracing import note
 
 SYSTEM = (
@@ -99,7 +99,7 @@ def _lesson_evidence(lesson_id: str, extra: dict) -> dict | None:
             'graded_count': m.get('graded_count'), 'ungraded_count': m.get('ungraded_count'),
             'incorrect_rate_pct': _pct(m.get('incorrect_rate')),
             'enough_sample': not m.get('insufficient_data'), 'rank': rank.get(m.get('kc_code'))}
-           for m in report['metrics']]
+           for m in report['metrics'] if m.get('status') != 'small_group']
     kcs.sort(key=lambda kc: (kc['rank'] is None, kc['rank'] or 0, -(kc['incorrect_rate_pct'] or 0)))
     match = re.search(r'program-day(\d+)', lesson_id)
     day = int(match.group(1)) if match else None
@@ -151,6 +151,8 @@ def answer(text: str, model=None) -> dict:
         note('Câu hỏi chưa chỉ ra bài học và không có số liệu để dựa vào')
         return {'output': 'Bạn muốn phân tích bài học nào? Gõ mã bài (ví dụ Day 05) hoặc tên bài đầy đủ.'}
     user = 'DỮ LIỆU:\n' + json.dumps(evidence, ensure_ascii=False)
+    if contains_sensitive(user):
+        return {'output': 'Dữ liệu có thông tin cần được loại bỏ trước khi phân tích.'}
     for attempt in range(2):
         try:
             result = model(SYSTEM, user)
@@ -162,9 +164,9 @@ def answer(text: str, model=None) -> dict:
             break
         output = (result.get('text') or '').strip()
         bad = unsupported_numbers(output, evidence, text)
-        if output and not bad:
+        if output and not bad and not contains_sensitive(output):
             return {'output': output}
-        note('Loại câu trả lời vì số không có căn cứ: %s' % ', '.join(bad[:5]))
-        user += '\n\nLần trả lời trước có số không có trong DỮ LIỆU (%s). Chỉ dùng số có sẵn.' % ', '.join(bad[:5])
+        note('Loại câu trả lời vì không qua kiểm tra nội dung')
+        user += '\n\nChỉ dùng số có sẵn trong dữ liệu và không đưa định danh hay khóa.'
     note('Trả báo cáo số liệu không qua model')
     return {'output': _fallback(evidence)}

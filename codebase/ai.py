@@ -19,8 +19,12 @@ Nối model thật: điền .env (chép từ .env.example), rồi viết nhánh 
 """
 import os
 import httpx
+from contextvars import ContextVar
 
-from tracing import model_call
+try:
+    from tracing import model_call
+except ModuleNotFoundError:
+    from codebase.tracing import model_call
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -42,21 +46,24 @@ load_env()
 MODEL_PROVIDER = (os.environ.get("MODEL_PROVIDER") or "fake").strip().lower()
 MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
 API_KEY = (os.environ.get("LIQUID_API_KEY") or os.environ.get("API_KEY") or "").strip()
+_demo_provider = ContextVar("demo_liquid_provider", default=False)
 
 
 @model_call
 def call_model(system: str, user: str) -> dict:
-    if MODEL_PROVIDER == "fake":
+    provider = "liquid" if _demo_provider.get() else MODEL_PROVIDER
+    model_name = MODEL_NAME or ("lfm3-1.7b" if _demo_provider.get() else "")
+    if provider == "fake":
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
 
-    if MODEL_PROVIDER == "liquid":
-        if not MODEL_NAME or not API_KEY:
+    if provider == "liquid":
+        if not model_name or not API_KEY:
             raise ValueError("Cần MODEL_NAME và LIQUID_API_KEY để gọi Liquid")
         response = httpx.post(
             "https://api.liquid.ai/openai/v1/chat/completions",
             headers={"Authorization": f"Bearer {API_KEY}"},
-            json={"model": MODEL_NAME, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
+            json={"model": model_name, "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}]},
             timeout=60,
         )
         response.raise_for_status()
@@ -70,3 +77,12 @@ def call_model(system: str, user: str) -> dict:
     raise NotImplementedError(
         "chưa viết phần gọi model thật cho MODEL_PROVIDER=%s trong codebase/ai.py — xem docs/connect-model.md"
         % MODEL_PROVIDER)
+
+
+def call_demo_model(system: str, user: str) -> dict:
+    """Dùng Liquid riêng cho bản nháp demo; không đổi provider mặc định của CLI."""
+    token = _demo_provider.set(True)
+    try:
+        return call_model(system, user)
+    finally:
+        _demo_provider.reset(token)

@@ -19,7 +19,7 @@ for (const screen of [{ name: "desktop", width: 1280, height: 800 }, { name: "mo
         docs = docs.map(doc => ({ ...doc, ...route.request().postDataJSON(), approved: false, version: doc.version + 1 }))
         payload = docs[0]
       } else if (url.pathname.endsWith("/approve")) {
-        docs = docs.map(doc => ({ ...doc, approved: true, version: doc.version + 1 }))
+        docs = docs.map(doc => ({ ...doc, approved: true, reviewed_by: "synthetic-coach", reviewed_at: "2026-11-28T00:00:00Z", version: doc.version + 1 }))
         payload = docs[0]
       } else if (url.pathname.endsWith("/search")) payload = docs.filter(doc => doc.approved)
       else if (url.pathname.endsWith("/history")) payload = []
@@ -33,13 +33,13 @@ for (const screen of [{ name: "desktop", width: 1280, height: 800 }, { name: "mo
     await page.getByLabel("Tệp PDF hoặc Markdown").setInputFiles({ name: "lesson.md", mimeType: "text/markdown", buffer: Buffer.from("Synthetic lesson") })
     await page.getByLabel("Tôi xác nhận có quyền sử dụng tài liệu này.").check()
     await page.getByRole("button", { name: "Tải lên" }).click()
-    await expect(page.getByText(/Chờ duyệt · Phiên bản 1/)).toBeVisible()
+    await expect(page.getByText(/Chờ coach duyệt · Phiên bản 1/)).toBeVisible()
     await page.getByRole("textbox", { name: "Nội dung", exact: true }).fill("Khái niệm đã sửa")
     await expect(page.getByRole("button", { name: "Duyệt bản đã lưu" })).toBeDisabled()
     await page.getByRole("button", { name: "Lưu thay đổi" }).click()
-    await expect(page.getByText(/Chờ duyệt · Phiên bản 2/)).toBeVisible()
+    await expect(page.getByText(/Chờ coach duyệt · Phiên bản 2/)).toBeVisible()
     await page.getByRole("button", { name: "Duyệt bản đã lưu" }).click()
-    await expect(page.getByText(/Đã duyệt · Phiên bản 3/)).toBeVisible()
+    await expect(page.getByText(/Coach đã duyệt · Phiên bản 3/)).toBeVisible()
     await page.getByRole("combobox", { name: "KC", exact: true }).selectOption("K1")
     await page.getByRole("textbox", { name: "Nội dung cần tìm", exact: true }).fill("khái niệm")
     await page.getByRole("button", { name: "Tìm căn cứ" }).click()

@@ -11,6 +11,7 @@ import { useReportRun } from "./ReportRunContext"
 import { readStoredSnapshot } from "./snapshot"
 import type { RunDetail } from "./types"
 import { useCopilot } from "./useCopilot"
+import DemoPreview from "./DemoPreview"
 import { valueText } from "./values"
 
 const actionButton =
@@ -114,6 +115,8 @@ function CopilotBody({ detail }: { detail: RunDetail }) {
           Danh sách lấy từ snapshot đã lưu. Bắt buộc với "Giải thích ưu tiên" và "3 câu hỏi kiểm tra lại".
         </p>
       </div>
+
+      {usable && <DemoPreview runId={detail.run_id} kcCode={kcCode} />}
 
       <ul className="space-y-3" aria-label="Thao tác Copilot">
         {COPILOT_ACTIONS.map((def) => {
