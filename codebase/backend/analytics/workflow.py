@@ -1,16 +1,27 @@
 """Shared evidence-only report until approved lesson sources are available."""
 import re
 
+_DAY = re.compile(r'day\s*0*([1-9][0-9]?)(?!\d)', re.IGNORECASE)
+
+
+def resolve_lesson_ids(value: str, snapshot: dict) -> list[str]:
+    """Mọi bài được nhắc tới trong câu hỏi, theo thứ tự xuất hiện, không trùng.
+
+    Nhận mã bài đầy đủ nằm trong câu, hoặc bí danh `Day NN` / `DayNN`.
+    Bí danh khớp nhiều bài (mơ hồ) thì bỏ qua bài đó.
+    """
+    hits = [(value.find(key), key) for key in snapshot if key in value]
+    for match in _DAY.finditer(value):
+        prefix = f"program-day{int(match.group(1)):02d}:"
+        matches = [key for key in snapshot if key.casefold().startswith(prefix)]
+        if len(matches) == 1:
+            hits.append((match.start(), matches[0]))
+    return list(dict.fromkeys(key for _, key in sorted(hits)))
+
 
 def resolve_lesson_id(value: str, snapshot: dict) -> str | None:
-    if value in snapshot:
-        return value
-    match = re.fullmatch(r'day\s*0*([1-9][0-9]?)', value, re.IGNORECASE)
-    if not match:
-        return None
-    prefix = f"program-day{int(match.group(1)):02d}:"
-    matches = [key for key in snapshot if key.casefold().startswith(prefix)]
-    return matches[0] if len(matches) == 1 else None
+    ids = resolve_lesson_ids(value, snapshot)
+    return ids[0] if ids else None
 
 
 def create_report(lesson_id: str, snapshot: dict) -> dict | None:
