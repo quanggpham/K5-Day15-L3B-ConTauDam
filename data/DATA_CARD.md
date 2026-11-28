@@ -24,8 +24,8 @@
 |---|---|
 | Dùng để làm gì | nguồn cho bước truy xuất bài giảng (BM25 và lọc metadata `lesson_id`, `kc_code`) |
 | Từ đâu | chưa chốt: nhóm tự viết lại, hoặc trích từ tài liệu khoá được BTC cho phép |
-| Xử lý những bước gì | chưa có |
-| Số dòng / số đoạn | chưa có |
+| Xử lý những bước gì | `scripts/ingest_kb.py`: notes → mỗi mục đánh số một đoạn; quiz → mỗi câu một đoạn, chỉ giữ đáp án đúng và lời giải của đáp án đúng; ánh xạ `lesson_id`/`kc_code` theo từng đoạn: BM25 đề xuất từ danh mục KC trong snapshot v2 ra `data/kb_mapping.csv`, người duyệt ghi `confirmed=yes` (số ngày notes/quiz không khớp chủ đề bài, vd notes day07 ~ `program-day06`); lưu bảng `knowledge_documents` (Supabase), mọi đoạn mới `approved=false` |
+| Số dòng / số đoạn | dry-run 2026-11-28: 609 đoạn từ 24 nguồn (notes 100, quiz 509); chưa nạp lên Supabase, chưa đoạn nào được duyệt |
 | Phiên bản / ngày lấy | chưa có |
 | Nhãn | ghi khi có nguồn |
 | Giới hạn | khi chưa có KB, hệ thống vẫn nêu lỗ hổng từ số liệu và ghi rõ "chưa có căn cứ bài giảng" |
