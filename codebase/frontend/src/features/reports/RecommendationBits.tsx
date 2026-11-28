@@ -40,7 +40,7 @@ export function JevScore({ rec, className }: { rec: RecommendationItem; classNam
         <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
           {entries.map(([key, value]) => (
             <li key={key}>
-              {key}: <span className="tabular-nums">{value}</span>
+              {key === "grounded" ? "Bám căn cứ" : key === "relevant" ? "Đúng chủ đề" : key}: <span className="tabular-nums">{value}</span>
             </li>
           ))}
         </ul>
