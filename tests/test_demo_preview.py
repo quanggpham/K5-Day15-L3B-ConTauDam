@@ -5,6 +5,7 @@ from tests.test_reviews_copilot import COACH_A, COACH_B, _create, as_coach, snap
 
 def test_demo_requires_owner_approved_sources_and_safe_output(as_coach, snap_path, monkeypatch):
     monkeypatch.setenv('DEMO_AI_ENABLED', 'true')
+    monkeypatch.setenv('SUPABASE_SERVICE_ROLE_KEY', 'synthetic-test-key')
     client = as_coach(COACH_A)
     run_id = _create(client)
     url = f'/api/analysis-runs/{run_id}/demo-preview'
@@ -21,9 +22,30 @@ def test_demo_requires_owner_approved_sources_and_safe_output(as_coach, snap_pat
     body = response.json()
     assert body['status'] == 'demo_unvalidated' and body['sources'][0]['id'] == 'doc-1'
     assert body['tokens_in'] == 31 and 'jev_score' not in body
+    save_url = url + '/save'
+    ticket = {'token': body['save_token']}
+    assert as_coach(COACH_B).post(save_url, json=ticket).status_code == 404
+    as_coach(COACH_A)
+    assert client.post(save_url, json={'token': body['save_token'] + '0'}).status_code == 422
+    assert client.get(f'/api/analysis-runs/{run_id}').json()['recommendations'] == []
+    saved = client.post(save_url, json=ticket)
+    assert saved.status_code == 200
+    assert client.post(save_url, json=ticket).json() == saved.json()
+    detail = client.get(f'/api/analysis-runs/{run_id}').json()
+    rec, = detail['recommendations']
+    assert rec['content'] == body['content'] and rec['jev_score'] is None
+    assert rec['citations'][0]['origin'] == 'demo_unvalidated'
+    result = client.post(f'/api/analysis-runs/{run_id}/reviews', json={
+        'recommendation_id': rec['id'], 'version': rec['version'], 'decision': 'accept'})
+    assert result.status_code == 201 and result.json()['recommendation']['review_status'] == 'accepted'
+    result = client.post(f'/api/analysis-runs/{run_id}/reviews', json={
+        'recommendation_id': rec['id'], 'version': result.json()['recommendation']['version'],
+        'decision': 'reject'})
+    assert result.status_code == 201 and result.json()['recommendation']['review_status'] == 'rejected'
     assert as_coach(COACH_B).post(url, json={'kc_code': 'K1'}).status_code == 404
     assert as_coach(COACH_A).post(url, json={'kc_code': 'K2'}).status_code == 422
     sources[0]['reviewed_at'] = None
+    assert client.post(save_url, json=ticket).status_code == 409
     def unexpected(*args):
         raise AssertionError('unreviewed source reached the model')
     monkeypatch.setattr(demo_preview, 'call_demo_model', unexpected)
