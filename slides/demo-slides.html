@@ -71,7 +71,7 @@
     <div class="card soft">
       <h2>Trích dẫn người dùng</h2>
       <p class="small" style="margin-bottom:6px">Chưa có phỏng vấn Lab Coach (nguồn phỏng vấn chưa đạt ngưỡng).</p>
-      <p>Chưa có — trích dẫn hiện chỉ là ví dụ nguyên văn từ data (<code>evidence/summary.md</code> §3).</p>
+      <p><span class="ph">[chờ phỏng vấn Lab Coach]</span></p>
     </div>
   </div>
   <div class="grid g3">
@@ -89,16 +89,14 @@
   <h1>Impact và các hướng đã cân nhắc</h1>
   <div class="card" style="margin-bottom:20px">
     <h2>Bảng impact rút gọn (người × lần / tháng × phút)</h2>
-    <p>Có nguồn: 721 tài khoản học viên hưởng lợi gián tiếp · 13 bài có data 05–25/11 = 13 lần coach phải chọn nội dung ôn (<code>data/DATA_CARD.md</code>).</p>
-    <p class="small">Chưa đo: số coach, phút tổng hợp tay mỗi bài → impact / tháng chưa tính được (cần phỏng vấn coach).</p>
+    <p><span class="ph">[chờ spec §2]</span></p>
   </div>
   <div class="card" style="margin-bottom:20px">
     <h2>Hướng đã loại và lý do</h2>
-    <p>Trợ giảng hỏi–đáp: 1.259/1.260 dòng chat không có <code>lesson_id</code>, không đo được chất lượng; chat tự do dễ bị prompt injection.</p>
-    <p>Trợ lý Discord: không có data hay người dùng trong repo.</p>
+    <p><span class="ph">[chờ spec §2]</span></p>
   </div>
   <p class="small">Số có sẵn để đối chiếu: 424 / 2.478 lượt lần đầu sai (17,11%) trên 160 KC của 13 bài (<code>evidence/data-mining.md</code> §3).</p>
-  <div class="src">Nguồn: <code>spec.md</code> §2 · <code>evidence/data-mining.md</code> §3</div>
+  <div class="src">Nguồn: <code>spec.md</code> §2 (hiện còn trống) · <code>evidence/data-mining.md</code> §3</div>
 </section>
 
 <!-- 3. Giải pháp -->
@@ -166,13 +164,13 @@
       </table>
       <table style="margin-top:16px">
         <tr><th>Lượt</th><th>Qua / tổng</th><th>4 metric</th></tr>
-        <tr><td>Lượt 1 <span class="small">run-1@20261128-130814</span></td><td>13/20 (65%) — chưa đạt (cần 18/20)</td><td class="small">số liệu 8/12 · nội dung ôn 5/6 · thiếu căn cứ 2/5 · thẩm quyền 2/3</td></tr>
-        <tr><td>Lượt 2 (sau 1 cải tiến) <span class="small">run-2@20261128-140358</span></td><td>15/20 (75%) — chưa đạt</td><td class="small">số liệu 9/12 · nội dung ôn 4/6 · thiếu căn cứ 3/5 · thẩm quyền 3/3</td></tr>
+        <tr><td>Lượt 1</td><td><span class="ph">[chờ run-1]</span></td><td><span class="ph">[chờ run-1]</span></td></tr>
+        <tr><td>Lượt 2 (sau 1 cải tiến)</td><td><span class="ph">[chờ run-2]</span></td><td><span class="ph">[chờ run-2]</span></td></tr>
       </table>
-      <p class="small" style="margin-top:10px">Đã sửa nhóm "mất số bắt buộc": 0/5 → 4/5. Lỗi còn lại: model xếp nhầm KC ít sai lên đầu (B02, B04), đồng hạng (B08), kết luận từ số dòng chat (B10).</p>
+      <p class="small" style="margin-top:10px">Lỗi chính còn lại: <span class="ph">[chờ report]</span></p>
     </div>
   </div>
-  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code>, <code>eval/run-1.csv</code>, <code>eval/run-2.csv</code></div>
+  <div class="src">Nguồn: <code>eval/benchmark.csv</code> · <code>eval/metric_spec.yaml</code> · <code>spec.md</code> §7 · số lượt: <code>eval/report.md</code> (chờ), <code>eval/run-N.csv</code></div>
 </section>
 
 <!-- 6. Chi phí -->
@@ -181,18 +179,18 @@
   <p class="kicker">Chi phí khi dùng thật</p>
   <h1>Chi phí trên mỗi task thành công và theo quy mô thật</h1>
   <div class="grid g3" style="margin-bottom:22px">
-    <div class="card"><h2>Chi phí / task thành công</h2><p><b>$0.0016</b> (LFM3) · $0.0709 (Sonnet 5.5)<br><span class="small">$0.0012 / phiên ÷ 75% đạt (run-2)</span></p></div>
-    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B</p><p class="small">$0,08 vào · $0,20 ra / 1M token (liquid.ai/pricing, 28/11) · TB 2.557 vào · 4.811 ra / phiên</p></div>
-    <div class="card"><h2>Số phiên mô phỏng</h2><p>50 phiên · 0 lỗi · seed 42</p><p class="small">simulate-1@20261128-130838</p></div>
+    <div class="card"><h2>Chi phí / task thành công</h2><p><span class="ph">[chờ simulate]</span></p></div>
+    <div class="card"><h2>Model dùng</h2><p>Liquid LFM3-1.7B <span class="small">(dự kiến)</span></p><p class="small">Giá và số token: <span class="ph">[chờ simulate]</span></p></div>
+    <div class="card"><h2>Số phiên mô phỏng</h2><p><span class="ph">[chờ simulate]</span></p></div>
   </div>
   <table>
     <tr><th>Kịch bản / tháng</th><th>Chi phí</th></tr>
-    <tr><td>Thấp (5 coach, tự ước tính)</td><td>LFM3 $0.06 · Sonnet 5.5 $2.59 / tháng</td></tr>
-    <tr><td>Cơ sở (10 coach)</td><td>LFM3 $0.11 · Sonnet 5.5 $5.17 / tháng</td></tr>
-    <tr><td>Cao (20 coach)</td><td>LFM3 $0.23 · Sonnet 5.5 $10.34 / tháng</td></tr>
+    <tr><td>Thấp</td><td><span class="ph">[chờ simulate]</span></td></tr>
+    <tr><td>Cơ sở</td><td><span class="ph">[chờ simulate]</span></td></tr>
+    <tr><td>Cao</td><td><span class="ph">[chờ simulate]</span></td></tr>
   </table>
-  <p style="margin-top:16px">Chi phí / coach / tháng: $0.011 (LFM3) · $0.52 (Sonnet 5.5). So với impact: chưa tính được vì chưa đo phút tiết kiệm của coach — chi phí model không phải rào cản.</p>
-  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> · <code>cost/simulate-1.csv</code> · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
+  <p style="margin-top:16px">So với impact / người / tháng: <span class="ph">[chờ spec §2 + simulate]</span></p>
+  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> (chờ) · <code>cost/simulate-N.csv</code> (chờ) · <code>cost/personas.yaml</code> · <code>spec.md</code> §8</div>
 </section>
 
 <!-- 7. Kết luận -->
@@ -205,11 +203,11 @@
     <div class="card"><h2>Iterate</h2><p class="small">Nếu một số còn trượt nhưng sửa được.</p></div>
     <div class="card"><h2>Stop</h2><p class="small">Nếu chi phí vượt impact hoặc lỗi không sửa được.</p></div>
   </div>
-  <p><b>Quyết định: ITERATE</b> — chi phí không phải rào cản, chất lượng chưa đạt chuẩn 90%.</p>
+  <p><b>Quyết định:</b> <span class="ph">[chờ số trang 5,6]</span></p>
   <ul>
     <li>Pain (trang 1): 424 / 2.478 lượt lần đầu sai (17,11%); 90 / 160 KC đủ mẫu.</li>
-    <li>Đánh giá (trang 5): 65% → 75% (cần 90%); tu_choi 3/3, kho 4/6</li>
-    <li>Chi phí (trang 6): $0.011 / coach / tháng (LFM3) · $0.52 (Sonnet 5.5) — không phải điểm nghẽn</li>
+    <li>Đánh giá (trang 5): <span class="ph">[chờ số trang 5]</span></li>
+    <li>Chi phí (trang 6): <span class="ph">[chờ số trang 6]</span></li>
   </ul>
   <div class="src">Nguồn: tổng hợp từ trang 1, 5, 6 · <code>evidence/data-mining.md</code> · <code>eval/report.md</code> · <code>cost/cost-estimate.md</code></div>
 </section>
@@ -230,9 +228,9 @@
       <p style="font-size:19px">Đề xuất AI, JEV, Langfuse chưa nối; cổng AI trên web đang đóng; checklist H01–H06 chưa nghiệm thu tay.</p>
       <p class="small">Nguồn: <code>spec.md</code> §4, §6; <code>README.md</code></p></div>
   </div>
-  <p style="margin-top:22px">Lỗi còn lại sau lượt 2: (1) để code chọn và xếp hạng KC, model chỉ diễn đạt (B02, B04, B08); (2) kiểm sau model KC nêu ra khớp thứ hạng; (3) chạy mỗi bản nhiều lần để tách nhiễu. Chưa có phản hồi người dùng thử.</p>
-  <p class="small">Việc tuần tới: phỏng vấn ≥3 Lab Coach để đo phút tiết kiệm và kiểm lại pain.</p>
-  <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 · <code>validation/log.md</code></div>
+  <p style="margin-top:22px">Lỗi còn lại sau lượt 2 và phản hồi người dùng: <span class="ph">[chờ report]</span></p>
+  <p class="small">Kiểm lại bằng phỏng vấn Lab Coach: <span class="ph">[chờ phỏng vấn]</span></p>
+  <div class="src">Nguồn: <code>spec.md</code> §9 · <code>eval/report.md</code> mục 4 (chờ) · <code>validation/log.md</code></div>
 </section>
 
 </body>
