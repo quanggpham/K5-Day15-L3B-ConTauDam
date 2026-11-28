@@ -99,7 +99,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): `answers.c
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
 - Persona + giá: `cost/personas.yaml` (3 kiểu coach, *(tự ước tính)*) · lượt mô phỏng: `cost/simulate-1.csv` (50 phiên, `simulate-1@20261128-130838`)
-- Chi phí / phiên: $0.0012 (`lfm3-1.7b`) · $0.0532 (`claude-sonnet-5.5`). Chi phí / task thành công = chi phí / phiên ÷ tỉ lệ đạt `run-2` ÷ 75% (`run-2`, 15/20) = $0.0016 (`lfm3-1.7b`) · $0.0709 (`claude-sonnet-5.5`)
+- Chi phí / phiên: $0.0012 (`lfm3-1.7b`) · $0.0532 (`claude-sonnet-5.5`). Chi phí / task thành công = chi phí / phiên ÷ tỉ lệ đạt `run-2` = __ · __ *(chờ chấm `run-2`)*
 - Chi phí / tháng ở quy mô thật (5 · 10 · 20 coach, *(tự ước tính)*): `lfm3-1.7b` $0.06 · $0.11 · $0.23; `claude-sonnet-5.5` $2.59 · $5.17 · $10.34 → chi tiết `cost/cost-estimate.md`
 - So với impact / người / tháng (§2): chi phí model < $1 / coach / tháng kể cả model mạnh, nên không phải điểm nghẽn; quyết định đáng làm hay không phụ thuộc tỉ lệ đạt và giờ công coach duyệt. Impact §2 còn chờ nhóm điền số.
 
