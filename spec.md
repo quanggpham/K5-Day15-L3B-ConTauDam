@@ -1,36 +1,40 @@
-# AI SPEC — [Tên lát cắt] · Nhóm [tên nhóm] · Phòng [XXX] · Zone [X]
+# AI SPEC — Chọn kiến thức ôn trước buổi học (LearningPulse) · Nhóm ConTauDam · Phòng __ (L3B: C401 / E403, nhóm xác nhận) · Zone __
 
 > Mốc nộp: §7 chốt chuẩn "đạt" tại **CP2 19:30 Thứ Sáu 27/11** · §0–§7 nộp **CP3 10:00 Thứ Bảy 28/11** · đủ §0–§10 **CP4 14:30 Thứ Bảy 28/11** · §10 changelog ghi tiếp đến **23:59 Thứ Bảy 28/11**.
 > Đầu mỗi mục ghi bước guide (`02-guide.md` trong repo đề) chỉ cách điền. Mỗi mục ngắn, có số và nguồn; chi tiết để ở file được trỏ tới. Xoá dòng hướng dẫn trong ngoặc vuông khi điền xong.
 
-Track: [ ] A · [ ] B · [ ] C · [ ] D · [ ] E — bài toán: [đề gợi ý trong file track, hoặc bài toán nhóm tự mở rộng] __
-Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
+Track: [x] A · [ ] B · [ ] C · [ ] D · [ ] E — bài toán: A1 (`tracks/track-a-edtech.md`), hướng tính năng AI mới: báo cáo "lớp đang kẹt gì" cho giảng viên và lab coach trước buổi học
+Data BTC cấp đã dùng (nếu có — không commit nguyên file): `answers.csv`, `chat.csv` và các bảng nạp cùng (`events`, `completed_items`, …); chỉ dùng số tổng hợp, mô tả ở `data/DATA_CARD.md`
 
 ## §0. Hiện tại việc này diễn ra thế nào *(guide 1.1)*
-- Luồng hiện tại của việc này, trong khoá hoặc trên app thật (3–5 bước; ảnh chụp từ tài khoản của mình, đã che thông tin):
-- Công cụ / AI đang được dùng cho việc này (nếu có) + nguồn. Không kiểm được thì ghi "chưa kiểm":
+- Luồng hiện tại *(giả thuyết từ `canvas.md` dòng 3; nhóm chưa phỏng vấn nên chưa xác nhận, chưa có ảnh chụp)*: (1) coach chọn bài sắp dạy; (2) mở kết quả pre-class của lớp; (3) tự tổng hợp xem học viên sai ở đâu; (4) chọn kiến thức giảng lại; (5) chuẩn bị cách giảng. Bước 3–4 là chỗ nhóm cho là vướng *(nhóm xác nhận)*.
+- Công cụ / AI đang dùng cho việc này: chưa kiểm.
 
 ## §1. Người dùng & bằng chứng *(guide 1.1, 1.2)*
-- Người dùng chính (một vai cụ thể):
-- Việc họ cố làm xong (`động từ + đối tượng + bối cảnh`, không có chữ AI):
-- Hôm nay họ giải bằng gì, hỏng ở đâu, vì sao chưa bỏ:
-- Pain (KHÔNG chữ AI): ai — đang làm gì — vướng đâu — hậu quả gì:
-- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`): __
+- Người dùng chính: giảng viên và lab coach AI20K (`canvas.md` dòng 2).
+- Việc họ cố làm xong: chọn kiến thức cần giảng lại trong buổi học sắp tới, dựa trên kết quả pre-class của lớp.
+- Hôm nay họ giải bằng gì, hỏng ở đâu, vì sao chưa bỏ: chưa kiểm, chưa phỏng vấn ai (`evidence/summary.md` §1–§2). Data chỉ cho biết học viên sai ở đâu, không cho biết coach đang làm gì.
+- Pain: giảng viên và lab coach tổng hợp kết quả học tập trước buổi học khó, khó xác định kiến thức học viên chưa hiểu, nên khó chọn nội dung giảng lại (`canvas.md` dòng 3). Hậu quả: buổi ôn có thể lệch trọng tâm *(giả thuyết, chưa kiểm với người dùng)*.
+- Bằng chứng — số chính (`evidence/summary.md`, `evidence/data-mining.md`): 424/2.478 lượt lần đầu sai (17,11%); chỉ 90/160 KC có ≥10 lượt chấm (56,25%); Day05 `ai_product_canvas` sai 12/15 (80%). Kết luận: data chỉ ra được KC sai nhiều và cho thấy hơn 40% KC chưa đủ mẫu để kết luận; nguồn đạt ngưỡng duy nhất là đào data. Phỏng vấn (0/3) và khảo sát (n = 0) chưa làm.
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
-|  |  |  |  |  |  |  |
+| A1 · Báo cáo "lớp đang kẹt gì" cho coach/giảng viên trước buổi | số coach/giảng viên: __ *(nhóm xác nhận)*; học viên hưởng lợi gián tiếp: 721 tài khoản (`data/DATA_CARD.md`) | __ *(nhóm xác nhận)* | __ phút tổng hợp tay *(nhóm xác nhận, chưa phỏng vấn)* | __ *(chưa tính được)* | Có: bản chạy thử và web đã chạy (§4) | Chọn |
+| A1 · Trợ giảng hỏi–đáp dưới video cho học viên | học viên; số __ *(nhóm xác nhận)* | __ *(nhóm xác nhận)* | __ *(nhóm xác nhận)* | __ | Chưa đánh giá | Loại |
+| A2 · Trợ lý Discord (logistics, câu hỏi lặp) | __ *(nhóm xác nhận)* | __ | __ | __ | Chưa đánh giá | Loại |
 
-- **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __ — nguồn từng thừa số: __ (không có nguồn thì ghi rõ *(tự ước tính)*)
-- Hướng ĐÃ LOẠI + vì sao (giữ lại, đừng xoá):
-- Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8):
+- **Impact / tháng** của hướng chọn = __ người × __ lần × __ phút = __ — chưa có thừa số nào có nguồn; nhóm điền sau phỏng vấn coach, nếu không thì ghi *(tự ước tính)*. Số có nguồn trong repo: 13 bài có data trong 05–25/11/2026 (`data/DATA_CARD.md`), tức mỗi bài một lần coach cần chọn kiến thức ôn.
+- Hướng ĐÃ LOẠI + vì sao (giữ lại, đừng xoá): *(nhóm xác nhận lý do; các dòng dưới là căn cứ có trong repo)*
+  - Trợ giảng hỏi–đáp: data chat chỉ gắn tới module (1.259/1.260 dòng `chat` trống `lesson_id`) và không có câu chữ học viên, nên không đo được chất lượng trả lời; `docs/learningpulse-design.md` cũng loại chat tự do vì rủi ro prompt injection.
+  - Trợ lý Discord: nhóm không có data hay người dùng cho hướng này trong repo.
+  - Không làm trong lát cắt (design): gửi tin hay ghi vào LMS, xem hoặc xếp hạng từng học viên, nhiều agent.
+- Số lần / tháng của từng kiểu người dùng (dùng cho persona ở §8): chưa đo. Giả định dùng cho mô phỏng chi phí: lab coach — 1 lượt cho mỗi bài trước buổi học, số bài / tháng __ *(tự ước tính)*; giảng viên — __ lượt / tháng *(tự ước tính)*.
 
 ## §3. Giải pháp tương tự *(guide 2.1)*
-- [sản phẩm / tính năng gần giống]: một điều đáng học · một điều đáng né · mình khác gì
+- Chưa khảo sát sản phẩm cụ thể nào (repo không có tài liệu về sản phẩm tương tự; nhóm không bịa). Nhóm điền khi thử xong: [sản phẩm]: một điều đáng học · một điều đáng né · mình khác gì *(nhóm xác nhận)*.
+- Điểm khác đã chốt trong thiết kế (`docs/learningpulse-design.md`): số do code tính, AI chỉ đề xuất, coach duyệt; không chat tự do.
 
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả): Lab Coach chọn một bài học · AI chỉ ra kiến thức (KC) nào cần ưu tiên ôn kèm số lượt sai/tổng lượt và tỷ lệ · coach quyết định có giảng lại hay không.
@@ -106,7 +110,7 @@ Data BTC cấp đã dùng (nếu có — không commit nguyên file): __
 - Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào: học viên (ôn lệch trọng tâm; bị lộ kết quả cá nhân) và coach (mất thời gian vì kết luận sai). Chặn bằng: KC dưới 10 lượt chấm không xếp ưu tiên, kiểm từng con số bằng code, coach duyệt từng đề xuất. Kiểm số chỉ bắt số không có trong căn cứ, không bắt số có thật nhưng gán nhầm KC hay kết luận sai (thấy ở `eval/run-1.csv`), nên coach vẫn phải đọc lại. Rủi ro còn mở: mọi tài khoản Supabase Auth đều vào được (`f71c525`), cần khoá đăng ký tự do.
 
 ## §10. Phân công & changelog
-- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
+- Phân công có tên (theo `TEAMS.md`): Nguyễn Phi Hoàng (Đội trưởng) — PO/DevOps; Phạm Quang Dũng — FE/BE; Nguyễn Minh Phúc — FE/BE; Nguyễn Công Hoàn — BA/test. *(Nhóm xác nhận chia cặp theo chặng; vai trong `canvas.md` dòng 7 và `docs/learningpulse-design.md` khác `TEAMS.md`.)*
 - Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`):
 - Nhật ký thay đổi — **mọi thay đổi sau CP2 19:30 Thứ Sáu 27/11 phải có dòng ở đây**:
 
