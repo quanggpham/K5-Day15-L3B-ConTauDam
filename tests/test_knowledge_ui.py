@@ -136,3 +136,15 @@ def test_bulk_apply_requires_explicit_source_rights(capsys):
     with pytest.raises(SystemExit):
         main(['--files', '.', '--mapping', 'mapping.csv', '--apply'])
     assert '--confirm-rights' in capsys.readouterr().err
+
+
+def test_bulk_cli_outputs_utf8_on_windows_with_legacy_encoding(tmp_path):
+    import os
+    import subprocess
+    import sys
+    (tmp_path / 'lesson.md').write_text('Synthetic lesson content', encoding='utf-8')
+    env = {**os.environ, 'PYTHONIOENCODING': 'cp1252'}
+    result = subprocess.run([sys.executable, 'scripts/ingest_kb.py', '--files', str(tmp_path)],
+                            env=env, capture_output=True, text=True, encoding='utf-8')
+    assert result.returncode == 0
+    assert 'đoạn' in result.stdout
