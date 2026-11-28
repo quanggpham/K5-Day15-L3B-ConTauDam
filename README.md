@@ -4,7 +4,7 @@ LearningPulse hỗ trợ lab coach tìm nội dung cần ôn tập từ dữ li�
 
 ## Trạng thái
 
-CLI và dashboard dùng chung báo cáo số liệu tổng hợp; không có khuyến nghị AI khi chưa có Lesson KB. Dashboard có đăng nhập, allowlist, chọn bài và lưu bản nháp. Adapter Liquid đã có nhưng chưa nối vào workflow; RAG, JEV, khuyến nghị AI và Langfuse chưa tích hợp.
+CLI và dashboard dùng chung báo cáo số liệu tổng hợp; không có khuyến nghị AI khi chưa có Lesson KB. Dashboard có đăng nhập, chọn bài và lưu bản nháp. Adapter Liquid đã có nhưng chưa nối vào workflow; RAG, JEV, khuyến nghị AI và Langfuse chưa tích hợp.
 
 ## Cài đặt và chạy
 
@@ -65,11 +65,11 @@ Tạo Railway service dùng Dockerfile, workflow đồng bộ `SUPABASE_URL` và
 
 Frontend local dùng `pnpm dev`, backend dùng `uv run uvicorn codebase.backend.main:app --reload`; đặt hai biến Supabase trong môi trường backend trước khi chạy. Supabase lưu tài khoản và kết quả; DuckDB giữ dữ liệu pre-class local. Không có bước tự đồng bộ dataset lên cloud.
 
-### Allowlist giảng viên và coach
+### Quyền truy cập
 
-Migration `20261127000001_coach_allowlist.sql` tạo bảng allowlist và yêu cầu email trong JWT nằm trong bảng cho mọi truy cập các bảng ứng dụng. Người quản trị quản lý email viết thường qua Supabase SQL Editor; client không có quyền đọc hoặc sửa bảng allowlist. Cần tạo người dùng trong Supabase Auth riêng. Không nhập mật khẩu hoặc service-role key vào repo.
+Migration `20261128000000_allow_auth_users.sql` cho phép mọi tài khoản còn tồn tại trong Supabase Auth truy cập, không cần thêm email vào allowlist. RLS vẫn giới hạn dữ liệu theo chủ sở hữu. Quản trị viên cần kiểm soát việc tạo tài khoản và cấu hình đăng ký trong Supabase Auth. Không nhập mật khẩu hoặc service-role key vào repo.
 
-Backend có `/api/me` để xác thực token với Supabase Auth và kiểm tra allowlist qua RLS; cả hai đều phải thành công. Thay đổi backend/frontend này phải được deploy mới có tác dụng trên Railway.
+Backend có `/api/me` để xác thực token với Supabase Auth và kiểm tra tài khoản qua RPC; cả hai đều phải thành công. Cần áp dụng migration cho Supabase và deploy frontend để cập nhật thông tin hiển thị trên Railway.
 
 `lesson_metrics` hiện tổng hợp theo `lesson_id` và `kc_code`: tỷ lệ sai bằng số lượt sai chia số lượt đã được chấm ở lần đầu; lượt chưa chấm được tính riêng. Dashboard đọc snapshot đã lọc trên Railway; API báo lỗi khi snapshot chưa có.
 

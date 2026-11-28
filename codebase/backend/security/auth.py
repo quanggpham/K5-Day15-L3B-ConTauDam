@@ -1,4 +1,4 @@
-"""Verify Supabase sessions and fail closed on allowlist checks."""
+"""Verify Supabase sessions and fail closed on access checks."""
 import os
 import httpx
 from fastapi import Header, HTTPException

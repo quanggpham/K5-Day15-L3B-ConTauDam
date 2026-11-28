@@ -42,7 +42,7 @@ export default function ProfilePage() {
       </h1>
       <dl className="mt-6 divide-y divide-violet-100 rounded-2xl border border-violet-200 bg-white px-5">
         <Row label="Email">{user?.email ?? "Không có thông tin"}</Row>
-        <Row label="Quyền truy cập">Coach trong danh sách được cấp quyền</Row>
+        <Row label="Quyền truy cập">Tài khoản Supabase được xác thực</Row>
         <Row label="Phiên hiện tại hết hạn lúc">
           {sessionExpiresAt ? dateTime.format(new Date(sessionExpiresAt * 1000)) : "Không xác định"}
           <span className="block text-xs text-slate-600">Hệ thống tự làm mới phiên khi bạn còn dùng ứng dụng.</span>

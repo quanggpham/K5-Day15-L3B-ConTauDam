@@ -24,7 +24,7 @@ const FAQS = [
   },
   {
     q: "Ai đăng nhập được?",
-    a: "Chỉ lab coach và giảng viên có email trong danh sách cho phép. Không có trang đăng ký công khai, học viên và người ngoài không vào được.",
+    a: "Các tài khoản được tạo trong Supabase Auth và đăng nhập thành công có thể truy cập. Mỗi tài khoản chỉ xem được báo cáo của mình.",
   },
   {
     q: "Có xem được từng học viên không?",

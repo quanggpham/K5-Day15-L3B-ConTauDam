@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => configureApi({ getAccessToken: () => null, onUnauthorized: () => {} })
   }, [applySession])
 
-  // Xác minh quyền (allowlist) mỗi khi đổi tài khoản; làm mới token không gọi lại.
+  // Xác minh quyền mỗi khi đổi tài khoản; làm mới token không gọi lại.
   const userId = session?.user.id ?? null
   useEffect(() => {
     if (!userId) {

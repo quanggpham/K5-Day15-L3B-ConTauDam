@@ -3,7 +3,6 @@ begin;
 insert into auth.users (id, email, raw_user_meta_data) values
  ('00000000-0000-0000-0000-00000000000a','a@test.local','{}'),
  ('00000000-0000-0000-0000-00000000000b','b@test.local','{}');
-insert into public.coach_allowlist values ('a@test.local');
 insert into public.analysis_runs (id,user_id,lesson_id) values ('10000000-0000-0000-0000-000000000001','00000000-0000-0000-0000-00000000000a','L1');
 insert into public.recommendations (id,analysis_run_id,kc_code,priority,content,jev_score) values
  ('20000000-0000-0000-0000-000000000001','10000000-0000-0000-0000-000000000001','KC1',1,'goc','{"s":1}');
@@ -44,6 +43,7 @@ reset role;
 set local role authenticated;
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-00000000000a","email":"a@test.local","role":"authenticated"}',true);
 do $$ begin
+ assert public.is_allowed_coach(), 'T16a Auth user can access without allowlist';
  assert (select count(*) from public.recommendation_reviews)=3, 'T16 owner sees audit';
  begin perform public.review_recommendation(null,null,1,'accept',null,null,null,null); raise exception 'T17 rpc allowed';
  exception when insufficient_privilege then null; end;
@@ -53,7 +53,12 @@ do $$ begin
  exception when insufficient_privilege then null; end;
 end $$;
 select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-00000000000b","email":"b@test.local","role":"authenticated"}',true);
-do $$ begin assert (select count(*) from public.recommendation_reviews)=0, 'T19 non-allowlisted/other sees audit'; end $$;
+do $$ begin
+ assert public.is_allowed_coach(), 'T19a second Auth user can access';
+ assert (select count(*) from public.recommendation_reviews)=0, 'T19 other owner sees audit';
+end $$;
+select set_config('request.jwt.claims','{"sub":"00000000-0000-0000-0000-00000000000c","role":"authenticated"}',true);
+do $$ begin assert not public.is_allowed_coach(), 'T19b unknown user denied'; end $$;
 reset role;
 
 -- cascade: xoá run -> recs + audit biến mất
